@@ -1,0 +1,89 @@
+import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import logo from '../assets/Logo.svg';
+
+const Navbar = () => {
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  return (
+    <nav className="sticky top-0 z-50 w-full glass-container border-b-0">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-4">
+        <div className="flex justify-between items-center h-20">
+          
+          {/* Left: Brand Logo */}
+          <div className="flex-shrink-0 flex items-center cursor-pointer">
+            <img src={logo} alt="OnePG Logo" className="h-8 sm:h-9 w-auto" />
+          </div>
+
+          {/* Center: Navigation Links (Desktop only) */}
+          <div className="hidden lg:flex space-x-8">
+            {['Products', 'Solutions', 'Developers', 'Pricing', 'Resources'].map((item) => (
+              <a 
+                key={item} 
+                href={`#${item.toLowerCase()}`}
+                className="text-[#9CA3AF] hover:text-[#FFFFFF] px-3 py-2 text-sm font-medium transition-colors"
+              >
+                {item}
+              </a>
+            ))}
+          </div>
+
+          {/* Right: Actions (Login & Contact Us buttons always in topbar) */}
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            <button className="text-[#FFFFFF] bg-transparent border border-transparent hover:border-[#333333] px-3 py-1.5 sm:px-4 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-all">
+              Login
+            </button>
+            <button className="bg-[#FF5722] text-[#FFFFFF] hover:bg-[#e64e1e] px-4 py-1.5 sm:px-6 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors shadow-[0_0_15px_rgba(255,87,34,0.3)]">
+              Contact Us
+            </button>
+            
+            {/* Mobile/Tablet menu button */}
+            <div className="lg:hidden flex items-center pl-1">
+              <button 
+                onClick={() => setIsOpen(!isOpen)}
+                className="text-[#9CA3AF] hover:text-[#FFFFFF] focus:outline-none p-2 rounded-lg hover:bg-white/5 transition-colors"
+              >
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  {isOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Animated Dropdown Menu for Mobile/Tablet */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="lg:hidden absolute top-20 left-0 w-full bg-brand-black/95 backdrop-blur-lg border-b border-white/5 overflow-hidden z-40"
+          >
+            <div className="px-4 pt-2 pb-6 space-y-2 flex flex-col">
+              {['Products', 'Solutions', 'Developers', 'Pricing', 'Resources'].map((item) => (
+                <a 
+                  key={item} 
+                  href={`#${item.toLowerCase()}`}
+                  onClick={() => setIsOpen(false)}
+                  className="text-[#9CA3AF] hover:text-[#FFFFFF] py-3 text-sm font-medium transition-colors border-b border-white/[0.02]"
+                >
+                  {item}
+                </a>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
+  );
+};
+
+export default Navbar;

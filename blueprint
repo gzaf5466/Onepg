@@ -1,0 +1,263 @@
+1. { 
+    the hero section 
+
+    the text in the hero section is: 
+
+    Route Better. Pay Faster. Verify Smarter – Onepg
+
+    One Platform for Payments, Routing Efficiency & Secure Verification
+
+    along with the some images and a button "Start Processing Payments"
+    }
+2. { 
+    it starts with 
+
+
+
+    <h1> Smarter Payments with Unified
+        Routing, Payouts & ID Verification </h1>
+
+
+    <p> Transform the way your business handles payments with intelligent routing, lightning fast payouts, and advanced verification tools all integrated in one powerful ecosystem.</p>
+
+    <---- 1st card --->
+        Transform the way your business handles payments with intelligent routing, lightning fast payouts, and advanced verification tools all integrated in one powerful ecosystem.
+            Transform the way your business handles payments with intelligent routing, lightning fast payouts, and advanced verification tools all integrated in one powerful ecosystem.
+
+                <---- 2nd card --->
+                    Smart Routing
+        Boost your success rate with OnePG’s adaptive routing engine. Transactions automatically flow through the best performing payment gateway based on real time performance, ensuring faster checkouts and fewer failures.
+
+                <----3d card --->
+                    Secure ID Verification
+    Authenticate PAN, Aadhaar, GSTIN, and bank details instantly. Reduce fraud and speed up onboarding with our secure, compliant, AI-powered identity verification suite.|
+    }
+3. { 
+    
+    it will start with a heading 
+
+    Payout Multiple Current Accounts
+    and a paragraph with 
+    Add multiple Payout Fund Sources and pay your vendors, partners, employees, or customers into the destination payment mode of their choice.
+
+    along with a box of 
+
+    spinning or rotating effect, 
+    and it will show the supported banks for payemnts
+    }
+4. { 
+    there will be a strip of infinite loop of the above banking partners.
+
+
+    }
+5. { 
+    it will start with a heading 
+    <h1>
+    Who Onepg Router Helps & How It Helps Them
+    </h1>
+    
+    with a 
+    <p>OnePG Router helps any business that accepts payments, sends payouts, or verifies customers by giving them higher success rates, instant money movement, and secure, automated verification in one unified platform.</p>
+
+
+    and with some images
+
+    }  
+6. { 
+    it will start with a heading 
+    <h1>
+        20000+ trusted by thousands of sellers
+    </h1>
+    <p>
+        We simplify payments with services for collections, payouts, and real-time verification.
+    </p>
+    1st card --> 
+
+    Developer
+    Friendly api
+
+    Effortless Integration
+
+
+    
+    2nd card --> 
+    Bulk Payouts
+
+    Bulk Payouts
+    Made Effortless
+
+
+    Manage high-volume payouts with accuracy, speed, and complete reporting no manual effort, no room for errors.
+
+
+    3rd card -->
+
+    Verification
+
+    Secure ID
+
+
+    Verify Aadhar, PAN, GSTIN and Bank a/c details of an individual or business and do identity verification in real-time.
+
+
+    4th card -->
+
+    Webhook
+    Integration
+
+
+    Retry logic and signature checks ensure secure, reliable webhook delivery. 
+
+
+    5th card -->
+
+    FlowWise
+
+    Smart Payment
+    Routing
+
+
+    Route Payments to multiple payment gateways on your website or application.
+
+
+    6th card -->
+    Payout
+
+    Fast & Secure
+    Payouts
+
+
+    Send payments instantly to any bank account, UPI VPA, card, or wallet.
+
+    }    
+7. { 
+    <h1>
+    Supports Extensive Platforms
+    </h1>
+    <p>
+    Integrates effortlessly with websites, apps, and POS systems.
+    </p>
+
+    both cards will have the images 
+    <-- first card -->
+    Works seamlessly
+    across web, mobile,
+    and apps.
+    Supports Android, iOS, PHP, Java, React
+    Native, C++, and Python for seamless
+    integration across all your platforms.
+
+    <-- second card -->
+    
+    Built to work
+    effortlessly
+    preview
+    Learn more
+    ">
+
+    }
+8.  { 
+    <h1>
+       Light SDKs, Flexible APIs
+    </h1>
+    <p>
+    Integrate payments effortlessly with our lightweight SDKs and simple, flexible APIs.
+    </p>
+    <h2 >
+    Integrated Ecosystem for
+    Developers</h2>
+    <p> Empowering developers with a connected suite of tools to create reliable, scalable, and intuitive payment solutions.</p>
+    with code editor and images 
+
+
+    }  
+9. { 
+    it will start with a heading
+    <h1>
+    SeamlessIntegration with Low-Code SDKs & APIs
+    </h1>
+    <p>
+    Onepg Payment Gateway provides low-code SDKs and RESTful APIs that work quickly with existing apps and ecosystems. Easily integrate PhonePe Payment Gateway into your tech stack.
+    </p>
+    along with some analytics images 
+    }
+10. { 
+    it will start with a heading
+    <h1>
+    Don’t trust us. Trust the
+    industry leaders
+    </h1>
+    <p>
+    See what our users are saying about our services and support
+    </p>
+    along with three costumer 5star rating with user image, name, and review.
+    
+    }
+11. {
+    it will start with a heading
+    <h1>
+    Payout
+    Frequently asked Questions
+    </h1>
+    <p>What is Onepg ???</p>
+    <p>OnePG is a modern payment gateway router that allows businesses to accept online payments through UPI, cards, net banking, wallets, and payment links.</p>
+    <p>How does OnePG routing improve payment success rates?</p>
+    <p>Our routing engine evaluates gateway performance in real time and automatically shifts transactions to the highest-performing gateway, reducing failures and improving conversions.</p>
+    <p>What types of payouts can I send using OnePG?</p>
+    <p>You can send instant payouts to bank accounts, UPI IDs, cards, and wallets – suitable for vendor payments, refunds, salaries, partner commissions, and customer settlements.</p>
+    <p>What documents can be verified using OnePG Secure ID?</p>
+    <p>We support Aadhaar, PAN, GSTIN, bank account verification, and more. Verification is instant, secure, and compliant with regulatory standards.</p>
+    
+
+    }  
+12. {   
+        <h1>Ready to Revolutionize Your Payments?</h1>
+        <p>Get started with Onepg today and experience the future of intelligent payment processing.</p>
+        <br>
+        along with some buttons, one for signup and one for contact sales 
+        <br>
+        <p>No Setup Fee</p>
+        <p>Instant Activation</p>
+        <p>24/7 Support</p>
+        <br>
+    }
+13. { 
+    
+    footer component
+
+
+    }
+
+
+
+
+coloring scheme 
+ { 
+
+    
+    ONEPG logo ke primary brand colors approximately ye hain:
+
+    | Color           | HEX                     | RGB           | Usage                  |
+    | --------------- | ----------------------- | ------------- | ---------------------- |
+    | 🟧 Orange       | **#EA602A**             | 234, 96, 42   | Main "one" text        |
+    | 🟦 Teal         | **#4C9196**marte              | 76, 145, 150  | "pg" stroke/logo       |
+    | 🟠 Light Gold   | **#FFC56B** *(approx.)* | 255, 197, 107 | Inner highlight of "G" |
+    | ⚫ Dark Charcoal | **#151515**             | 21, 21, 21    | Text/icons             |
+    | ⚪ White         | **#FFFFFF**             | 255, 255, 255 | Background             |
+
+    Recommended Brand Palette
+
+    * **Primary Orange:** `#EA602A`
+    * **Primary Teal:** `#4C9196`
+    * **Accent Gold:** `#FFC56B`
+    * **Dark Text:** `#151515`
+    * **Background:** `#FFFFFF`
+
+    For Documents (Offer Letter / NDA)
+
+    * **Headings:** `#0F1F52` (Navy)
+    * **Accent Line:** Orange `#EA602A` + Teal `#4C9196`
+    * **Watermark:** ONEPG logo at **2–3% opacity**
+    * **Icons:** Orange `#EA602A`
+    * **Footer:** Navy `#0F1F52` with Orange & Teal accents
+}

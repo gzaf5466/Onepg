@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-black: #050505;
+  --color-brand-orange: #FF5722;
+  --color-brand-cyan: #00E5FF;
+  --color-brand-white: #FFFFFF;
+  --color-brand-grey: #9CA3AF;
+  --color-brand-teal: #4C9196;
+  --color-brand-navy: #0F1F52;
+  --color-brand-gold: #FFC56B;
+  --color-brand-surface: #FDFDFD;
+  --color-brand-dark: #151515;
+  --color-brand-light: #F3F4F6;
+  
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+@layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    background-color: var(--color-brand-black);
+    color: var(--color-brand-grey);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--color-brand-white);
+  }
+}
+
+@layer components {
+  .glass-container {
+    background-color: rgba(25, 25, 25, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.05);
+  }
+
+  .glass-card {
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(15, 31, 82, 0.06);
+    box-shadow: 0 10px 30px -10px rgba(15, 31, 82, 0.05);
+    transition: all 0.3s ease;
+  }
+  .glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -15px rgba(15, 31, 82, 0.1);
+    border-color: rgba(15, 31, 82, 0.12);
+  }
+
+  .badge-outline {
+    border: 1px solid transparent;
+    background-image: linear-gradient(transparent, transparent), linear-gradient(to right, #FF5722, #00E5FF);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+  }
+}
+
+@layer utilities {
+  .animate-gradient-slide {
+    background-size: 200% auto;
+    animation: gradient-slide 3s linear infinite;
+  }
+  
+  
+  .animate-pulse-glow {
+    animation: pulse-glow 4s ease-in-out infinite;
+  }
+  
+  .animate-marquee {
+    animation: marquee-scroll 35s linear infinite;
+  }
+  
+  .animate-marquee:hover {
+    animation-play-state: paused;
+  }
+  
+  .animate-dash {
+    stroke-dasharray: 6 12;
+    animation: dash-scroll 1.5s linear infinite;
+  }
+}
+
+@keyframes dash-scroll {
+  to {
+    stroke-dashoffset: -18;
+  }
+}
+
+@keyframes marquee-scroll {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes gradient-slide {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 40px rgba(0, 229, 255, 0.3)) contrast(1.15);
+    translate: 0 0;
+  }
+  50% {
+    filter: drop-shadow(0 0 70px rgba(0, 229, 255, 0.6)) contrast(1.25) brightness(1.1);
+    translate: 0 -12px;
+  }
+}
