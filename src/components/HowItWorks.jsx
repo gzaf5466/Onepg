@@ -2,10 +2,9 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Code, CreditCard, BarChart3 } from 'lucide-react';
 
-// Asset placeholders (paths relative to project root)
-const howItWorksDesktop = '/src/assets/how-it-works-desktop.png';
-const howItWorksTablet = '/src/assets/how-it-works-tablet.png';
-const howItWorksMobile = '/src/assets/how-it-works-mobile.png';
+import howItWorksDesktop from '../assets/how-it-works-desktop.png';
+import howItWorksTablet from '../assets/how-it-works-tablet.png';
+import howItWorksMobile from '../assets/how-it-works-mobile.png';
 
 const steps = [
   {
@@ -59,7 +58,10 @@ export default function HowItWorks() {
   }, [isModalOpen]);
 
   return (
-    <section className="py-12 md:py-20 lg:py-24 relative z-10 bg-brand-black border-b border-white/5">
+    <section 
+      className="py-12 md:py-20 lg:py-24 relative bg-brand-black border-b border-white/5"
+      style={{ zIndex: isModalOpen ? 100 : 10 }}
+    >
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-4">
         
         {/* Large Rounded Container Card with gradient blending */}
