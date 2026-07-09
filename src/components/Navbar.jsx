@@ -1,31 +1,50 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../assets/Logo.svg';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = React.useState(false);
+  const location = useLocation();
 
   return (
-    <nav className="sticky top-0 z-50 w-full glass-container border-b-0">
+    <nav className="sticky top-0 z-50 w-full glass-container border-b border-white/5 bg-[#050505]/80 backdrop-blur-md">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-4">
         <div className="flex justify-between items-center h-20">
           
           {/* Left: Brand Logo */}
-          <div className="flex-shrink-0 flex items-center cursor-pointer">
+          <Link to="/" className="flex-shrink-0 flex items-center cursor-pointer">
             <img src={logo} alt="OnePG Logo" className="h-8 sm:h-9 w-auto" />
-          </div>
+          </Link>
 
           {/* Center: Navigation Links (Desktop only) */}
           <div className="hidden lg:flex space-x-8">
-            {['Products', 'Solutions', 'Developers', 'Pricing', 'Resources'].map((item) => (
-              <a 
-                key={item} 
-                href={`#${item.toLowerCase()}`}
-                className="text-[#9CA3AF] hover:text-[#FFFFFF] px-3 py-2 text-sm font-medium transition-colors"
-              >
-                {item}
-              </a>
-            ))}
+            {[
+              { label: 'Products', path: '/products' },
+              { label: 'Solutions', path: '/solutions' },
+              { label: 'Developers', path: '/developers' },
+              { label: 'Pricing', path: '/pricing' }
+            ].map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <Link 
+                  key={item.label} 
+                  to={item.path}
+                  className={`px-3 py-2 text-sm font-medium transition-all relative ${
+                    isActive ? 'text-white font-semibold' : 'text-[#9CA3AF] hover:text-[#FFFFFF]'
+                  }`}
+                >
+                  {item.label}
+                  {isActive && (
+                    <motion.div 
+                      layoutId="activeTab" 
+                      className="absolute bottom-0 left-3 right-3 h-0.5 bg-[#FF5722] rounded-full"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
           </div>
 
           {/* Right: Actions (Login & Contact Us buttons always in topbar) */}
@@ -68,16 +87,29 @@ const Navbar = () => {
             className="lg:hidden absolute top-20 left-0 w-full bg-brand-black/95 backdrop-blur-lg border-b border-white/5 overflow-hidden z-40"
           >
             <div className="px-4 pt-2 pb-6 space-y-2 flex flex-col">
-              {['Products', 'Solutions', 'Developers', 'Pricing', 'Resources'].map((item) => (
-                <a 
-                  key={item} 
-                  href={`#${item.toLowerCase()}`}
-                  onClick={() => setIsOpen(false)}
-                  className="text-[#9CA3AF] hover:text-[#FFFFFF] py-3 text-sm font-medium transition-colors border-b border-white/[0.02]"
-                >
-                  {item}
-                </a>
-              ))}
+              {[
+                { label: 'Products', path: '/products' },
+                { label: 'Solutions', path: '/solutions' },
+                { label: 'Developers', path: '/developers' },
+                { label: 'Pricing', path: '/pricing' }
+              ].map((item) => {
+                const isActive = location.pathname === item.path;
+                return (
+                  <Link 
+                    key={item.label} 
+                    to={item.path}
+                    onClick={() => setIsOpen(false)}
+                    className={`py-3 text-sm font-medium transition-colors border-b border-white/[0.02] flex items-center justify-between ${
+                      isActive ? 'text-white font-bold' : 'text-[#9CA3AF] hover:text-[#FFFFFF]'
+                    }`}
+                  >
+                    <span>{item.label}</span>
+                    {isActive && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#FF5722]" />
+                    )}
+                  </Link>
+                );
+              })}
             </div>
           </motion.div>
         )}
