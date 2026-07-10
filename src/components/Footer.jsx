@@ -76,7 +76,7 @@ const Footer = () => {
           {/* Column 1: Brand & Social */}
           <div className="col-span-2 flex flex-col">
             <Link to="/" className="flex-shrink-0 flex items-center cursor-pointer mb-5">
-              <img src={logo} alt="OnePG Logo" className="h-8 w-auto" />
+              <img src={logo} alt="OnePG Logo" width="95" height="33" className="h-8 w-auto" />
             </Link>
             <p className="text-gray-400 text-sm mb-6 max-w-xs font-light leading-relaxed">
               Simplifying payments and powering businesses to grow faster, globally.

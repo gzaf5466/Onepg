@@ -30,6 +30,8 @@ const PartnerStrip = () => {
               <img 
                 src={partner.src} 
                 alt={partner.name} 
+                width="32"
+                height="32"
                 className="h-8 w-8 object-contain" 
               />
               <span className={`text-2xl ${partner.font}`}>

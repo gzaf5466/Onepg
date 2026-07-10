@@ -63,8 +63,8 @@ const WhyChooseUs = () => {
 
         {/* Table Container */}
         <div className="bg-white/[0.01] border border-white/5 rounded-2xl overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.3)] max-w-4xl mx-auto">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto scrollbar-thin">
+            <table className="w-full min-w-[650px] text-left border-collapse">
               <thead>
                 <tr className="border-b border-white/5 bg-white/[0.02] text-xs uppercase font-extrabold text-gray-400 tracking-wider">
                   <th className="px-6 py-5">Onboarding Metrics</th>
@@ -75,12 +75,16 @@ const WhyChooseUs = () => {
               <tbody className="divide-y divide-white/5 text-xs sm:text-sm">
                 {comparisonData.map((row) => (
                   <tr key={row.feature} className="hover:bg-white/[0.01] transition-colors">
-                    <td className="px-6 py-4 font-bold text-white flex items-center gap-1.5">
-                      {row.feature}
+                    <td className="px-6 py-4 font-bold text-white">
+                      <div className="flex items-center gap-1.5">
+                        {row.feature}
+                      </div>
                     </td>
-                    <td className="px-6 py-4 text-gray-500 font-medium flex items-center gap-2">
-                      <X size={14} className="text-red-500/60 shrink-0" />
-                      <span>{row.withoutPG}</span>
+                    <td className="px-6 py-4 text-gray-500 font-medium">
+                      <div className="flex items-center gap-2">
+                        <X size={14} className="text-red-500/60 shrink-0" />
+                        <span>{row.withoutPG}</span>
+                      </div>
                     </td>
                     <td className={`px-6 py-4 font-semibold text-gray-200 ${row.highlight ? 'bg-[#FF5722]/5' : ''}`}>
                       <div className="flex items-center gap-2">

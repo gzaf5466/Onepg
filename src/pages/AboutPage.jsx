@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Calendar, Award, Users, ShieldCheck, ArrowRight } from 'lucide-react';
-import aboutUsImg from '../assets/aboutus.png';
+import aboutUsImg from '../assets/aboutus.avif';
 
 const AboutPage = () => {
   const stats = [
@@ -42,15 +42,15 @@ const AboutPage = () => {
             <p className="text-gray-400 text-base sm:text-lg leading-relaxed">
               OnePG was founded with a single mission: to deliver innovative, reliable, and secure payment solutions that help businesses thrive globally. We bridge the gap between traditional banking infrastructure and modern developer needs.
             </p>
-            <div className="flex flex-wrap gap-4 pt-2">
-              <div className="flex items-center gap-2.5 bg-white/[0.02] border border-white/5 p-3 rounded-lg">
+            <div className="flex flex-col sm:flex-row gap-4 pt-2 w-full sm:w-auto">
+              <div className="flex items-center gap-2.5 bg-white/[0.02] border border-white/5 p-3 rounded-lg flex-1 sm:flex-none">
                 <ShieldCheck className="text-[#FF5722] w-5 h-5" />
                 <div className="text-left">
                   <h4 className="text-xs font-bold text-white">Secure Pipeline</h4>
                   <p className="text-[10px] text-gray-500">PCI DSS Compliant stack</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2.5 bg-white/[0.02] border border-white/5 p-3 rounded-lg">
+              <div className="flex items-center gap-2.5 bg-white/[0.02] border border-white/5 p-3 rounded-lg flex-1 sm:flex-none">
                 <Users className="text-[#00E5FF] w-5 h-5" />
                 <div className="text-left">
                   <h4 className="text-xs font-bold text-white">Merchant First</h4>
@@ -61,11 +61,13 @@ const AboutPage = () => {
           </div>
 
           {/* Visual 3D network graphic/illustration */}
-          <div className="relative h-[300px] sm:h-[400px] flex items-center justify-center bg-white/[0.01] border border-white/5 rounded-2xl overflow-hidden group p-4">
+          <div className="relative h-[300px] sm:h-[400px] flex items-center justify-center group">
             <img 
               src={aboutUsImg} 
               alt="About OnePG" 
-              className="w-full h-full object-contain rounded-xl transition-transform duration-700 group-hover:scale-105"
+              width="1024"
+              height="1024"
+              className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
             />
           </div>
         </section>

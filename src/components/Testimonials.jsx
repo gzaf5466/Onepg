@@ -66,7 +66,7 @@ export default function Testimonials() {
               </p>
               
               <div className="flex items-center gap-4 border-t border-white/5 pt-6">
-                <img src={t.avatar} alt={t.name} className="w-12 h-12 rounded-full border-2 border-[#00E5FF]/20" />
+                <img src={t.avatar} alt={t.name} width="48" height="48" className="w-12 h-12 rounded-full border-2 border-[#00E5FF]/20" />
                 <div>
                   <h4 className="font-bold text-white text-sm">{t.name}</h4>
                   <p className="text-xs font-bold text-[#00E5FF]">{t.role}</p>

@@ -2,9 +2,9 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Code, CreditCard, BarChart3 } from 'lucide-react';
 
-import howItWorksDesktop from '../assets/how-it-works-desktop.png';
-import howItWorksTablet from '../assets/how-it-works-tablet.png';
-import howItWorksMobile from '../assets/how-it-works-mobile.png';
+import howItWorksDesktop from '../assets/how-it-works-desktop.avif';
+import howItWorksTablet from '../assets/how-it-works-tablet.avif';
+import howItWorksMobile from '../assets/how-it-works-mobile.avif';
 
 const steps = [
   {
@@ -157,11 +157,13 @@ export default function HowItWorks() {
           {/* Right Side: Responsive Image Placeholder */}
           <div className="flex-grow-0 shrink-0 w-full lg:w-[48%] flex items-center justify-center lg:justify-end relative z-10">
             <picture className="relative w-full max-w-[500px] flex items-center justify-center lg:justify-end">
-              <source media="(min-width: 1024px)" srcSet={howItWorksDesktop} />
-              <source media="(min-width: 768px)" srcSet={howItWorksTablet} />
+              <source media="(min-width: 1024px)" srcSet={howItWorksDesktop} width="600" height="600" />
+              <source media="(min-width: 768px)" srcSet={howItWorksTablet} width="450" height="450" />
               <img 
                 src={howItWorksMobile} 
                 alt="How it works mockups" 
+                width="350"
+                height="350"
                 className="w-full h-auto object-contain rounded-r-2xl lg:rounded-r-[2.5rem] lg:ml-0"
                 onError={(e) => {
                   e.target.onerror = null;

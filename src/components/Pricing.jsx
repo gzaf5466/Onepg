@@ -161,8 +161,8 @@ export default function Pricing() {
             <p className="text-[#88929b] text-sm font-light font-sans">Detailed capabilities and services available for each billing tier.</p>
           </div>
 
-          <div className="overflow-x-auto border border-white/[0.08] rounded-2xl bg-white/[0.01]">
-            <table className="w-full text-sm font-sans text-left border-collapse min-w-[600px]">
+          <div className="overflow-x-auto border border-white/[0.08] rounded-2xl bg-white/[0.01] scrollbar-thin">
+            <table className="w-full text-sm font-sans text-left border-collapse min-w-[750px]">
               <thead>
                 <tr className="border-b border-white/5 bg-white/[0.02]">
                   <th className="px-6 py-4 font-bold text-[#88929b] uppercase tracking-wider text-xs">Feature Details</th>

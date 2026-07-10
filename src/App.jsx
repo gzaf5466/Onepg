@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AppContextProvider } from './context/AppContext';
 
@@ -6,16 +6,9 @@ import { AppContextProvider } from './context/AppContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import PartnerStrip from './components/PartnerStrip';
-import ProductPillars from './components/ProductPillars';
-import Payouts from './components/Payouts';
-import Platforms from './components/Platforms';
 import HowItWorks from './components/HowItWorks';
-import Benefits from './components/Benefits';
-import FeaturesGrid from './components/FeaturesGrid';
-import Pricing from './components/Pricing';
 import Testimonials from './components/Testimonials';
 import FAQ from './components/FAQ';
-import Industries from './components/Industries';
 import CTA from './components/CTA';
 import Footer from './components/Footer';
 
@@ -24,16 +17,27 @@ import WhyChooseUs from './components/WhyChooseUs';
 import SecurityCompliance from './components/SecurityCompliance';
 import Technology from './components/Technology';
 
-// New Sub-pages
-import AboutPage from './pages/AboutPage';
-import ServicesPage from './pages/ServicesPage';
-import ContactPage from './pages/ContactPage';
-import BlogPage from './pages/BlogPage';
+// Lazy Loaded Pages
+const AboutPage = lazy(() => import('./pages/AboutPage'));
+const ServicesPage = lazy(() => import('./pages/ServicesPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const BlogPage = lazy(() => import('./pages/BlogPage'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const ClientDashboard = lazy(() => import('./pages/ClientDashboard'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const ProductsPage = lazy(() => import('./pages/ProductsPage'));
+const SolutionsPage = lazy(() => import('./pages/SolutionsPage'));
+const PricingPage = lazy(() => import('./pages/PricingPage'));
 
-// Portal pages
-import LoginPage from './pages/LoginPage';
-import ClientDashboard from './pages/ClientDashboard';
-import AdminDashboard from './pages/AdminDashboard';
+// Premium Loading Indicator
+const LoadingScreen = () => (
+  <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+    <div className="relative w-12 h-12">
+      <div className="absolute inset-0 rounded-full border-t-2 border-r-2 border-[#FF5722] animate-spin"></div>
+      <div className="absolute inset-2 rounded-full border-b-2 border-l-2 border-[#00E5FF] animate-spin [animation-duration:1.5s] [animation-direction:reverse]"></div>
+    </div>
+  </div>
+);
 
 // Home Page Component
 const Home = () => (
@@ -83,37 +87,6 @@ const Home = () => (
   </>
 );
 
-// Products Page Component
-const ProductsPage = () => (
-  <div className="min-h-screen flex flex-col bg-[#050505]">
-    <Navbar />
-    <Platforms />
-    <ProductPillars />
-    <Payouts />
-    <FeaturesGrid />
-    <Footer />
-  </div>
-);
-
-// Solutions Page Component
-const SolutionsPage = () => (
-  <div className="min-h-screen flex flex-col bg-[#050505]">
-    <Navbar />
-    <Benefits />
-    <Industries />
-    <Footer />
-  </div>
-);
-
-// Pricing Page Component
-const PricingPage = () => (
-  <div className="min-h-screen flex flex-col bg-[#050505]">
-    <Navbar />
-    <Pricing />
-    <Footer />
-  </div>
-);
-
 // Scroll to top on route change
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -131,19 +104,21 @@ function App() {
       <BrowserRouter>
         <ScrollToTop />
         <div className="flex flex-col min-h-screen bg-[#050505]">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/products" element={<ProductsPage />} />
-            <Route path="/solutions" element={<SolutionsPage />} />
-            <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/services" element={<ServicesPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/dashboard" element={<ClientDashboard />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-          </Routes>
+          <Suspense fallback={<LoadingScreen />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/products" element={<ProductsPage />} />
+              <Route path="/solutions" element={<SolutionsPage />} />
+              <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/services" element={<ServicesPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/dashboard" element={<ClientDashboard />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+            </Routes>
+          </Suspense>
         </div>
       </BrowserRouter>
     </AppContextProvider>

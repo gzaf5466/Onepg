@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Terminal, Activity, Lock, Webhook, Cpu, Code2 } from 'lucide-react';
-import technologyImg from '../assets/technology.png';
+import technologyImg from '../assets/technology.avif';
 
 export default function Technology() {
   const techFeatures = [
@@ -94,19 +94,15 @@ export default function Technology() {
           {/* Center Column: Glowing chip image */}
           <div className="lg:col-span-4 flex justify-center items-center py-8 lg:py-0 relative">
             <div className="absolute inset-0 bg-[#00E5FF]/5 rounded-full blur-[80px] pointer-events-none scale-75 animate-pulse" />
-            <motion.div
+            <motion.img
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="relative w-full max-w-[320px] aspect-square flex items-center justify-center bg-gradient-to-tr from-[#00E5FF]/10 to-[#FF5722]/5 p-6 rounded-3xl border border-white/[0.08] group overflow-hidden"
-            >
-              <img 
-                src={technologyImg} 
-                alt="OnePG Technology Core" 
-                className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(255,87,34,0.15)] transition-transform duration-700 group-hover:scale-105"
-              />
-            </motion.div>
+              src={technologyImg} 
+              alt="OnePG Technology Core" 
+              className="w-full max-w-[320px] aspect-square object-contain filter drop-shadow-[0_0_20px_rgba(255,87,34,0.15)] transition-transform duration-700 hover:scale-105"
+            />
           </div>
 
           {/* Right Column (3 items) */}

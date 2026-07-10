@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import routingNodes from '../assets/routing-nodes.jpeg';
+import routingNodes from '../assets/routing-nodes.avif';
 
 export default function Benefits() {
   return (
@@ -22,6 +22,8 @@ export default function Benefits() {
             <img 
               src={routingNodes} 
               alt="OnePG Smart Routing Nodes" 
+              width="1920"
+              height="1080"
               className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
             />
           </div>

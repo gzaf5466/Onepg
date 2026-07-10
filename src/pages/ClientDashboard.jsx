@@ -975,7 +975,7 @@ const ClientDashboard = () => {
         <div className="flex flex-col">
           <div className="px-6 mb-8">
             <Link to="/">
-              <img src={logo} alt="OnePG" className="h-8 w-auto mb-1" />
+              <img src={logo} alt="OnePG" width="95" height="33" className="h-8 w-auto mb-1" />
             </Link>
             <span className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold pl-0.5">Simplifying Payments</span>
           </div>

@@ -14,7 +14,7 @@ const Navbar = () => {
           
           {/* Left: Brand Logo */}
           <Link to="/" className="flex-shrink-0 flex items-center cursor-pointer">
-            <img src={logo} alt="OnePG Logo" className="h-8 sm:h-9 w-auto" />
+            <img src={logo} alt="OnePG Logo" width="95" height="33" className="h-8 sm:h-9 w-auto" />
           </Link>
 
           {/* Center: Navigation Links (Desktop only) */}
@@ -53,13 +53,13 @@ const Navbar = () => {
           <div className="flex items-center space-x-2 sm:space-x-4">
             <Link 
               to="/login"
-              className="text-[#FFFFFF] bg-transparent border border-transparent hover:border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-all"
+              className="hidden lg:inline-flex text-[#FFFFFF] bg-transparent border border-transparent hover:border-white/10 px-4 py-2 rounded-md text-sm font-medium transition-all"
             >
               Login
             </Link>
             <Link 
               to="/contact"
-              className="bg-[#FF5722] text-[#FFFFFF] hover:bg-[#e64e1e] px-4 py-1.5 sm:px-6 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors shadow-[0_0_15px_rgba(255,87,34,0.3)]"
+              className="hidden lg:inline-flex bg-[#FF5722] text-[#FFFFFF] hover:bg-[#e64e1e] px-6 py-2 rounded-md text-sm font-medium transition-colors shadow-[0_0_15px_rgba(255,87,34,0.3)]"
             >
               Contact Us
             </Link>
@@ -120,6 +120,24 @@ const Navbar = () => {
                   </Link>
                 );
               })}
+              
+              {/* Mobile Actions inside Drawer */}
+              <div className="pt-4 flex flex-col gap-3">
+                <Link
+                  to="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full text-center text-[#FFFFFF] bg-white/[0.03] hover:bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm font-semibold transition-all"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/contact"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full text-center bg-[#FF5722] text-[#FFFFFF] hover:bg-[#e64e1e] px-4 py-3 rounded-lg text-sm font-semibold transition-colors shadow-[0_0_15px_rgba(255,87,34,0.3)]"
+                >
+                  Contact Us
+                </Link>
+              </div>
             </div>
           </motion.div>
         )}

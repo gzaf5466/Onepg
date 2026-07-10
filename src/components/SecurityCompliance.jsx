@@ -1,6 +1,6 @@
 import React from 'react';
 import { ShieldAlert, KeyRound, Radio, DatabaseZap, SearchCode, Server } from 'lucide-react';
-import securityImg from '../assets/security and compliance.png';
+import securityImg from '../assets/security and compliance.avif';
 
 const SecurityCompliance = () => {
   const securityItems = [
@@ -80,13 +80,13 @@ const SecurityCompliance = () => {
 
           {/* Center Graphic Shield Lock (Col 4) */}
           <div className="lg:col-span-4 flex items-center justify-center py-6 lg:py-0">
-            <div className="relative w-[240px] h-[240px] flex items-center justify-center bg-white/[0.01] border border-white/5 rounded-2xl p-4 group">
-              <img 
-                src={securityImg} 
-                alt="Security Compliance" 
-                className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
-              />
-            </div>
+            <img 
+              src={securityImg} 
+              alt="Security Compliance" 
+              width="1024"
+              height="1024"
+              className="w-[240px] h-[240px] object-contain transition-transform duration-700 hover:scale-105"
+            />
           </div>
 
           {/* Right Cards (Col 4) */}

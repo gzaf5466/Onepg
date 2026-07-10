@@ -1,8 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
-import { Shield, Sparkles, Activity, Zap, CheckCircle, Eye, EyeOff } from 'lucide-react';
-import loginImg from '../assets/login.png';
+import { Shield, Sparkles, Activity, Zap, CheckCircle, Eye, EyeOff, Globe, TrendingUp, ShieldCheck, ChevronRight } from 'lucide-react';
+import loginImg from '../assets/login.avif';
 import logo from '../assets/Logo.svg';
 
 const LoginPage = () => {
@@ -54,54 +54,59 @@ const LoginPage = () => {
       <div className="w-full max-w-[1200px] grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
         
         {/* Left Side: Brand Promo (Hidden on Mobile/Tablet) */}
-        <div className="hidden lg:flex lg:col-span-6 flex-col justify-between h-full min-h-[600px] pr-8 py-4">
+        <div className="hidden lg:flex lg:col-span-6 flex-col justify-between h-full min-h-[640px] pr-8 py-4">
           <div>
             <Link to="/">
-              <img src={logo} alt="OnePG" className="h-10 w-auto mb-6" />
+              <img src={logo} alt="OnePG" width="95" height="33" className="h-10 w-auto mb-3" />
             </Link>
-            <h2 className="text-4xl font-extrabold text-white leading-tight mb-4 tracking-tight">
-              Simplifying Payments,<br />
-              <span className="bg-gradient-to-r from-[#FF5722] to-[#FF8A65] bg-clip-text text-transparent">Powering Growth</span>
-            </h2>
-            <p className="text-gray-400 text-lg max-w-md">
-              Access your merchant account, track your onboarding journey, and manage customer payouts seamlessly.
+            <p className="text-gray-400 text-sm tracking-wide font-normal">
+              Simplifying Payments, Powering Growth
             </p>
           </div>
 
           {/* 3D Glowing Card Graphic Mockup */}
-          <div className="my-8 relative flex items-center justify-center h-[280px] w-full bg-white/[0.01] border border-white/5 rounded-2xl p-4 group">
+          <div className="my-auto relative flex items-center justify-center h-[340px] w-full group">
             <img 
               src={loginImg} 
               alt="Secure Payments" 
-              className="w-full h-full object-contain rounded-xl transition-transform duration-700 group-hover:scale-105"
+              width="1024"
+              height="1024"
+              className="w-full max-w-[420px] h-auto object-contain transition-transform duration-700 group-hover:scale-105 scale-110"
             />
           </div>
 
-          {/* Secure Badges */}
-          <div className="grid grid-cols-4 gap-4 border-t border-white/5 pt-6 mt-4">
-            <div className="flex flex-col items-center text-center">
-              <div className="w-8 h-8 rounded-lg bg-[#FF5722]/10 flex items-center justify-center text-[#FF5722] mb-1.5 border border-[#FF5722]/20">
-                <Shield size={16} />
+          <div>
+            {/* Secure Badges */}
+            <div className="grid grid-cols-4 gap-4 border-t border-white/5 pt-6">
+              <div className="flex flex-col items-center text-center">
+                <div className="w-12 h-12 rounded-xl bg-white/[0.02] border border-white/[0.08] flex items-center justify-center text-gray-400 mb-2 hover:border-white/20 hover:text-white transition-all">
+                  <ShieldCheck size={20} />
+                </div>
+                <span className="text-[11px] text-gray-400 font-semibold tracking-wide">Secure</span>
               </div>
-              <span className="text-[10px] text-gray-400 font-medium">Secure</span>
+              <div className="flex flex-col items-center text-center">
+                <div className="w-12 h-12 rounded-xl bg-white/[0.02] border border-white/[0.08] flex items-center justify-center text-gray-400 mb-2 hover:border-white/20 hover:text-white transition-all">
+                  <Globe size={20} />
+                </div>
+                <span className="text-[11px] text-gray-400 font-semibold tracking-wide">Reliable</span>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                <div className="w-12 h-12 rounded-xl bg-white/[0.02] border border-white/[0.08] flex items-center justify-center text-gray-400 mb-2 hover:border-white/20 hover:text-white transition-all">
+                  <TrendingUp size={20} />
+                </div>
+                <span className="text-[11px] text-gray-400 font-semibold tracking-wide">Fast</span>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                <div className="w-12 h-12 rounded-xl bg-white/[0.02] border border-white/[0.08] flex items-center justify-center text-gray-400 mb-2 hover:border-white/20 hover:text-white transition-all">
+                  <Shield size={20} />
+                </div>
+                <span className="text-[11px] text-gray-400 font-semibold tracking-wide">Trusted</span>
+              </div>
             </div>
-            <div className="flex flex-col items-center text-center">
-              <div className="w-8 h-8 rounded-lg bg-[#00E5FF]/10 flex items-center justify-center text-[#00E5FF] mb-1.5 border border-[#00E5FF]/20">
-                <CheckCircle size={16} />
-              </div>
-              <span className="text-[10px] text-gray-400 font-medium">Reliable</span>
-            </div>
-            <div className="flex flex-col items-center text-center">
-              <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-400 mb-1.5 border border-orange-500/20">
-                <Zap size={16} />
-              </div>
-              <span className="text-[10px] text-gray-400 font-medium">Fast</span>
-            </div>
-            <div className="flex flex-col items-center text-center">
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-1.5 border border-emerald-500/20">
-                <Sparkles size={16} />
-              </div>
-              <span className="text-[10px] text-gray-400 font-medium">Trusted</span>
+
+            {/* Footer Copyright */}
+            <div className="text-[10px] text-gray-600 mt-6 tracking-wider">
+              © 2025 OnePG Technologies Pvt. Ltd. All rights reserved.
             </div>
           </div>
         </div>
@@ -114,7 +119,7 @@ const LoginPage = () => {
 
             <div className="mb-6 flex flex-col items-center text-center lg:items-start lg:text-left">
               <Link to="/" className="lg:hidden mb-4">
-                <img src={logo} alt="OnePG" className="h-8 w-auto" />
+                <img src={logo} alt="OnePG" width="95" height="33" className="h-8 w-auto" />
               </Link>
               <h3 className="text-2xl font-bold text-white mb-1">Welcome Back</h3>
               <p className="text-gray-400 text-sm">Login to your OnePG account</p>
@@ -175,9 +180,10 @@ const LoginPage = () => {
 
               <button 
                 type="submit"
-                className="w-full bg-[#FF5722] hover:bg-[#e64e1e] text-white py-3 rounded-lg font-semibold text-sm transition-colors shadow-[0_4px_20px_rgba(255,87,34,0.25)] flex items-center justify-center"
+                className="w-full bg-[#FF5722] hover:bg-[#e64e1e] text-white py-3 rounded-lg font-semibold text-sm transition-colors shadow-[0_4px_20px_rgba(255,87,34,0.25)] flex items-center justify-center relative"
               >
                 Login
+                <ChevronRight size={16} className="absolute right-4 text-white" />
               </button>
             </form>
 

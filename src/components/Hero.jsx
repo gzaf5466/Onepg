@@ -1,7 +1,7 @@
 import React from 'react';
-import desktopImage from '../assets/DESKTOP.png';
-import tabletImage from '../assets/tablet.png';
-import mobileImage from '../assets/mobile.png';
+import desktopImage from '../assets/DESKTOP.avif';
+import tabletImage from '../assets/tablet.avif';
+import mobileImage from '../assets/mobile.avif';
 
 const Hero = () => {
   return (
@@ -39,11 +39,14 @@ const Hero = () => {
             {/* Responsive Orbital Graphic Image */}
             <div className="relative z-10 w-full max-w-[320px] md:max-w-[420px] lg:max-w-none mx-auto flex items-center justify-center scale-[1.05] lg:scale-[1.15] animate-pulse-glow lg:animate-none">
               <picture className="w-full h-auto flex items-center justify-center">
-                <source media="(min-width: 1024px)" srcSet={desktopImage} />
-                <source media="(min-width: 768px)" srcSet={tabletImage} />
+                <source media="(min-width: 1024px)" srcSet={desktopImage} width="1184" height="750" />
+                <source media="(min-width: 768px)" srcSet={tabletImage} width="928" height="500" />
                 <img 
                   src={mobileImage} 
                   alt="OnePG Hero Graphic" 
+                  width="800"
+                  height="506"
+                  fetchPriority="high"
                   className="w-full h-auto max-h-[28vh] md:max-h-[35vh] lg:max-h-none object-contain mx-auto"
                 />
               </picture>

@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Calendar, Clock, ArrowRight, ArrowLeft } from 'lucide-react';
-import blogPaymentGatewayImg from '../assets/blog-payment-gateway.png';
-import blogT0SettlementImg from '../assets/blog-t0-settlement.png';
-import blogFuturePaymentsImg from '../assets/blog-future-payments.png';
-import blogCrossBorderImg from '../assets/blog-cross-border.png';
-import blogPciDssImg from '../assets/blog-pci-dss.png';
-import blogSmartRoutingImg from '../assets/blog-smart-routing.png';
+import blogPaymentGatewayImg from '../assets/blog-payment-gateway.avif';
+import blogT0SettlementImg from '../assets/blog-t0-settlement.avif';
+import blogFuturePaymentsImg from '../assets/blog-future-payments.avif';
+import blogCrossBorderImg from '../assets/blog-cross-border.avif';
+import blogPciDssImg from '../assets/blog-pci-dss.avif';
+import blogSmartRoutingImg from '../assets/blog-smart-routing.avif';
 
 const BlogPage = () => {
   const [selectedBlog, setSelectedBlog] = useState(null);
@@ -164,6 +164,8 @@ const BlogPage = () => {
               <img 
                 src={selectedBlog.image} 
                 alt={selectedBlog.title} 
+                width="1024"
+                height="1024"
                 className="w-full h-full object-cover" 
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-40" />
@@ -250,6 +252,8 @@ const BlogPage = () => {
                       <img 
                         src={blog.image} 
                         alt={blog.title} 
+                        width="1024"
+                        height="1024"
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-80" />

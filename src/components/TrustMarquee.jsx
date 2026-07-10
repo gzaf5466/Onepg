@@ -33,7 +33,7 @@ export default function TrustMarquee() {
         >
           {[...partners, ...partners, ...partners].map((partner, idx) => (
             <div key={idx} className="flex items-center gap-3 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-pointer select-none">
-              <img src={partner.src} alt={partner.name} className="h-8 w-8 object-contain" />
+              <img src={partner.src} alt={partner.name} width="32" height="32" className="h-8 w-8 object-contain" />
               <span className={`text-2xl ${partner.font}`}>{partner.name}</span>
             </div>
           ))}

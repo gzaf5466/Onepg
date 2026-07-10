@@ -6,10 +6,11 @@ import {
   CreditCard, FileText, LifeBuoy, Settings, LogOut, Search, 
   Plus, Edit3, CheckCircle, Info, ChevronLeft,
   Shield, RefreshCw, ToggleLeft, ToggleRight,
-  Database
+  Database, Menu, X
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../assets/Logo.svg';
-import addNewClientImg from '../assets/add new client.png';
+import addNewClientImg from '../assets/add new client.avif';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const AdminDashboard = () => {
   // Admin navigation state: 'all-clients', 'add-client', 'update-status', 'projects', 'services', 'payments', 'invoices', 'documents', 'tickets', 'settings'
   const [currentView, setCurrentView] = useState('all-clients');
   const [selectedClientForUpdate, setSelectedClientForUpdate] = useState(clients[0] || null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   // Search & Filter state
   const [searchTerm, setSearchTerm] = useState('');
@@ -181,7 +183,7 @@ const AdminDashboard = () => {
           />
         </div>
 
-        <div className="flex items-center gap-3 w-full md:w-auto justify-end">
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-start md:justify-end">
           <select 
             value={planFilter}
             onChange={(e) => setPlanFilter(e.target.value)}
@@ -215,8 +217,8 @@ const AdminDashboard = () => {
 
       {/* Clients Table */}
       <div className="bg-white/[0.01] border border-white/5 rounded-xl overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto scrollbar-thin">
+          <table className="w-full min-w-[900px] text-left border-collapse">
             <thead>
               <tr className="border-b border-white/5 text-[10px] uppercase font-bold text-gray-500 tracking-wider bg-white/[0.01]">
                 <th className="px-6 py-4">Client ID</th>
@@ -287,9 +289,9 @@ const AdminDashboard = () => {
         </div>
 
         {/* Pagination */}
-        <div className="border-t border-white/5 px-6 py-4 flex items-center justify-between bg-white/[0.01]">
+        <div className="border-t border-white/5 px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 bg-white/[0.01]">
           <span className="text-xs text-gray-500">Showing {filteredClients.length} of {clients.length} merchants</span>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 overflow-x-auto max-w-full py-0.5">
             {[1, 2, 3, '...', 10].map((pg, idx) => (
               <button 
                 key={idx}
@@ -777,12 +779,90 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-[#050505] text-white flex font-sans overflow-x-hidden">
       
+      {/* Mobile Drawer Sidebar */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.6 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSidebarOpen(false)}
+              className="fixed inset-0 bg-black z-40 xl:hidden"
+            />
+            {/* Drawer */}
+            <motion.div
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 bottom-0 left-0 w-[280px] bg-[#050505] border-r border-white/5 z-50 xl:hidden flex flex-col justify-between py-6 shadow-2xl"
+            >
+              <div className="flex flex-col">
+                <div className="px-6 mb-8 flex items-center justify-between">
+                  <div>
+                    <Link to="/">
+                      <img src={logo} alt="OnePG" width="95" height="33" className="h-8 w-auto mb-1" />
+                    </Link>
+                    <span className="text-[10px] text-[#00E5FF] uppercase tracking-widest font-extrabold pl-0.5">Admin Panel</span>
+                  </div>
+                  <button 
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="text-gray-500 hover:text-white p-1 rounded-lg hover:bg-white/5 transition-colors focus:outline-none"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                <nav className="space-y-1 px-4">
+                  {adminNavItems.map((item) => {
+                    const IconComp = item.icon;
+                    const isActive = currentView === item.view;
+                    return (
+                      <button
+                        key={item.view}
+                        onClick={() => {
+                          setCurrentView(item.view);
+                          setIsSidebarOpen(false);
+                        }}
+                        className={`w-full flex items-center px-4 py-3 rounded-lg text-xs font-semibold transition-all ${
+                          isActive 
+                            ? 'bg-gradient-to-r from-[#00E5FF]/10 to-transparent text-[#00E5FF] border-l-2 border-[#00E5FF]' 
+                            : 'text-gray-400 hover:text-white hover:bg-white/[0.02]'
+                        }`}
+                      >
+                        <IconComp size={16} className="mr-3" />
+                        {item.name}
+                      </button>
+                    );
+                  })}
+                </nav>
+              </div>
+
+              <div className="px-4">
+                <button 
+                  onClick={() => {
+                    setIsSidebarOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full flex items-center px-4 py-3 rounded-lg text-sm font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all"
+                >
+                  <LogOut size={18} className="mr-3" />
+                  Logout
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       {/* Sidebar */}
       <aside className="w-[280px] bg-white/[0.01] border-r border-white/5 flex-shrink-0 hidden xl:flex flex-col justify-between py-6">
         <div className="flex flex-col">
           <div className="px-6 mb-8">
             <Link to="/">
-              <img src={logo} alt="OnePG" className="h-8 w-auto mb-1" />
+              <img src={logo} alt="OnePG" width="95" height="33" className="h-8 w-auto mb-1" />
             </Link>
             <span className="text-[10px] text-[#00E5FF] uppercase tracking-widest font-extrabold pl-0.5">Admin Panel</span>
           </div>
@@ -824,16 +904,25 @@ const AdminDashboard = () => {
       <div className="flex-grow flex flex-col min-h-screen">
         
         {/* Admin Header */}
-        <header className="h-20 bg-white/[0.01] border-b border-white/5 flex items-center justify-between px-4 sm:px-6 md:px-8">
-          <div>
-            <h1 className="text-xl font-bold text-white">OnePG Admin Console</h1>
-            <p className="text-xs text-gray-500">Global control panel for onboarding, status logs, and transaction reviews.</p>
+        <header className="h-20 bg-white/[0.01] border-b border-white/5 flex items-center justify-between px-4 sm:px-6 md:px-8 gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            {/* Hamburger Button for mobile/tablet */}
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="xl:hidden text-gray-400 hover:text-white p-1.5 rounded-lg hover:bg-white/5 transition-colors focus:outline-none shrink-0"
+            >
+              <Menu size={20} />
+            </button>
+            <div className="min-w-0">
+              <h1 className="text-base sm:text-xl font-bold text-white truncate">OnePG Admin Console</h1>
+              <p className="text-xs text-gray-500 hidden sm:block truncate">Global control panel for onboarding, status logs, and transaction reviews.</p>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-xs bg-[#00E5FF]/10 text-[#00E5FF] px-2.5 py-1 rounded-full border border-[#00E5FF]/20 font-bold uppercase tracking-wider">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <span className="text-[10px] sm:text-xs bg-[#00E5FF]/10 text-[#00E5FF] px-2 sm:px-2.5 py-1 rounded-full border border-[#00E5FF]/20 font-bold uppercase tracking-wider">
               Super Admin
             </span>
-            <div className="w-10 h-10 rounded-full bg-[#00E5FF]/20 border border-[#00E5FF]/40 flex items-center justify-center font-bold text-sm text-[#00E5FF]">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#00E5FF]/20 border border-[#00E5FF]/40 flex items-center justify-center font-bold text-xs sm:text-sm text-[#00E5FF]">
               AD
             </div>
           </div>
@@ -853,13 +942,13 @@ const AdminDashboard = () => {
 
           {/* VIEW: ADD NEW CLIENT */}
           {currentView === 'add-client' && (
-            <div className="max-w-[1000px] bg-white/[0.01] border border-white/5 rounded-xl p-6 md:p-8 shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
-              <div className="flex items-center gap-2 mb-6">
+            <div className="w-full space-y-8">
+              <div className="flex items-center gap-2">
                 <button onClick={() => setCurrentView('all-clients')} className="text-gray-500 hover:text-white mr-1">
                   <ChevronLeft size={20} />
                 </button>
                 <div>
-                  <h3 className="text-lg font-bold text-white">Add New Client</h3>
+                  <h3 className="text-2xl font-bold text-white">Add New Client</h3>
                   <p className="text-xs text-gray-500">Create a new client merchant account to begin their onboarding pipeline.</p>
                 </div>
               </div>
@@ -870,8 +959,8 @@ const AdminDashboard = () => {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <form onSubmit={handleSaveClient} className="lg:col-span-7 space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <form onSubmit={handleSaveClient} className="lg:col-span-7 space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Full Name</label>
@@ -948,30 +1037,30 @@ const AdminDashboard = () => {
 
                   <div className="flex items-center gap-3 pt-4">
                     <button 
-                      type="submit"
-                      className="bg-[#FF5722] hover:bg-[#e64e1e] text-white py-3 px-6 rounded-lg text-xs font-bold transition-all shadow-[0_0_15px_rgba(255,87,34,0.25)]"
-                    >
-                      Save Client
-                    </button>
-                    <button 
                       type="button" 
                       onClick={() => setCurrentView('all-clients')}
                       className="bg-transparent border border-white/10 hover:bg-white/5 text-gray-300 px-6 py-3 rounded-lg text-xs font-bold transition-all"
                     >
                       Cancel
                     </button>
+                    <button 
+                      type="submit"
+                      className="bg-[#FF5722] hover:bg-[#e64e1e] text-white py-3 px-6 rounded-lg text-xs font-bold transition-all shadow-[0_0_15px_rgba(255,87,34,0.25)]"
+                    >
+                      Save Client
+                    </button>
                   </div>
                 </form>
 
-                <div className="lg:col-span-5 flex flex-col items-center justify-center p-6 bg-white/[0.02] border border-white/5 rounded-xl h-[320px] relative overflow-hidden group">
-                  <div className="absolute w-[200px] h-[200px] bg-[#00E5FF]/10 rounded-full blur-2xl pointer-events-none" />
+                <div className="lg:col-span-5 flex items-center justify-center relative group p-4">
+                  <div className="absolute w-[400px] h-[400px] bg-[#00E5FF]/10 rounded-full blur-[120px] pointer-events-none" />
                   <img 
                     src={addNewClientImg} 
                     alt="Secure Merchant Profile" 
-                    className="w-full h-full object-contain rounded-xl relative z-10 transition-transform duration-700 group-hover:scale-105"
+                    width="1024"
+                    height="1024"
+                    className="w-full max-w-[500px] h-auto object-contain relative z-10 transition-transform duration-700 group-hover:scale-105 scale-105"
                   />
-                  <h4 className="mt-4 text-sm font-bold text-white">Secure Merchant Profile</h4>
-                  <p className="text-[10px] text-gray-500 text-center max-w-xs mt-1">Onboarding credentials are encrypted using industry-standard hashing algorithms.</p>
                 </div>
               </div>
             </div>

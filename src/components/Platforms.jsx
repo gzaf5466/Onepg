@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { RefreshCcw, Smartphone, Laptop, ShieldCheck, Zap } from 'lucide-react';
-import paymentSolutionImg from '../assets/payment solution.png';
+import paymentSolutionImg from '../assets/payment solution.avif';
 
 export default function Platforms() {
   return (
@@ -51,13 +51,13 @@ export default function Platforms() {
 
           {/* Right Column: Visual Mockup Placeholder */}
           <div className="lg:col-span-6 relative flex justify-center items-center group">
-            <div className="relative w-full max-w-[540px] rounded-3xl border border-white/[0.08] bg-gradient-to-b from-[#0f1b29]/50 via-[#0b1014]/80 to-[#0e1a24]/50 p-4 shadow-[0_0_50px_rgba(0,229,255,0.03)] overflow-hidden flex items-center justify-center">
-              <img 
-                src={paymentSolutionImg} 
-                alt="OnePG Payment Solution" 
-                className="w-full h-auto object-contain rounded-2xl transition-transform duration-700 group-hover:scale-105"
-              />
-            </div>
+            <img 
+              src={paymentSolutionImg} 
+              alt="OnePG Payment Solution" 
+              width="1024"
+              height="1024"
+              className="w-full max-w-[540px] h-auto object-contain transition-transform duration-700 group-hover:scale-105"
+            />
           </div>
 
         </div>
