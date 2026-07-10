@@ -5,8 +5,10 @@ import {
   LayoutDashboard, Briefcase, Layers, CreditCard, FileText, Calendar, 
   LifeBuoy, Bell, User, LogOut, Download, Crown, ChevronRight, 
   UploadCloud, CheckCircle2, Clock, AlertCircle, HelpCircle, Phone, ArrowUpRight,
-  Shield, Eye, EyeOff, Globe, Server, Check, AlertTriangle, Play, RefreshCw, Send
+  Shield, Eye, EyeOff, Globe, Server, Check, AlertTriangle, Play, RefreshCw, Send,
+  Menu, X
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../assets/Logo.svg';
 
 const ClientDashboard = () => {
@@ -15,6 +17,7 @@ const ClientDashboard = () => {
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [notificationCount, setNotificationCount] = useState(2);
   const [uploadingDoc, setUploadingDoc] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Support Tickets Local State
   const [tickets, setTickets] = useState([
@@ -430,44 +433,46 @@ const ClientDashboard = () => {
       </div>
 
       <div className="bg-white/[0.01] border border-white/5 rounded-xl overflow-hidden">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b border-white/5 text-[10px] uppercase tracking-wider text-gray-500 bg-white/[0.01]">
-              <th className="p-4 font-bold">App ID</th>
-              <th className="p-4 font-bold">Application Type</th>
-              <th className="p-4 font-bold">Partner Institution</th>
-              <th className="p-4 font-bold">Status</th>
-              <th className="p-4 font-bold">Last Updated</th>
-              <th className="p-4 font-bold text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5 text-xs">
-            <tr className="hover:bg-white/[0.01]">
-              <td className="p-4 font-mono text-gray-400">APP-2026-904</td>
-              <td className="p-4 font-bold text-white">Pay-In Routing Integration</td>
-              <td className="p-4 text-gray-300">ICICI Bank Ltd</td>
-              <td className="p-4"><span className="text-[10px] font-bold px-2 py-0.5 rounded border bg-emerald-500/10 text-emerald-400 border-emerald-500/20 uppercase">Approved</span></td>
-              <td className="p-4 text-gray-500">12 July 2026</td>
-              <td className="p-4 text-right"><button onClick={() => alert('Displaying integration logs for ICICI')} className="text-[#00E5FF] hover:underline font-semibold">Integrate</button></td>
-            </tr>
-            <tr className="hover:bg-white/[0.01]">
-              <td className="p-4 font-mono text-gray-400">APP-2026-905</td>
-              <td className="p-4 font-bold text-white">Payout Disbursals Gateway</td>
-              <td className="p-4 text-gray-300">HDFC Bank Ltd</td>
-              <td className="p-4"><span className="text-[10px] font-bold px-2 py-0.5 rounded border bg-orange-500/10 text-orange-400 border-orange-500/20 uppercase">Under Review</span></td>
-              <td className="p-4 text-gray-500">15 July 2026</td>
-              <td className="p-4 text-right"><button onClick={() => alert('HDFC review logs: Compliance checking signatures.')} className="text-gray-400 hover:text-white font-semibold">Check Logs</button></td>
-            </tr>
-            <tr className="hover:bg-white/[0.01]">
-              <td className="p-4 font-mono text-gray-400">APP-2026-906</td>
-              <td className="p-4 font-bold text-white">T+0 Same-Day Settlement</td>
-              <td className="p-4 text-gray-300">OnePG Settlement Core</td>
-              <td className="p-4"><span className="text-[10px] font-bold px-2 py-0.5 rounded border bg-blue-500/10 text-blue-400 border-blue-500/20 uppercase">Applied</span></td>
-              <td className="p-4 text-gray-500">15 July 2026</td>
-              <td className="p-4 text-right"><button onClick={() => alert('T+0 Settlement application is queued for active volume auditing.')} className="text-gray-400 hover:text-white font-semibold">Details</button></td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="overflow-x-auto scrollbar-thin">
+          <table className="w-full min-w-[800px] text-left border-collapse">
+            <thead>
+              <tr className="border-b border-white/5 text-[10px] uppercase tracking-wider text-gray-500 bg-white/[0.01]">
+                <th className="p-4 font-bold">App ID</th>
+                <th className="p-4 font-bold">Application Type</th>
+                <th className="p-4 font-bold">Partner Institution</th>
+                <th className="p-4 font-bold">Status</th>
+                <th className="p-4 font-bold">Last Updated</th>
+                <th className="p-4 font-bold text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5 text-xs">
+              <tr className="hover:bg-white/[0.01]">
+                <td className="p-4 font-mono text-gray-400">APP-2026-904</td>
+                <td className="p-4 font-bold text-white">Pay-In Routing Integration</td>
+                <td className="p-4 text-gray-300">ICICI Bank Ltd</td>
+                <td className="p-4"><span className="text-[10px] font-bold px-2 py-0.5 rounded border bg-emerald-500/10 text-emerald-400 border-emerald-500/20 uppercase">Approved</span></td>
+                <td className="p-4 text-gray-500">12 July 2026</td>
+                <td className="p-4 text-right"><button onClick={() => alert('Displaying integration logs for ICICI')} className="text-[#00E5FF] hover:underline font-semibold">Integrate</button></td>
+              </tr>
+              <tr className="hover:bg-white/[0.01]">
+                <td className="p-4 font-mono text-gray-400">APP-2026-905</td>
+                <td className="p-4 font-bold text-white">Payout Disbursals Gateway</td>
+                <td className="p-4 text-gray-300">HDFC Bank Ltd</td>
+                <td className="p-4"><span className="text-[10px] font-bold px-2 py-0.5 rounded border bg-orange-500/10 text-orange-400 border-orange-500/20 uppercase">Under Review</span></td>
+                <td className="p-4 text-gray-500">15 July 2026</td>
+                <td className="p-4 text-right"><button onClick={() => alert('HDFC review logs: Compliance checking signatures.')} className="text-gray-400 hover:text-white font-semibold">Check Logs</button></td>
+              </tr>
+              <tr className="hover:bg-white/[0.01]">
+                <td className="p-4 font-mono text-gray-400">APP-2026-906</td>
+                <td className="p-4 font-bold text-white">T+0 Same-Day Settlement</td>
+                <td className="p-4 text-gray-300">OnePG Settlement Core</td>
+                <td className="p-4"><span className="text-[10px] font-bold px-2 py-0.5 rounded border bg-blue-500/10 text-blue-400 border-blue-500/20 uppercase">Applied</span></td>
+                <td className="p-4 text-gray-500">15 July 2026</td>
+                <td className="p-4 text-right"><button onClick={() => alert('T+0 Settlement application is queued for active volume auditing.')} className="text-gray-400 hover:text-white font-semibold">Details</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
@@ -507,44 +512,46 @@ const ClientDashboard = () => {
       <div>
         <h3 className="text-sm font-bold text-white mb-4">Invoice History</h3>
         <div className="bg-white/[0.01] border border-white/5 rounded-xl overflow-hidden">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-white/5 text-[10px] uppercase tracking-wider text-gray-500 bg-white/[0.01]">
-                <th className="p-4 font-bold">Invoice ID</th>
-                <th className="p-4 font-bold">Issue Date</th>
-                <th className="p-4 font-bold">Description</th>
-                <th className="p-4 font-bold">Amount</th>
-                <th className="p-4 font-bold">Status</th>
-                <th className="p-4 font-bold text-right">Invoice PDF</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5 text-xs">
-              {currentClient.invoices && currentClient.invoices.map((inv) => (
-                <tr key={inv.id} className="hover:bg-white/[0.01]">
-                  <td className="p-4 font-mono font-bold text-white">{inv.id}</td>
-                  <td className="p-4 text-gray-400">{inv.date === '--' ? 'Pending settlement' : inv.date}</td>
-                  <td className="p-4 text-gray-300">{inv.id === 'INV-2026-001' ? 'First Onboarding Advance Milestone' : 'Second Project Handover Milestone'}</td>
-                  <td className="p-4 font-bold text-white">₹{inv.amount.toLocaleString('en-IN')}</td>
-                  <td className="p-4">
-                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded border uppercase ${
-                      inv.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                    }`}>
-                      {inv.status}
-                    </span>
-                  </td>
-                  <td className="p-4 text-right">
-                    {inv.status === 'Paid' ? (
-                      <button onClick={() => alert(`Downloading invoice ${inv.id}...`)} className="text-[#00E5FF] hover:underline font-semibold flex items-center justify-end gap-1 ml-auto">
-                        <Download size={12} /> Download
-                      </button>
-                    ) : (
-                      <button onClick={handlePayNow} className="text-[#FF5722] hover:underline font-bold">Pay Now</button>
-                    )}
-                  </td>
+          <div className="overflow-x-auto scrollbar-thin">
+            <table className="w-full min-w-[800px] text-left border-collapse">
+              <thead>
+                <tr className="border-b border-white/5 text-[10px] uppercase tracking-wider text-gray-500 bg-white/[0.01]">
+                  <th className="p-4 font-bold">Invoice ID</th>
+                  <th className="p-4 font-bold">Issue Date</th>
+                  <th className="p-4 font-bold">Description</th>
+                  <th className="p-4 font-bold">Amount</th>
+                  <th className="p-4 font-bold">Status</th>
+                  <th className="p-4 font-bold text-right">Invoice PDF</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-white/5 text-xs">
+                {currentClient.invoices && currentClient.invoices.map((inv) => (
+                  <tr key={inv.id} className="hover:bg-white/[0.01]">
+                    <td className="p-4 font-mono font-bold text-white">{inv.id}</td>
+                    <td className="p-4 text-gray-400">{inv.date === '--' ? 'Pending settlement' : inv.date}</td>
+                    <td className="p-4 text-gray-300">{inv.id === 'INV-2026-001' ? 'First Onboarding Advance Milestone' : 'Second Project Handover Milestone'}</td>
+                    <td className="p-4 font-bold text-white">₹{inv.amount.toLocaleString('en-IN')}</td>
+                    <td className="p-4">
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded border uppercase ${
+                        inv.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                      }`}>
+                        {inv.status}
+                      </span>
+                    </td>
+                    <td className="p-4 text-right">
+                      {inv.status === 'Paid' ? (
+                        <button onClick={() => alert(`Downloading invoice ${inv.id}...`)} className="text-[#00E5FF] hover:underline font-semibold flex items-center justify-end gap-1 ml-auto">
+                          <Download size={12} /> Download
+                        </button>
+                      ) : (
+                        <button onClick={handlePayNow} className="text-[#FF5722] hover:underline font-bold">Pay Now</button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -970,6 +977,123 @@ const ClientDashboard = () => {
   return (
     <div className="min-h-screen bg-[#050505] text-white flex font-sans overflow-x-hidden">
       
+      {/* Mobile Drawer Sidebar */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.6 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSidebarOpen(false)}
+              className="fixed inset-0 bg-black z-40 xl:hidden"
+            />
+            {/* Drawer */}
+            <motion.div
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 bottom-0 left-0 w-[280px] bg-[#050505] border-r border-white/5 z-50 xl:hidden flex flex-col justify-between py-6 shadow-2xl"
+            >
+              <div className="flex flex-col">
+                <div className="px-6 mb-8 flex items-center justify-between">
+                  <div>
+                    <Link to="/">
+                      <img src={logo} alt="OnePG" width="95" height="33" className="h-8 w-auto mb-1" />
+                    </Link>
+                    <span className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold pl-0.5">Simplifying Payments</span>
+                  </div>
+                  <button 
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="text-gray-500 hover:text-white p-1 rounded-lg hover:bg-white/5 transition-colors focus:outline-none"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                <nav className="space-y-1 px-4">
+                  {[
+                    { name: 'Dashboard', icon: LayoutDashboard },
+                    { name: 'Onboarding Services', icon: Briefcase },
+                    { name: 'Bank Integrations', icon: Layers },
+                    { name: 'Payments & Settlement', icon: CreditCard },
+                    { name: 'KYC Documents', icon: FileText },
+                    { name: 'Timeline', icon: Calendar },
+                    { name: 'Support Tickets', icon: LifeBuoy }
+                  ].map((item) => {
+                    const IconComp = item.icon;
+                    const isActive = activeTab === item.name;
+                    return (
+                      <button
+                        key={item.name}
+                        onClick={() => {
+                          setActiveTab(item.name);
+                          setIsSidebarOpen(false);
+                        }}
+                        className={`w-full flex items-center px-4 py-3 rounded-lg text-sm font-semibold transition-all ${
+                          isActive 
+                            ? 'bg-gradient-to-r from-[#FF5722]/10 to-transparent text-[#FF5722] border-l-2 border-[#FF5722]' 
+                            : 'text-gray-400 hover:text-white hover:bg-white/[0.02]'
+                        }`}
+                      >
+                        <IconComp size={18} className="mr-3" />
+                        {item.name}
+                      </button>
+                    );
+                  })}
+                </nav>
+              </div>
+
+              <div className="px-4 space-y-1">
+                <button 
+                  onClick={() => {
+                    setActiveTab('Notifications');
+                    setIsSidebarOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-semibold transition-all ${
+                    activeTab === 'Notifications' ? 'text-[#FF5722] bg-white/[0.02]' : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center">
+                    <Bell size={18} className="mr-3" />
+                    Notifications
+                  </div>
+                  {notificationCount > 0 && (
+                    <span className="bg-[#FF5722] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">{notificationCount}</span>
+                  )}
+                </button>
+                
+                <button 
+                  onClick={() => {
+                    setActiveTab('Profile');
+                    setIsSidebarOpen(false);
+                  }}
+                  className={`w-full flex items-center px-4 py-3 rounded-lg text-sm font-semibold transition-all ${
+                    activeTab === 'Profile' ? 'text-[#FF5722] bg-white/[0.02]' : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  <User size={18} className="mr-3" />
+                  Profile
+                </button>
+
+                <button 
+                  onClick={() => {
+                    setIsSidebarOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full flex items-center px-4 py-3 rounded-lg text-sm font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all mt-4"
+                >
+                  <LogOut size={18} className="mr-3" />
+                  Logout
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       {/* Sidebar (Left Sidebar) */}
       <aside className="w-[280px] bg-white/[0.01] border-r border-white/5 flex-shrink-0 hidden xl:flex flex-col justify-between py-6">
         <div className="flex flex-col">
@@ -1050,21 +1174,40 @@ const ClientDashboard = () => {
       <div className="flex-grow flex flex-col min-h-screen">
         
         {/* Top Navbar */}
-        <header className="h-20 bg-white/[0.01] border-b border-white/5 flex items-center justify-between px-4 sm:px-6 md:px-8">
-          <div className="flex flex-col">
-            <h1 className="text-xl font-bold text-white flex items-center gap-2">
-              Welcome back, {currentClient.name}
-              <span className="text-xl">👋</span>
-            </h1>
-            <p className="text-xs text-gray-500">Here's the overview of your project and services. ID: {currentClient.id}</p>
+        <header className="h-20 bg-white/[0.01] border-b border-white/5 flex items-center justify-between px-4 sm:px-6 md:px-8 gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            {/* Hamburger Button for mobile/tablet */}
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="xl:hidden text-gray-400 hover:text-white p-1.5 rounded-lg hover:bg-white/5 transition-colors focus:outline-none shrink-0"
+            >
+              <Menu size={20} />
+            </button>
+            <div className="min-w-0">
+              <h1 className="text-base sm:text-xl font-bold text-white flex items-center gap-1.5 truncate">
+                <span className="truncate">Welcome back, {currentClient.name}</span>
+                <span className="text-sm sm:text-xl shrink-0">👋</span>
+              </h1>
+              <p className="text-xs text-gray-500 hidden sm:block truncate">Here's the overview of your project and services. ID: {currentClient.id}</p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <button onClick={() => alert('Downloading Client Onboarding Summary report...')} className="flex items-center gap-2 bg-white/[0.03] border border-white/10 hover:border-white/20 text-gray-300 hover:text-white px-4 py-2 rounded-lg text-xs font-semibold transition-all">
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+            <button 
+              onClick={() => alert('Downloading Client Onboarding Summary report...')} 
+              className="hidden md:flex items-center gap-2 bg-white/[0.03] border border-white/10 hover:border-white/20 text-gray-300 hover:text-white px-4 py-2 rounded-lg text-xs font-semibold transition-all"
+            >
               <Download size={14} />
               Download Report
             </button>
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#FF5722] to-amber-500 flex items-center justify-center font-bold text-sm text-white">
+            <button 
+              onClick={() => alert('Downloading Client Onboarding Summary report...')} 
+              className="md:hidden flex items-center justify-center bg-white/[0.03] border border-white/10 hover:border-white/20 text-gray-300 hover:text-white p-2 rounded-lg text-xs transition-all"
+              title="Download Report"
+            >
+              <Download size={16} />
+            </button>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-[#FF5722] to-amber-500 flex items-center justify-center font-bold text-xs sm:text-sm text-white shrink-0">
               {currentClient.name.split(' ').map(n => n[0]).join('')}
             </div>
           </div>

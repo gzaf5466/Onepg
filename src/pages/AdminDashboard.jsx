@@ -218,7 +218,7 @@ const AdminDashboard = () => {
       {/* Clients Table */}
       <div className="bg-white/[0.01] border border-white/5 rounded-xl overflow-hidden">
         <div className="overflow-x-auto scrollbar-thin">
-          <table className="w-full min-w-[900px] text-left border-collapse">
+          <table className="w-full min-w-[900px] text-left border-collapse whitespace-nowrap">
             <thead>
               <tr className="border-b border-white/5 text-[10px] uppercase font-bold text-gray-500 tracking-wider bg-white/[0.01]">
                 <th className="px-6 py-4">Client ID</th>
@@ -323,54 +323,56 @@ const AdminDashboard = () => {
       </div>
 
       <div className="bg-white/[0.01] border border-white/5 rounded-xl overflow-hidden">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b border-white/5 text-[10px] uppercase font-bold text-gray-500 tracking-wider bg-white/[0.01]">
-              <th className="px-6 py-4">Company Name</th>
-              <th className="px-6 py-4">Technical Streams</th>
-              <th className="px-6 py-4">Developers Assigned</th>
-              <th className="px-6 py-4 text-center">Milestones</th>
-              <th className="px-6 py-4 text-center">Priority</th>
-              <th className="px-6 py-4 text-right">Settings</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5 text-sm">
-            {clients.map((client) => {
-              const activeCount = client.services?.filter(s => s.status !== 'Not Started').length || 0;
-              return (
-                <tr key={client.id} className="hover:bg-white/[0.02]">
-                  <td className="px-6 py-4">
-                    <span className="font-bold text-white block">{client.company}</span>
-                    <span className="text-[10px] text-gray-500 font-mono">{client.id}</span>
-                  </td>
-                  <td className="px-6 py-4 text-xs text-gray-300">
-                    {client.services?.slice(0, 3).map(s => s.name).join(', ') || 'None active'}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-1">
-                      <div className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[9px] text-[#00E5FF] font-bold">JD</div>
-                      <div className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[9px] text-[#FF5722] font-bold">AS</div>
-                      <span className="text-[10px] text-gray-500 font-bold ml-1">+2 Devs</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-center font-bold text-white">
-                    {activeCount} / {client.services?.length || 5}
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${
-                      client.plan === 'Premium' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                    }`}>
-                      {client.plan === 'Premium' ? 'Critical' : 'Normal'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <button onClick={() => alert(`Opening developer logs for ${client.company}`)} className="text-[#00E5FF] hover:underline font-bold text-xs">Assign Dev</button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <div className="overflow-x-auto scrollbar-thin">
+          <table className="w-full min-w-[800px] text-left border-collapse whitespace-nowrap">
+            <thead>
+              <tr className="border-b border-white/5 text-[10px] uppercase font-bold text-gray-500 tracking-wider bg-white/[0.01]">
+                <th className="px-6 py-4">Company Name</th>
+                <th className="px-6 py-4">Technical Streams</th>
+                <th className="px-6 py-4">Developers Assigned</th>
+                <th className="px-6 py-4 text-center">Milestones</th>
+                <th className="px-6 py-4 text-center">Priority</th>
+                <th className="px-6 py-4 text-right">Settings</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5 text-sm">
+              {clients.map((client) => {
+                const activeCount = client.services?.filter(s => s.status !== 'Not Started').length || 0;
+                return (
+                  <tr key={client.id} className="hover:bg-white/[0.02]">
+                    <td className="px-6 py-4">
+                      <span className="font-bold text-white block">{client.company}</span>
+                      <span className="text-[10px] text-gray-500 font-mono">{client.id}</span>
+                    </td>
+                    <td className="px-6 py-4 text-xs text-gray-300">
+                      {client.services?.slice(0, 3).map(s => s.name).join(', ') || 'None active'}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-1">
+                        <div className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[9px] text-[#00E5FF] font-bold">JD</div>
+                        <div className="w-6 h-6 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[9px] text-[#FF5722] font-bold">AS</div>
+                        <span className="text-[10px] text-gray-500 font-bold ml-1">+2 Devs</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-center font-bold text-white">
+                      {activeCount} / {client.services?.length || 5}
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${
+                        client.plan === 'Premium' ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                      }`}>
+                        {client.plan === 'Premium' ? 'Critical' : 'Normal'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <button onClick={() => alert(`Opening developer logs for ${client.company}`)} className="text-[#00E5FF] hover:underline font-bold text-xs">Assign Dev</button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
@@ -467,46 +469,48 @@ const AdminDashboard = () => {
       </div>
 
       <div className="bg-white/[0.01] border border-white/5 rounded-xl overflow-hidden">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b border-white/5 text-[10px] uppercase font-bold text-gray-500 tracking-wider bg-white/[0.01]">
-              <th className="px-6 py-4">Client</th>
-              <th className="px-6 py-4">Company</th>
-              <th className="px-6 py-4 text-center">Amount Paid</th>
-              <th className="px-6 py-4 text-center">Amount Outstanding</th>
-              <th className="px-6 py-4 text-center">Setup Fee Plan</th>
-              <th className="px-6 py-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5 text-sm">
-            {clients.map((c) => (
-              <tr key={c.id} className="hover:bg-white/[0.02]">
-                <td className="px-6 py-4 font-bold text-white">{c.name}</td>
-                <td className="px-6 py-4 text-gray-400">{c.company}</td>
-                <td className="px-6 py-4 text-center font-bold text-emerald-400">₹{c.amountPaid.toLocaleString('en-IN')}</td>
-                <td className="px-6 py-4 text-center font-bold text-[#FF5722]">₹{c.pendingAmount.toLocaleString('en-IN')}</td>
-                <td className="px-6 py-4 text-center">
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-white/5 border border-white/5">{c.plan}</span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  {c.pendingAmount > 0 ? (
-                    <button 
-                      onClick={() => {
-                        makePayment(c.id);
-                        alert(`Recorded payment of ₹${c.pendingAmount.toLocaleString('en-IN')} from ${c.company}`);
-                      }}
-                      className="text-[#00E5FF] hover:underline font-bold text-xs"
-                    >
-                      Record Payment
-                    </button>
-                  ) : (
-                    <span className="text-xs text-gray-500 font-bold">Settled</span>
-                  )}
-                </td>
+        <div className="overflow-x-auto scrollbar-thin">
+          <table className="w-full min-w-[800px] text-left border-collapse whitespace-nowrap">
+            <thead>
+              <tr className="border-b border-white/5 text-[10px] uppercase font-bold text-gray-500 tracking-wider bg-white/[0.01]">
+                <th className="px-6 py-4">Client</th>
+                <th className="px-6 py-4">Company</th>
+                <th className="px-6 py-4 text-center">Amount Paid</th>
+                <th className="px-6 py-4 text-center">Amount Outstanding</th>
+                <th className="px-6 py-4 text-center">Setup Fee Plan</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-white/5 text-sm">
+              {clients.map((c) => (
+                <tr key={c.id} className="hover:bg-white/[0.02]">
+                  <td className="px-6 py-4 font-bold text-white">{c.name}</td>
+                  <td className="px-6 py-4 text-gray-400">{c.company}</td>
+                  <td className="px-6 py-4 text-center font-bold text-emerald-400">₹{c.amountPaid.toLocaleString('en-IN')}</td>
+                  <td className="px-6 py-4 text-center font-bold text-[#FF5722]">₹{c.pendingAmount.toLocaleString('en-IN')}</td>
+                  <td className="px-6 py-4 text-center">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-white/5 border border-white/5">{c.plan}</span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    {c.pendingAmount > 0 ? (
+                      <button 
+                        onClick={() => {
+                          makePayment(c.id);
+                          alert(`Recorded payment of ₹${c.pendingAmount.toLocaleString('en-IN')} from ${c.company}`);
+                        }}
+                        className="text-[#00E5FF] hover:underline font-bold text-xs"
+                      >
+                        Record Payment
+                      </button>
+                    ) : (
+                      <span className="text-xs text-gray-500 font-bold">Settled</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
@@ -520,43 +524,45 @@ const AdminDashboard = () => {
       </div>
 
       <div className="bg-white/[0.01] border border-white/5 rounded-xl overflow-hidden">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b border-white/5 text-[10px] uppercase font-bold text-gray-500 tracking-wider bg-white/[0.01]">
-              <th className="px-6 py-4">Invoice ID</th>
-              <th className="px-6 py-4">Client Company</th>
-              <th className="px-6 py-4">Billing Date</th>
-              <th className="px-6 py-4">Amount Due</th>
-              <th className="px-6 py-4">Status</th>
-              <th className="px-6 py-4 text-right">Settings</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5 text-sm">
-            {clients.map((c) => {
-              return c.invoices && c.invoices.map((inv) => (
-                <tr key={inv.id} className="hover:bg-white/[0.02]">
-                  <td className="px-6 py-4 font-mono font-bold text-white">{inv.id}</td>
-                  <td className="px-6 py-4">
-                    <span className="font-bold text-white block">{c.company}</span>
-                    <span className="text-[10px] text-gray-500">{c.name}</span>
-                  </td>
-                  <td className="px-6 py-4 text-gray-400">{inv.date === '--' ? 'Awaiting Payment' : inv.date}</td>
-                  <td className="px-6 py-4 font-bold text-white">₹{inv.amount.toLocaleString('en-IN')}</td>
-                  <td className="px-6 py-4">
-                    <span className={`text-[9px] font-bold px-2 py-0.5 rounded border uppercase ${
-                      inv.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                    }`}>
-                      {inv.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <button onClick={() => alert(`Emailing invoice ${inv.id} reminder to ${c.email}...`)} className="text-[#00E5FF] hover:underline font-bold text-xs">Email Reminder</button>
-                  </td>
-                </tr>
-              ));
-            })}
-          </tbody>
-        </table>
+        <div className="overflow-x-auto scrollbar-thin">
+          <table className="w-full min-w-[800px] text-left border-collapse whitespace-nowrap">
+            <thead>
+              <tr className="border-b border-white/5 text-[10px] uppercase font-bold text-gray-500 tracking-wider bg-white/[0.01]">
+                <th className="px-6 py-4">Invoice ID</th>
+                <th className="px-6 py-4">Client Company</th>
+                <th className="px-6 py-4">Billing Date</th>
+                <th className="px-6 py-4">Amount Due</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4 text-right">Settings</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5 text-sm">
+              {clients.map((c) => {
+                return c.invoices && c.invoices.map((inv) => (
+                  <tr key={inv.id} className="hover:bg-white/[0.02]">
+                    <td className="px-6 py-4 font-mono font-bold text-white">{inv.id}</td>
+                    <td className="px-6 py-4">
+                      <span className="font-bold text-white block">{c.company}</span>
+                      <span className="text-[10px] text-gray-500">{c.name}</span>
+                    </td>
+                    <td className="px-6 py-4 text-gray-400">{inv.date === '--' ? 'Awaiting Payment' : inv.date}</td>
+                    <td className="px-6 py-4 font-bold text-white">₹{inv.amount.toLocaleString('en-IN')}</td>
+                    <td className="px-6 py-4">
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded border uppercase ${
+                        inv.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                      }`}>
+                        {inv.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <button onClick={() => alert(`Emailing invoice ${inv.id} reminder to ${c.email}...`)} className="text-[#00E5FF] hover:underline font-bold text-xs">Email Reminder</button>
+                    </td>
+                  </tr>
+                ));
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
@@ -627,62 +633,64 @@ const AdminDashboard = () => {
       </div>
 
       <div className="bg-white/[0.01] border border-white/5 rounded-xl overflow-hidden">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b border-white/5 text-[10px] uppercase font-bold text-gray-500 tracking-wider bg-white/[0.01]">
-              <th className="px-6 py-4">Ticket ID</th>
-              <th className="px-6 py-4">Client Merchant</th>
-              <th className="px-6 py-4">Issue Title</th>
-              <th className="px-6 py-4">Priority</th>
-              <th className="px-6 py-4">Status</th>
-              <th className="px-6 py-4 text-right">Resolve Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5 text-sm">
-            {adminTickets.map((t) => (
-              <tr key={t.id} className="hover:bg-white/[0.02]">
-                <td className="px-6 py-4 font-mono text-gray-500">{t.id}</td>
-                <td className="px-6 py-4">
-                  <span className="font-bold text-white block">{t.company}</span>
-                  <span className="text-[10px] text-gray-500">{t.client}</span>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="font-semibold text-white block">{t.title}</span>
-                  <span className="text-[11px] text-gray-400 font-light block mt-0.5">{t.desc}</span>
-                </td>
-                <td className="px-6 py-4">
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${
-                    t.severity === 'High' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                  }`}>
-                    {t.severity}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${
-                    t.status === 'Resolved' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                  }`}>
-                    {t.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-right">
-                  {t.status === 'Open' ? (
-                    <button 
-                      onClick={() => {
-                        setAdminTickets(prev => prev.map(tick => tick.id === t.id ? { ...tick, status: 'Resolved' } : tick));
-                        alert('Ticket resolved successfully!');
-                      }}
-                      className="bg-[#00E5FF] hover:bg-[#00bacc] text-black px-3 py-1 rounded text-xs font-bold transition-all shadow-[0_0_10px_rgba(0,229,255,0.15)]"
-                    >
-                      Resolve Ticket
-                    </button>
-                  ) : (
-                    <span className="text-xs text-gray-500 font-bold">Resolved</span>
-                  )}
-                </td>
+        <div className="overflow-x-auto scrollbar-thin">
+          <table className="w-full min-w-[800px] text-left border-collapse whitespace-nowrap">
+            <thead>
+              <tr className="border-b border-white/5 text-[10px] uppercase font-bold text-gray-500 tracking-wider bg-white/[0.01]">
+                <th className="px-6 py-4">Ticket ID</th>
+                <th className="px-6 py-4">Client Merchant</th>
+                <th className="px-6 py-4">Issue Title</th>
+                <th className="px-6 py-4">Priority</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4 text-right">Resolve Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-white/5 text-sm">
+              {adminTickets.map((t) => (
+                <tr key={t.id} className="hover:bg-white/[0.02]">
+                  <td className="px-6 py-4 font-mono text-gray-500">{t.id}</td>
+                  <td className="px-6 py-4">
+                    <span className="font-bold text-white block">{t.company}</span>
+                    <span className="text-[10px] text-gray-500">{t.client}</span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="font-semibold text-white block">{t.title}</span>
+                    <span className="text-[11px] text-gray-400 font-light block mt-0.5">{t.desc}</span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${
+                      t.severity === 'High' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                    }`}>
+                      {t.severity}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${
+                      t.status === 'Resolved' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                    }`}>
+                      {t.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    {t.status === 'Open' ? (
+                      <button 
+                        onClick={() => {
+                          setAdminTickets(prev => prev.map(tick => tick.id === t.id ? { ...tick, status: 'Resolved' } : tick));
+                          alert('Ticket resolved successfully!');
+                        }}
+                        className="bg-[#00E5FF] hover:bg-[#00bacc] text-black px-3 py-1 rounded text-xs font-bold transition-all shadow-[0_0_10px_rgba(0,229,255,0.15)]"
+                      >
+                        Resolve Ticket
+                      </button>
+                    ) : (
+                      <span className="text-xs text-gray-500 font-bold">Resolved</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
@@ -901,7 +909,7 @@ const AdminDashboard = () => {
       </aside>
 
       {/* Main Panel Content */}
-      <div className="flex-grow flex flex-col min-h-screen">
+      <div className="flex-grow flex flex-col min-h-screen min-w-0">
         
         {/* Admin Header */}
         <header className="h-20 bg-white/[0.01] border-b border-white/5 flex items-center justify-between px-4 sm:px-6 md:px-8 gap-3">
