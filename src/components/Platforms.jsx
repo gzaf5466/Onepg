@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { RefreshCcw, Smartphone, Laptop, ShieldCheck, Zap } from 'lucide-react';
+import paymentSolutionImg from '../assets/payment solution.png';
 
 export default function Platforms() {
   return (
@@ -49,16 +50,12 @@ export default function Platforms() {
           </div>
 
           {/* Right Column: Visual Mockup Placeholder */}
-          <div className="lg:col-span-6 relative flex justify-center items-center">
+          <div className="lg:col-span-6 relative flex justify-center items-center group">
             <div className="relative w-full max-w-[540px] rounded-3xl border border-white/[0.08] bg-gradient-to-b from-[#0f1b29]/50 via-[#0b1014]/80 to-[#0e1a24]/50 p-4 shadow-[0_0_50px_rgba(0,229,255,0.03)] overflow-hidden flex items-center justify-center">
               <img 
-                src="/src/assets/platforms-sync.png" 
-                alt="OnePG Cross-Platform Sync Checkout" 
-                className="w-full h-auto object-contain rounded-2xl"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 380' fill='none'><rect width='540' height='380' rx='24' fill='%2305090c'/><circle cx='270' cy='190' r='140' fill='%23FF5722' fill-opacity='0.02' filter='blur(50px)'/><rect x='80' y='60' width='240' height='170' rx='12' stroke='%23ffffff' stroke-width='1.5' stroke-opacity='0.1' fill='%230b1014'/><circle cx='100' cy='75' r='3' fill='%23ff5f56'/><circle cx='108' cy='75' r='3' fill='%23ffbd2e'/><circle cx='116' cy='75' r='3' fill='%2327c93f'/><rect x='340' y='100' width='110' height='210' rx='20' stroke='%23ffffff' stroke-width='1.5' stroke-opacity='0.1' fill='%230b1014'/><path d='M380 108 A 4 4 0 0 1 380 114' stroke='%23ffffff' stroke-width='1.5' stroke-opacity='0.2'/><path d='M150 170 C240 100 280 280 370 170' stroke='%2300e5ff' stroke-width='3' stroke-dasharray='6 4'/></svg>";
-                }}
+                src={paymentSolutionImg} 
+                alt="OnePG Payment Solution" 
+                className="w-full h-auto object-contain rounded-2xl transition-transform duration-700 group-hover:scale-105"
               />
             </div>
           </div>

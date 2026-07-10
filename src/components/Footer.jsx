@@ -1,112 +1,264 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { 
+  X, CheckCircle, ArrowRight, ShieldCheck, Mail 
+} from 'lucide-react';
 import logo from '../assets/Logo.svg';
 
 const Footer = () => {
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
+  const [activePolicy, setActivePolicy] = useState(null);
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    if (!email) return;
+    setSubscribed(true);
+    setEmail('');
+    setTimeout(() => setSubscribed(false), 5000);
+  };
+
+  const legalPolicies = {
+    'Privacy Policy': {
+      title: 'Privacy Policy',
+      lastUpdated: 'October 12, 2025',
+      content: [
+        'At OnePG, we prioritize the protection of your personal and corporate financial data. This Privacy Policy details how we collect, process, and secure information when you access our merchant APIs, client dashboards, or transactional interfaces.',
+        'We collect registration details (business name, PAN, GSTIN, email, and contact info), operational metadata (IP address, device identifiers, checkout telemetry), and transactional parameters necessary to execute secure settlements.',
+        'All client data is encrypted in transit using TLS 1.3 and at rest using AES-256 standards. We do not sell or lease merchant or customer data to third-party marketing brokers. Data sharing is limited to certified banking networks and regulatory compliance authorities.'
+      ]
+    },
+    'Terms of Service': {
+      title: 'Terms of Service',
+      lastUpdated: 'November 01, 2025',
+      content: [
+        'These Terms of Service govern your use of the payment processing, payout rails, and dashboard systems provided by OnePG Technologies Pvt. Ltd.',
+        'By onboarding as a merchant or configuring gateway credentials, you agree to satisfy all merchant underwriting criteria, maintain legitimate business records, and ensure your site displays correct refund and service policies to consumers.',
+        'Transaction processing fees (MDR) will be deducted per the agreed schedule. Chargebacks and transaction disputes must be resolved in accordance with Visa, MasterCard, and RuPay card network regulations.'
+      ]
+    },
+    'Refund Policy': {
+      title: 'Refund & Settlement Policy',
+      lastUpdated: 'August 18, 2025',
+      content: [
+        'This policy applies to commercial transactions and customer chargebacks processed through the OnePG rails.',
+        'Refund requests must be initiated via the Client Dashboard or our automated Refund API. Funds will be returned directly to the customer’s original payment instrument (credit card, bank account, or wallet) within 5 to 7 banking business days.',
+        'Standard processing fees (MDR) are non-refundable in the event of customer cancellations, except where negotiated under custom enterprise partner plans.'
+      ]
+    },
+    'Security': {
+      title: 'Security & Encryption Standards',
+      lastUpdated: 'December 05, 2025',
+      content: [
+        'OnePG maintains state-of-the-art security measures to safeguard all transaction data.',
+        'We are fully PCI-DSS Level 1 certified. Cardholder data is isolated completely from primary application servers using secure tokenization and sandboxed iframe checkouts.',
+        'We conduct continuous real-time fraud monitoring, daily vulnerability scans, and bi-annual external network penetration testing by certified third-party security auditors.'
+      ]
+    },
+    'Compliance': {
+      title: 'Regulatory Compliance Mandates',
+      lastUpdated: 'September 30, 2025',
+      content: [
+        'OnePG operates as a certified payment aggregator under licensing frameworks established by central banking authorities.',
+        'All corporate clients must undergo mandatory business verification (KYC/KYB) before transaction settlements can be processed.',
+        'We maintain strict Anti-Money Laundering (AML) monitoring and report suspicious transaction structures in accordance with regulatory reporting requirements.'
+      ]
+    }
+  };
+
   return (
     <footer className="bg-[#050505] border-t border-white/5 pt-16 pb-8 z-10 relative">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-4">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Desktop Grid Area (lg and up) */}
-        <div className="hidden lg:grid lg:grid-cols-6 gap-8 mb-12">
+        {/* Desktop & Mobile Mega Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
           
           {/* Column 1: Brand & Social */}
-          <div className="lg:col-span-2 flex flex-col">
-            <Link to="/" className="flex-shrink-0 flex items-center cursor-pointer mb-4">
+          <div className="col-span-2 flex flex-col">
+            <Link to="/" className="flex-shrink-0 flex items-center cursor-pointer mb-5">
               <img src={logo} alt="OnePG Logo" className="h-8 w-auto" />
             </Link>
-            <p className="text-[#9CA3AF] text-sm mb-6 max-w-sm">
-              Empowering modern businesses with unified, lightning-fast payment and disbursal infrastructure.
+            <p className="text-gray-400 text-sm mb-6 max-w-xs font-light leading-relaxed">
+              Simplifying payments and powering businesses to grow faster, globally.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-[#9CA3AF] hover:text-[#FFFFFF] transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+            {/* Social Icons with custom SVG assets */}
+            <div className="flex space-x-3.5">
+              <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center text-gray-400 hover:text-[#00E5FF] hover:border-[#00E5FF]/30 hover:bg-[#00E5FF]/5 transition-all duration-300">
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
               </a>
-              <a href="#" className="text-[#9CA3AF] hover:text-[#FFFFFF] transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+              <a href="https://twitter.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center text-gray-400 hover:text-[#00E5FF] hover:border-[#00E5FF]/30 hover:bg-[#00E5FF]/5 transition-all duration-300">
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
               </a>
-              <a href="#" className="text-[#9CA3AF] hover:text-[#FFFFFF] transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm3 8h-1.35c-.538 0-.65.221-.65.778v1.222h2l-.209 2h-1.791v7h-3v-7h-2v-2h2v-2.308c0-1.769.931-2.692 3.029-2.692h1.971v3z"/></svg>
+              <a href="https://facebook.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center text-gray-400 hover:text-[#00E5FF] hover:border-[#00E5FF]/30 hover:bg-[#00E5FF]/5 transition-all duration-300">
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center text-gray-400 hover:text-[#00E5FF] hover:border-[#00E5FF]/30 hover:bg-[#00E5FF]/5 transition-all duration-300">
+                <svg className="w-4 h-4 fill-none stroke-current stroke-2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+              </a>
+              <a href="https://youtube.com" target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center text-gray-400 hover:text-[#00E5FF] hover:border-[#00E5FF]/30 hover:bg-[#00E5FF]/5 transition-all duration-300">
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.108C19.52 3.5 12 3.5 12 3.5s-7.52 0-9.388.555a3.002 3.002 0 0 0-2.11 2.108C0 8.03 0 12 0 12s0 3.97.502 5.837a3.003 3.003 0 0 0 2.11 2.108C4.48 20.5 12 20.5 12 20.5s7.52 0 9.388-.555a3.002 3.002 0 0 0 2.11-2.108C24 15.97 24 12 24 12s0-3.97-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
               </a>
             </div>
           </div>
 
           {/* Column 2: Solutions */}
-          <div className="lg:col-span-1">
-            <h4 className="text-[#FFFFFF] font-semibold mb-4 text-sm uppercase tracking-wider">Solutions</h4>
+          <div>
+            <h4 className="text-white font-bold mb-4 text-xs sm:text-sm uppercase tracking-wider">Solutions</h4>
             <ul className="space-y-3">
-              <li><Link to="/products" className="text-[#9CA3AF] hover:text-[#00E5FF] text-sm transition-colors font-light">Payment Gateway</Link></li>
-              <li><Link to="/products" className="text-[#9CA3AF] hover:text-[#00E5FF] text-sm transition-colors font-light">Payouts Rails</Link></li>
-              <li><Link to="/solutions" className="text-[#9CA3AF] hover:text-[#00E5FF] text-sm transition-colors font-light">E-Commerce</Link></li>
-              <li><Link to="/solutions" className="text-[#9CA3AF] hover:text-[#00E5FF] text-sm transition-colors font-light">Marketplaces</Link></li>
+              <li><Link to="/products" className="text-gray-400 hover:text-[#FF5722] text-sm transition-colors font-light">Pay-In Gateway</Link></li>
+              <li><Link to="/products" className="text-gray-400 hover:text-[#FF5722] text-sm transition-colors font-light">Payout Gateway</Link></li>
+              <li><Link to="/solutions" className="text-gray-400 hover:text-[#FF5722] text-sm transition-colors font-light">T+0 Settlement</Link></li>
+              <li><Link to="/solutions" className="text-gray-400 hover:text-[#FF5722] text-sm transition-colors font-light">International Payments</Link></li>
+              <li><Link to="/products" className="text-gray-400 hover:text-[#FF5722] text-sm transition-colors font-light">All Solutions</Link></li>
             </ul>
           </div>
 
           {/* Column 3: Resources */}
-          <div className="lg:col-span-1">
-            <h4 className="text-[#FFFFFF] font-semibold mb-4 text-sm uppercase tracking-wider">Resources</h4>
+          <div>
+            <h4 className="text-white font-bold mb-4 text-xs sm:text-sm uppercase tracking-wider">Resources</h4>
             <ul className="space-y-3">
-              <li><Link to="/developers" className="text-[#9CA3AF] hover:text-[#00E5FF] text-sm transition-colors font-light">Documentation</Link></li>
-              <li><Link to="/developers" className="text-[#9CA3AF] hover:text-[#00E5FF] text-sm transition-colors font-light">API Reference</Link></li>
-              <li><Link to="/pricing" className="text-[#9CA3AF] hover:text-[#00E5FF] text-sm transition-colors font-light">Pricing</Link></li>
-              <li><Link to="/" className="text-[#9CA3AF] hover:text-[#00E5FF] text-sm transition-colors font-light">FAQs</Link></li>
+              <li><Link to="/blog" className="text-gray-400 hover:text-[#00E5FF] text-sm transition-colors font-light">Blog</Link></li>
+              <li><Link to="/products" className="text-gray-400 hover:text-[#00E5FF] text-sm transition-colors font-light">Documentation</Link></li>
+              <li><Link to="/products" className="text-gray-400 hover:text-[#00E5FF] text-sm transition-colors font-light">API Docs</Link></li>
+              <li><Link to="/blog" className="text-gray-400 hover:text-[#00E5FF] text-sm transition-colors font-light">Guides</Link></li>
+              <li><Link to="/contact" className="text-gray-400 hover:text-[#00E5FF] text-sm transition-colors font-light">Help Center</Link></li>
             </ul>
           </div>
 
           {/* Column 4: Company */}
-          <div className="lg:col-span-1">
-            <h4 className="text-[#FFFFFF] font-semibold mb-4 text-sm uppercase tracking-wider">Company</h4>
+          <div>
+            <h4 className="text-white font-bold mb-4 text-xs sm:text-sm uppercase tracking-wider">Company</h4>
             <ul className="space-y-3">
-              <li><Link to="/" className="text-[#9CA3AF] hover:text-[#00E5FF] text-sm transition-colors font-light">About Us</Link></li>
-              <li><Link to="/" className="text-[#9CA3AF] hover:text-[#00E5FF] text-sm transition-colors font-light">Careers</Link></li>
-              <li><Link to="/" className="text-[#9CA3AF] hover:text-[#00E5FF] text-sm transition-colors font-light">Contact</Link></li>
+              <li><Link to="/about" className="text-gray-400 hover:text-[#00E5FF] text-sm transition-colors font-light">About Us</Link></li>
+              <li><Link to="/about" className="text-gray-400 hover:text-[#00E5FF] text-sm transition-colors font-light">Careers</Link></li>
+              <li><Link to="/solutions" className="text-gray-400 hover:text-[#00E5FF] text-sm transition-colors font-light">Partners</Link></li>
+              <li><Link to="/contact" className="text-gray-400 hover:text-[#00E5FF] text-sm transition-colors font-light">Contact Us</Link></li>
+              <li><Link to="/blog" className="text-gray-400 hover:text-[#00E5FF] text-sm transition-colors font-light">Newsroom</Link></li>
             </ul>
           </div>
 
-          {/* Column 5: Contact Info */}
-          <div className="lg:col-span-1">
-            <h4 className="text-[#FFFFFF] font-semibold mb-4 text-sm uppercase tracking-wider">Contact Info</h4>
-            <ul className="space-y-3 text-sm text-[#9CA3AF] font-light">
-              <li className="flex items-start">
-                <svg className="w-5 h-5 mr-2 text-[#FF5722] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                support@onepg.in
+          {/* Column 5: Legal */}
+          <div>
+            <h4 className="text-white font-bold mb-4 text-xs sm:text-sm uppercase tracking-wider">Legal</h4>
+            <ul className="space-y-3">
+              <li>
+                <button onClick={() => setActivePolicy('Privacy Policy')} className="text-gray-400 hover:text-[#FF5722] text-sm transition-colors font-light cursor-pointer text-left">
+                  Privacy Policy
+                </button>
               </li>
-              <li className="flex items-start">
-                <svg className="w-5 h-5 mr-2 text-[#FF5722] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
-                +91 1800 123 4567
+              <li>
+                <button onClick={() => setActivePolicy('Terms of Service')} className="text-gray-400 hover:text-[#FF5722] text-sm transition-colors font-light cursor-pointer text-left">
+                  Terms of Service
+                </button>
+              </li>
+              <li>
+                <button onClick={() => setActivePolicy('Refund Policy')} className="text-gray-400 hover:text-[#FF5722] text-sm transition-colors font-light cursor-pointer text-left">
+                  Refund Policy
+                </button>
+              </li>
+              <li>
+                <button onClick={() => setActivePolicy('Security')} className="text-gray-400 hover:text-[#FF5722] text-sm transition-colors font-light cursor-pointer text-left">
+                  Security
+                </button>
+              </li>
+              <li>
+                <button onClick={() => setActivePolicy('Compliance')} className="text-gray-400 hover:text-[#FF5722] text-sm transition-colors font-light cursor-pointer text-left">
+                  Compliance
+                </button>
               </li>
             </ul>
           </div>
 
         </div>
 
-        {/* Mobile & Tablet Simplified Footer (below lg) */}
-        <div className="lg:hidden flex flex-col items-center text-center gap-8 mb-12">
-          <Link to="/" className="flex items-center justify-center cursor-pointer">
-            <img src={logo} alt="OnePG Logo" className="h-8 w-auto" />
-          </Link>
+        {/* Newsletter Section */}
+        <div className="border-t border-b border-white/5 py-8 my-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div className="space-y-1">
+            <h3 className="text-white font-bold text-base sm:text-lg">Subscribe to our newsletter</h3>
+            <p className="text-gray-400 text-xs sm:text-sm font-light">Get the latest updates and insights</p>
+          </div>
           
-          <p className="text-[#9CA3AF] text-sm max-w-sm mx-auto -mt-4 font-light">
-            Empowering modern businesses with unified, lightning-fast payment and disbursal infrastructure.
-          </p>
-
-          {/* Quick Links Menu */}
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-[#9CA3AF]">
-            <Link to="/products" className="hover:text-[#00E5FF] transition-colors font-light">Products</Link>
-            <Link to="/solutions" className="hover:text-[#00E5FF] transition-colors font-light">Solutions</Link>
-            <Link to="/developers" className="hover:text-[#00E5FF] transition-colors font-light">Developers</Link>
-            <Link to="/pricing" className="hover:text-[#00E5FF] transition-colors font-light">Pricing</Link>
-          </div>
+          <form onSubmit={handleSubscribe} className="w-full md:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <div className="relative flex-grow md:w-64">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
+              <input 
+                type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email" 
+                className="w-full bg-[#050505] border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00E5FF]/40 transition-colors"
+                required
+              />
+            </div>
+            <button 
+              type="submit" 
+              className="bg-[#00838F] hover:bg-[#0097A7] text-white text-xs sm:text-sm font-bold px-6 py-2.5 rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              Subscribe
+            </button>
+          </form>
         </div>
 
-        {/* Base Divider & Copyright */}
-        <div className="pt-8 border-t border-white/5 text-center">
-          <p className="text-[#9CA3AF] text-xs font-light">
-            &copy; {new Date().getFullYear()} OnePG Private Limited. All rights reserved.
+        {/* Base Copyright */}
+        <div className="text-center">
+          <p className="text-gray-500 text-xs font-light">
+            &copy; 2025 OnePG Technologies Pvt. Ltd. All rights reserved.
           </p>
         </div>
 
       </div>
+
+      {/* Subscription Toast Feedback */}
+      {subscribed && (
+        <div className="fixed bottom-6 right-6 z-50 bg-[#050505] border border-[#00E5FF]/20 rounded-xl p-4 flex items-center gap-3 shadow-2xl animate-slideIn">
+          <CheckCircle className="text-[#00E5FF]" size={20} />
+          <div>
+            <h5 className="text-white text-xs font-bold">Successfully Subscribed!</h5>
+            <p className="text-gray-400 text-[10px]">Thank you for joining the OnePG newsletter.</p>
+          </div>
+        </div>
+      )}
+
+      {/* Legal Document Modal */}
+      {activePolicy && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-[#0b0b0b] border border-white/10 rounded-2xl w-full max-w-xl overflow-hidden relative shadow-2xl">
+            {/* Modal Header */}
+            <div className="border-b border-white/5 p-6 flex justify-between items-center bg-white/[0.02]">
+              <div className="space-y-1">
+                <h3 className="text-white font-bold text-lg flex items-center gap-2">
+                  <ShieldCheck className="text-[#00E5FF]" size={20} />
+                  {legalPolicies[activePolicy].title}
+                </h3>
+                <p className="text-gray-500 text-[11px] font-semibold">Last Updated: {legalPolicies[activePolicy].lastUpdated}</p>
+              </div>
+              <button 
+                onClick={() => setActivePolicy(null)}
+                className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-4 max-h-[350px] overflow-y-auto text-gray-300 text-sm leading-relaxed font-light">
+              {legalPolicies[activePolicy].content.map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="border-t border-white/5 p-4 flex justify-end bg-white/[0.01]">
+              <button 
+                onClick={() => setActivePolicy(null)}
+                className="bg-white/5 hover:bg-white/10 text-white text-xs font-bold px-5 py-2.5 rounded-lg transition-all cursor-pointer"
+              >
+                Close Policy
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </footer>
   );
 };

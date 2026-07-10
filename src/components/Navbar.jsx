@@ -18,27 +18,29 @@ const Navbar = () => {
           </Link>
 
           {/* Center: Navigation Links (Desktop only) */}
-          <div className="hidden lg:flex space-x-8">
+          <div className="hidden lg:flex space-x-6">
             {[
               { label: 'Products', path: '/products' },
               { label: 'Solutions', path: '/solutions' },
-              { label: 'Developers', path: '/developers' },
-              { label: 'Pricing', path: '/pricing' }
+              { label: 'Services', path: '/services' },
+              { label: 'Pricing', path: '/pricing' },
+              { label: 'About', path: '/about' },
+              { label: 'Blog', path: '/blog' }
             ].map((item) => {
               const isActive = location.pathname === item.path;
               return (
                 <Link 
                   key={item.label} 
                   to={item.path}
-                  className={`px-3 py-2 text-sm font-medium transition-all relative ${
-                    isActive ? 'text-white font-semibold' : 'text-[#9CA3AF] hover:text-[#FFFFFF]'
+                  className={`px-2 py-2 text-xs font-semibold tracking-wide transition-all relative ${
+                    isActive ? 'text-white font-bold' : 'text-[#9CA3AF] hover:text-[#FFFFFF]'
                   }`}
                 >
                   {item.label}
                   {isActive && (
                     <motion.div 
                       layoutId="activeTab" 
-                      className="absolute bottom-0 left-3 right-3 h-0.5 bg-[#FF5722] rounded-full"
+                      className="absolute bottom-0 left-2 right-2 h-0.5 bg-[#FF5722] rounded-full"
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
                     />
                   )}
@@ -49,12 +51,18 @@ const Navbar = () => {
 
           {/* Right: Actions (Login & Contact Us buttons always in topbar) */}
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <button className="text-[#FFFFFF] bg-transparent border border-transparent hover:border-[#333333] px-3 py-1.5 sm:px-4 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-all">
+            <Link 
+              to="/login"
+              className="text-[#FFFFFF] bg-transparent border border-transparent hover:border-white/10 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-all"
+            >
               Login
-            </button>
-            <button className="bg-[#FF5722] text-[#FFFFFF] hover:bg-[#e64e1e] px-4 py-1.5 sm:px-6 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors shadow-[0_0_15px_rgba(255,87,34,0.3)]">
+            </Link>
+            <Link 
+              to="/contact"
+              className="bg-[#FF5722] text-[#FFFFFF] hover:bg-[#e64e1e] px-4 py-1.5 sm:px-6 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors shadow-[0_0_15px_rgba(255,87,34,0.3)]"
+            >
               Contact Us
-            </button>
+            </Link>
             
             {/* Mobile/Tablet menu button */}
             <div className="lg:hidden flex items-center pl-1">
@@ -84,14 +92,16 @@ const Navbar = () => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="lg:hidden absolute top-20 left-0 w-full bg-brand-black/95 backdrop-blur-lg border-b border-white/5 overflow-hidden z-40"
+            className="lg:hidden absolute top-20 left-0 w-full bg-[#050505]/95 backdrop-blur-lg border-b border-white/5 overflow-hidden z-40"
           >
             <div className="px-4 pt-2 pb-6 space-y-2 flex flex-col">
               {[
                 { label: 'Products', path: '/products' },
                 { label: 'Solutions', path: '/solutions' },
-                { label: 'Developers', path: '/developers' },
-                { label: 'Pricing', path: '/pricing' }
+                { label: 'Services', path: '/services' },
+                { label: 'Pricing', path: '/pricing' },
+                { label: 'About', path: '/about' },
+                { label: 'Blog', path: '/blog' }
               ].map((item) => {
                 const isActive = location.pathname === item.path;
                 return (
