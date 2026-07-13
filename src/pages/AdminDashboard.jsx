@@ -14,7 +14,7 @@ import addNewClientImg from '../assets/add new client.avif';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const { clients, addClient, updateClientStatus, uploadDocument, makePayment, setCurrentClientId } = useContext(AppContext);
+  const { clients, addClient, updateClientStatus, uploadDocument, makePayment, setCurrentClientId, logout } = useContext(AppContext);
   
   // Admin navigation state: 'all-clients', 'add-client', 'update-status', 'projects', 'services', 'payments', 'invoices', 'documents', 'tickets', 'settings'
   const [currentView, setCurrentView] = useState('all-clients');
@@ -55,6 +55,7 @@ const AdminDashboard = () => {
   const [sandboxState, setSandboxState] = useState(true);
 
   const handleLogout = () => {
+    logout();
     navigate('/login');
   };
 

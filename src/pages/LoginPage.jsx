@@ -7,7 +7,7 @@ import logo from '../assets/Logo.svg';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { setCurrentClientId } = useContext(AppContext);
+  const { login } = useContext(AppContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -22,9 +22,10 @@ const LoginPage = () => {
     }
 
     if (email === 'admin@onepg.in' && password === 'admin') {
+      login('admin');
       navigate('/admin');
     } else if (email === 'rahul@sharmaent.com' && password === 'password') {
-      setCurrentClientId('OPG-2026-1045');
+      login('client', 'OPG-2026-1045');
       navigate('/dashboard');
     } else {
       setError('Invalid credentials. Use quick login buttons below to test.');
@@ -35,11 +36,12 @@ const LoginPage = () => {
     if (role === 'client') {
       setEmail('rahul@sharmaent.com');
       setPassword('password');
-      setCurrentClientId('OPG-2026-1045');
+      login('client', 'OPG-2026-1045');
       navigate('/dashboard');
     } else if (role === 'admin') {
       setEmail('admin@onepg.in');
       setPassword('admin');
+      login('admin');
       navigate('/admin');
     }
   };

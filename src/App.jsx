@@ -1,6 +1,6 @@
-import React, { useEffect, lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { AppContextProvider } from './context/AppContext';
+import React, { useEffect, lazy, Suspense, useContext } from 'react';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { AppContextProvider, AppContext } from './context/AppContext';
 
 // Standard Components
 import Navbar from './components/Navbar';
@@ -98,6 +98,21 @@ const ScrollToTop = () => {
   return null;
 };
 
+// Protected Route Guard Component
+const ProtectedRoute = ({ children, allowedRoles }) => {
+  const { isAuthenticated, userRole } = useContext(AppContext);
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(userRole)) {
+    return <Navigate to={userRole === 'admin' ? '/admin' : '/dashboard'} replace />;
+  }
+
+  return children;
+};
+
 function App() {
   return (
     <AppContextProvider>
@@ -115,8 +130,22 @@ function App() {
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/blog" element={<BlogPage />} />
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/dashboard" element={<ClientDashboard />} />
-              <Route path="/admin" element={<AdminDashboard />} />
+              <Route 
+                path="/dashboard" 
+                element={
+                  <ProtectedRoute allowedRoles={['client']}>
+                    <ClientDashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin" 
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                } 
+              />
             </Routes>
           </Suspense>
         </div>

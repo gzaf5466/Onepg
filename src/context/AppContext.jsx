@@ -128,11 +128,40 @@ export const AppContextProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : initialClients;
   });
 
-  const [currentClientId, setCurrentClientId] = useState('OPG-2026-1045');
+  const [currentClientId, setCurrentClientId] = useState(() => {
+    return localStorage.getItem('onepg_current_client_id') || 'OPG-2026-1045';
+  });
+
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('onepg_auth') === 'true';
+  });
+
+  const [userRole, setUserRole] = useState(() => {
+    return localStorage.getItem('onepg_role') || null;
+  });
 
   useEffect(() => {
     localStorage.setItem('onepg_clients', JSON.stringify(clients));
   }, [clients]);
+
+  const login = (role, clientId = null) => {
+    setIsAuthenticated(true);
+    setUserRole(role);
+    localStorage.setItem('onepg_auth', 'true');
+    localStorage.setItem('onepg_role', role);
+    if (clientId) {
+      setCurrentClientId(clientId);
+      localStorage.setItem('onepg_current_client_id', clientId);
+    }
+  };
+
+  const logout = () => {
+    setIsAuthenticated(false);
+    setUserRole(null);
+    localStorage.removeItem('onepg_auth');
+    localStorage.removeItem('onepg_role');
+    localStorage.removeItem('onepg_current_client_id');
+  };
 
   const addClient = (clientData) => {
     const nextIdNum = Math.max(...clients.map(c => parseInt(c.id.split('-')[2]))) + 1;
@@ -281,7 +310,11 @@ export const AppContextProvider = ({ children }) => {
       addClient,
       updateClientStatus,
       uploadDocument,
-      makePayment
+      makePayment,
+      isAuthenticated,
+      userRole,
+      login,
+      logout
     }}>
       {children}
     </AppContext.Provider>

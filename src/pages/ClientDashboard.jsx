@@ -13,7 +13,7 @@ import logo from '../assets/Logo.svg';
 
 const ClientDashboard = () => {
   const navigate = useNavigate();
-  const { currentClient, uploadDocument, makePayment } = useContext(AppContext);
+  const { currentClient, uploadDocument, makePayment, logout } = useContext(AppContext);
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [notificationCount, setNotificationCount] = useState(2);
   const [uploadingDoc, setUploadingDoc] = useState(null);
@@ -50,6 +50,7 @@ const ClientDashboard = () => {
   }
 
   const handleLogout = () => {
+    logout();
     navigate('/login');
   };
 
