@@ -4,7 +4,7 @@ import Pricing from '../components/Pricing';
 import Footer from '../components/Footer';
 
 const PricingPage = () => (
-  <div className="min-h-screen flex flex-col bg-[#050505]">
+  <div className="min-h-screen flex flex-col bg-[#050505] overflow-x-hidden">
     <Navbar />
     <Pricing />
     <Footer />

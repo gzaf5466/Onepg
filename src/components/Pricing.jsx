@@ -65,8 +65,8 @@ const compareFeatures = [
 
 export default function Pricing() {
   return (
-    <div className="w-full bg-[#050505] text-white font-sans">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-4 py-20 md:py-28 relative">
+    <div className="w-full bg-[#050505] text-white font-sans overflow-x-hidden">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 relative">
         
         {/* Decorative background glows */}
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-brand-orange/5 blur-[120px] rounded-full pointer-events-none" />
