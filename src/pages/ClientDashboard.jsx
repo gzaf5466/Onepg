@@ -434,7 +434,7 @@ const ClientDashboard = () => {
 
       <div className="bg-white/[0.01] border border-white/5 rounded-xl overflow-hidden">
         <div className="overflow-x-auto scrollbar-thin">
-          <table className="w-full min-w-[800px] text-left border-collapse">
+          <table className="w-full min-w-[800px] text-left border-collapse whitespace-nowrap">
             <thead>
               <tr className="border-b border-white/5 text-[10px] uppercase tracking-wider text-gray-500 bg-white/[0.01]">
                 <th className="p-4 font-bold">App ID</th>
@@ -513,7 +513,7 @@ const ClientDashboard = () => {
         <h3 className="text-sm font-bold text-white mb-4">Invoice History</h3>
         <div className="bg-white/[0.01] border border-white/5 rounded-xl overflow-hidden">
           <div className="overflow-x-auto scrollbar-thin">
-            <table className="w-full min-w-[800px] text-left border-collapse">
+            <table className="w-full min-w-[800px] text-left border-collapse whitespace-nowrap">
               <thead>
                 <tr className="border-b border-white/5 text-[10px] uppercase tracking-wider text-gray-500 bg-white/[0.01]">
                   <th className="p-4 font-bold">Invoice ID</th>
@@ -1171,7 +1171,7 @@ const ClientDashboard = () => {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-grow flex flex-col min-h-screen">
+      <div className="flex-grow flex flex-col min-h-screen min-w-0">
         
         {/* Top Navbar */}
         <header className="h-20 bg-white/[0.01] border-b border-white/5 flex items-center justify-between px-4 sm:px-6 md:px-8 gap-3">

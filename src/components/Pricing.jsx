@@ -1,67 +1,69 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, HelpCircle, ArrowRight, Minus, Plus } from 'lucide-react';
 
 const plans = [
   {
-    name: 'Starter Tier',
-    priceMonthly: 0,
-    priceYearly: 0,
+    name: 'Payin Solution',
+    price: '₹15,000',
+    period: 'Starting from',
+    popular: false,
     features: [
-      'Basic Features',
-      'Standard Payout Speeds',
-      'Simple Conversion Routing',
-      'Basic Channels Support',
-      'Up to ₹50k monthly volume'
+      'Standard Pay-In Gateway',
+      'All Major Payment Methods (UPI, Cards, QR)',
+      'High Success Rates & Failover Routing',
+      'Merchant Settlement Dashboard',
+      'Standard API & Webhook Integration',
+      '24/7 Email & Chat Support'
     ],
-    buttonText: 'Start Now',
+    buttonText: 'Inquire Now',
     highlighted: false,
   },
   {
-    name: 'Growth Tier',
-    priceMonthly: 49,
-    priceYearly: 39,
+    name: 'Web Development',
+    price: '₹20,000',
+    period: 'Starting from',
     popular: true,
     features: [
-      'Advanced Features',
-      'Instant Payout Speeds',
-      'Dynamic Conversion Routing',
-      'Priority Support Channels',
-      'Up to ₹10L monthly volume',
-      'Advanced API access'
+      'Custom Web Application Design',
+      'Responsive UI for Mobile & Desktop',
+      'Seamless Payment Gateway Integration',
+      'Secure User Authentication & Database',
+      'Admin Control Panel & Dashboard',
+      'SEO Optimized & High Performance'
     ],
-    buttonText: 'Sign Now',
+    buttonText: 'Build with Us',
     highlighted: true,
   },
   {
-    name: 'Enterprise Tier',
-    priceMonthly: 'Custom',
-    priceYearly: 'Custom',
+    name: 'Payout Solution',
+    price: '₹50,000',
+    period: 'Starting from',
+    popular: false,
     features: [
-      'Custom Enterprise Integrations',
-      'Dedicated Account Rails',
-      'Fail-safe Routing Engine',
-      '24/7 Dedicated Account Manager',
-      'Unlimited transaction volume',
-      'Custom SLA uptime guarantee'
+      'Automated Bulk Disbursements',
+      'Instant Account & VPA Verification',
+      'Multi-Bank Smart Fail-Safe Routing',
+      'Dedicated Sandbox & Production Keys',
+      'Custom SLA & 99.99% Uptime Guarantee',
+      'Dedicated Account Manager'
     ],
-    buttonText: 'Contact Sales',
+    buttonText: 'Setup Payouts',
     highlighted: false,
   }
 ];
 
 const compareFeatures = [
-  { category: 'Platform & API', starter: true, growth: true, enterprise: true },
-  { category: 'Payout Speeds', starter: '3 Days', growth: 'Instant', enterprise: 'Custom / Realtime' },
-  { category: 'Conversion Routing', starter: 'Basic Failover', growth: 'Dynamic Smart Engine', enterprise: 'Fail-safe custom rules' },
-  { category: 'Support Channels', starter: 'Email', growth: 'Email & Chat', enterprise: '24/7 Phone & Slack' },
-  { category: 'API Uptime SLA', starter: '99.5%', growth: '99.9%', enterprise: '99.99%' },
-  { category: 'Idempotency Keys', starter: true, growth: true, enterprise: true }
+  { category: 'Starting Rate', payin: '₹15,000', web: '₹20,000', payout: '₹50,000' },
+  { category: 'Integration Type', payin: 'API / SDK / Webhook', web: 'Custom Built Frontend/Backend', payout: 'API / Batch File Upload' },
+  { category: 'Settlement Time', payin: 'T+1 or T+2 days', web: 'N/A', payout: 'Instant / Real-time' },
+  { category: 'Uptime SLA', payin: '99.9%', web: '99.9% Hosting', payout: '99.99%' },
+  { category: 'Support Level', payin: '24/7 Chat & Email', web: '1 Month Post-Launch support', payout: 'Dedicated Account Manager' },
+  { category: 'Customizations', payin: 'Standard Theme', web: 'Fully Tailored UI/UX', payout: 'Custom Routing & Flow' }
 ];
 
 export default function Pricing() {
-  const [isYearly, setIsYearly] = useState(false);
-
   return (
     <div className="w-full bg-[#050505] text-white font-sans">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-4 py-20 md:py-28 relative">
@@ -81,28 +83,14 @@ export default function Pricing() {
             <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#FF5722] to-[#00E5FF]">Pricing Built for Scale</span>
           </h1>
           
-          {/* Monthly / Yearly Toggle */}
-          <div className="flex items-center justify-center gap-4 mt-8">
-            <span className={`text-sm ${!isYearly ? 'text-white' : 'text-gray-500'}`}>Monthly</span>
-            <button 
-              onClick={() => setIsYearly(!isYearly)}
-              className="w-12 h-6 rounded-full bg-white/10 p-1 flex items-center transition-colors relative"
-            >
-              <div 
-                className={`w-4 h-4 rounded-full bg-[#00E5FF] transition-transform ${isYearly ? 'translate-x-6' : 'translate-x-0'}`} 
-              />
-            </button>
-            <span className={`text-sm flex items-center gap-1.5 ${isYearly ? 'text-[#00E5FF]' : 'text-gray-500'}`}>
-              Yearly 
-              <span className="text-[10px] font-bold px-2 py-0.5 bg-[#00E5FF]/10 text-[#00E5FF] rounded-full">Save 20%</span>
-            </span>
-          </div>
+          <p className="text-[#88929b] text-base max-w-2xl mx-auto mt-6 font-light leading-relaxed">
+            Every business has unique needs. We offer flexible, custom-tailored pricing plans built to grow with your transaction volumes and development goals.
+          </p>
         </div>
 
         {/* Pricing Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24 relative z-10">
           {plans.map((plan, idx) => {
-            const price = isYearly ? plan.priceYearly : plan.priceMonthly;
             return (
               <div 
                 key={idx}
@@ -120,13 +108,11 @@ export default function Pricing() {
 
                 <div>
                   <h3 className="text-lg font-bold text-gray-400 mb-2">{plan.name}</h3>
-                  <div className="flex items-baseline gap-1 mb-8">
+                  <div className="flex flex-col gap-0.5 mb-8">
+                    <span className="text-[10px] text-gray-500 uppercase tracking-wider">{plan.period}</span>
                     <span className="text-4xl font-extrabold text-white">
-                      {typeof price === 'number' ? `$${price}` : price}
+                      {plan.price}
                     </span>
-                    {typeof price === 'number' && (
-                      <span className="text-sm text-gray-500">/month</span>
-                    )}
                   </div>
 
                   <ul className="space-y-4 mb-8">
@@ -139,15 +125,16 @@ export default function Pricing() {
                   </ul>
                 </div>
 
-                <button 
-                  className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all ${
+                <Link 
+                  to="/login"
+                  className={`w-full py-3.5 rounded-xl font-bold text-sm text-center block transition-all ${
                     plan.highlighted 
                       ? 'bg-[#FF5722] hover:bg-[#e64e1e] text-white shadow-[0_4px_15px_rgba(255,87,34,0.3)]' 
                       : 'bg-white/5 border border-white/10 hover:bg-white/10 text-white'
                   }`}
                 >
                   {plan.buttonText}
-                </button>
+                </Link>
               </div>
             );
           })}
@@ -166,29 +153,29 @@ export default function Pricing() {
               <thead>
                 <tr className="border-b border-white/5 bg-white/[0.02]">
                   <th className="px-6 py-4 font-bold text-[#88929b] uppercase tracking-wider text-xs">Feature Details</th>
-                  <th className="px-6 py-4 font-bold text-white tracking-wider">Starter</th>
-                  <th className="px-6 py-4 font-bold text-[#FF5722] tracking-wider">Growth</th>
-                  <th className="px-6 py-4 font-bold text-white tracking-wider">Enterprise</th>
+                  <th className="px-6 py-4 font-bold text-white tracking-wider">Payin Solution</th>
+                  <th className="px-6 py-4 font-bold text-[#FF5722] tracking-wider">Web Development</th>
+                  <th className="px-6 py-4 font-bold text-white tracking-wider">Payout Solution</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5 text-[#88929b] font-light">
                 {compareFeatures.map((row, rIdx) => (
                   <tr key={rIdx} className="hover:bg-white/[0.01] transition-colors">
                     <td className="px-6 py-4 text-white font-medium">{row.category}</td>
-                    <td className="px-6 py-4">
-                      {typeof row.starter === 'boolean' ? (
-                        row.starter ? <Check className="w-4 h-4 text-[#00E5FF]" /> : '—'
-                      ) : row.starter}
+                    <td className="px-6 py-4 text-gray-300">
+                      {typeof row.payin === 'boolean' ? (
+                        row.payin ? <Check className="w-4 h-4 text-[#00E5FF]" /> : '—'
+                      ) : row.payin}
                     </td>
                     <td className="px-6 py-4 text-white font-medium">
-                      {typeof row.growth === 'boolean' ? (
-                        row.growth ? <Check className="w-4 h-4 text-[#00E5FF]" /> : '—'
-                      ) : row.growth}
+                      {typeof row.web === 'boolean' ? (
+                        row.web ? <Check className="w-4 h-4 text-[#FF5722]" /> : '—'
+                      ) : row.web}
                     </td>
-                    <td className="px-6 py-4">
-                      {typeof row.enterprise === 'boolean' ? (
-                        row.enterprise ? <Check className="w-4 h-4 text-[#00E5FF]" /> : '—'
-                      ) : row.enterprise}
+                    <td className="px-6 py-4 text-gray-300">
+                      {typeof row.payout === 'boolean' ? (
+                        row.payout ? <Check className="w-4 h-4 text-[#00E5FF]" /> : '—'
+                      ) : row.payout}
                     </td>
                   </tr>
                 ))}
@@ -207,9 +194,12 @@ export default function Pricing() {
           </div>
 
           <div className="relative z-10 flex gap-4 shrink-0 flex-col sm:flex-row w-full sm:w-auto">
-            <button className="w-full sm:w-auto px-8 py-3.5 bg-[#FF5722] hover:bg-[#e64e1e] text-white font-bold rounded-xl shadow-[0_4px_15px_rgba(255,87,34,0.3)] transition-all">
+            <Link 
+              to="/login"
+              className="w-full sm:w-auto px-8 py-3.5 bg-[#FF5722] hover:bg-[#e64e1e] text-[#FFFFFF] font-bold rounded-xl shadow-[0_4px_15px_rgba(255,87,34,0.3)] transition-all text-center block"
+            >
               Get Started Now
-            </button>
+            </Link>
           </div>
         </div>
 
