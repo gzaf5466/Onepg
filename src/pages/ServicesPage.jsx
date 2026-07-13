@@ -72,7 +72,7 @@ const ServicesPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white flex flex-col font-sans">
+    <div className="min-h-screen bg-[#050505] text-white flex flex-col font-sans overflow-x-hidden">
       <Navbar />
 
       <main className="flex-grow max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 space-y-16 w-full relative">

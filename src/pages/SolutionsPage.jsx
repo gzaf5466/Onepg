@@ -5,7 +5,7 @@ import Industries from '../components/Industries';
 import Footer from '../components/Footer';
 
 const SolutionsPage = () => (
-  <div className="min-h-screen flex flex-col bg-[#050505]">
+  <div className="min-h-screen flex flex-col bg-[#050505] overflow-x-hidden">
     <Navbar />
     <Benefits />
     <Industries />

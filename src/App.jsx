@@ -41,7 +41,7 @@ const LoadingScreen = () => (
 
 // Home Page Component
 const Home = () => (
-  <>
+  <div className="w-full overflow-x-hidden flex flex-col">
     <div className="min-h-screen lg:h-screen flex flex-col justify-between relative overflow-hidden border-b border-white/5 bg-[#050505]">
       <Navbar />
       <Hero />
@@ -84,7 +84,7 @@ const Home = () => (
       </div>
     </main>
     <Footer />
-  </>
+  </div>
 );
 
 // Scroll to top on route change
@@ -103,7 +103,7 @@ function App() {
     <AppContextProvider>
       <BrowserRouter>
         <ScrollToTop />
-        <div className="flex flex-col min-h-screen bg-[#050505]">
+        <div className="flex flex-col min-h-screen bg-[#050505] overflow-x-hidden">
           <Suspense fallback={<LoadingScreen />}>
             <Routes>
               <Route path="/" element={<Home />} />

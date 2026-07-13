@@ -7,7 +7,7 @@ import FeaturesGrid from '../components/FeaturesGrid';
 import Footer from '../components/Footer';
 
 const ProductsPage = () => (
-  <div className="min-h-screen flex flex-col bg-[#050505]">
+  <div className="min-h-screen flex flex-col bg-[#050505] overflow-x-hidden">
     <Navbar />
     <Platforms />
     <ProductPillars />
