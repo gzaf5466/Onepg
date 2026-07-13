@@ -2,22 +2,8 @@ import React, { useEffect, lazy, Suspense, useContext } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AppContextProvider, AppContext } from './context/AppContext';
 
-// Standard Components
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import PartnerStrip from './components/PartnerStrip';
-import HowItWorks from './components/HowItWorks';
-import Testimonials from './components/Testimonials';
-import FAQ from './components/FAQ';
-import CTA from './components/CTA';
-import Footer from './components/Footer';
-
-// New Section Components
-import WhyChooseUs from './components/WhyChooseUs';
-import SecurityCompliance from './components/SecurityCompliance';
-import Technology from './components/Technology';
-
 // Lazy Loaded Pages
+const HomePage = lazy(() => import('./pages/HomePage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
@@ -36,54 +22,6 @@ const LoadingScreen = () => (
       <div className="absolute inset-0 rounded-full border-t-2 border-r-2 border-[#FF5722] animate-spin"></div>
       <div className="absolute inset-2 rounded-full border-b-2 border-l-2 border-[#00E5FF] animate-spin [animation-duration:1.5s] [animation-direction:reverse]"></div>
     </div>
-  </div>
-);
-
-// Home Page Component
-const Home = () => (
-  <div className="w-full overflow-x-hidden flex flex-col">
-    <div className="min-h-screen lg:h-screen flex flex-col justify-between relative overflow-hidden border-b border-white/5 bg-[#050505]">
-      <Navbar />
-      <Hero />
-      <div className="hidden sm:block">
-        <PartnerStrip />
-      </div>
-    </div>
-    
-    <main className="flex-grow flex flex-col">
-      <div className="sm:hidden order-none">
-        <PartnerStrip />
-      </div>
-      
-      <div className="order-1">
-        <HowItWorks />
-      </div>
-      
-      <div className="order-2">
-        <WhyChooseUs />
-      </div>
-
-      <div className="order-3">
-        <SecurityCompliance />
-      </div>
-
-      <div className="order-4">
-        <Technology />
-      </div>
-
-      <div className="order-5">
-        <Testimonials />
-      </div>
-      
-      <div className="order-6">
-        <FAQ />
-      </div>
-      
-      <div className="order-7">
-        <CTA />
-      </div>
-    </main>
-    <Footer />
   </div>
 );
 
@@ -121,7 +59,7 @@ function App() {
         <div className="flex flex-col min-h-screen bg-[#050505] overflow-x-hidden">
           <Suspense fallback={<LoadingScreen />}>
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<HomePage />} />
               <Route path="/products" element={<ProductsPage />} />
               <Route path="/solutions" element={<SolutionsPage />} />
               <Route path="/pricing" element={<PricingPage />} />
