@@ -13,7 +13,7 @@ import logo from '../assets/Logo.svg';
 
 const ClientDashboard = () => {
   const navigate = useNavigate();
-  const { currentClient, uploadDocument, makePayment, logout } = useContext(AppContext);
+  const { currentClient, uploadDocument, makePayment, logout, showToast } = useContext(AppContext);
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [notificationCount, setNotificationCount] = useState(2);
   const [uploadingDoc, setUploadingDoc] = useState(null);
@@ -86,7 +86,7 @@ const ClientDashboard = () => {
   const handlePayNow = () => {
     if (currentClient.pendingAmount > 0) {
       makePayment(currentClient.id);
-      alert('Payment of ₹' + currentClient.pendingAmount.toLocaleString('en-IN') + ' successful!');
+      showToast('Payment of ₹' + currentClient.pendingAmount.toLocaleString('en-IN') + ' completed successfully!', 'success');
     }
   };
 
@@ -107,7 +107,7 @@ const ClientDashboard = () => {
     ]);
     setNewTicketTitle('');
     setNewTicketDesc('');
-    alert(`Support Ticket ${nextId} has been created successfully!`);
+    showToast(`Support Ticket ${nextId} has been created successfully!`, 'success');
   };
 
   const handleMarkAllRead = () => {
@@ -122,7 +122,7 @@ const ClientDashboard = () => {
       newKey += chars[Math.floor(Math.random() * chars.length)];
     }
     setSandboxKey(newKey);
-    alert('New Sandbox Key generated successfully!');
+    showToast('New Sandbox API Key generated successfully!', 'success');
   };
 
   // Sub-view: Dashboard Overview
@@ -299,7 +299,7 @@ const ClientDashboard = () => {
                       {inv.status}
                     </span>
                     {inv.status === 'Paid' && (
-                      <button onClick={() => alert(`Downloading Invoice ${inv.id} PDF...`)} className="text-gray-500 hover:text-white transition-colors">
+                      <button onClick={() => showToast(`Downloading Invoice ${inv.id} PDF... (Mock File Download)`, 'info')} className="text-gray-500 hover:text-white transition-colors">
                         <Download size={14} />
                       </button>
                     )}
@@ -361,7 +361,7 @@ const ClientDashboard = () => {
             </div>
             <div className="flex gap-2 w-full sm:w-auto">
               <button onClick={() => setActiveTab('Support Tickets')} className="flex-1 sm:flex-none bg-[#FF5722] hover:bg-[#e64e1e] text-white px-3.5 py-1.5 rounded-lg text-[10px] font-bold transition-all">Raise Ticket</button>
-              <button onClick={() => alert('Dialing Account Manager: +91 1800 123 4567')} className="flex-1 sm:flex-none bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] text-gray-300 px-3.5 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center justify-center gap-1">
+              <button onClick={() => showToast('Dialing Account Manager: +91 1800 123 4567...', 'info')} className="flex-1 sm:flex-none bg-white/[0.04] border border-white/10 hover:bg-white/[0.08] text-gray-300 px-3.5 py-1.5 rounded-lg text-[10px] font-bold transition-all flex items-center justify-center gap-1">
                 <Phone size={10} />
                 Contact Manager
               </button>
@@ -380,7 +380,7 @@ const ClientDashboard = () => {
           <h2 className="text-lg font-bold text-white">Merchant Services Console</h2>
           <p className="text-xs text-gray-400">Track and configure your active and subscribed corporate services.</p>
         </div>
-        <button onClick={() => alert('New Service request sent to Manager')} className="bg-gradient-to-r from-[#FF5722] to-amber-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-[0_0_15px_rgba(255,87,34,0.2)]">
+        <button onClick={() => showToast('New Service activation request sent to Account Manager.', 'success')} className="bg-gradient-to-r from-[#FF5722] to-amber-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-[0_0_15px_rgba(255,87,34,0.2)]">
           Request New Service
         </button>
       </div>
@@ -415,7 +415,7 @@ const ClientDashboard = () => {
                     View API Keys <ArrowUpRight size={10} />
                   </button>
                 ) : (
-                  <button onClick={() => alert(`Details for ${svc.name}: Under Active Review.`)} className="text-gray-400 hover:text-white transition-colors">View SLA</button>
+                  <button onClick={() => showToast(`Details for ${svc.name}: Under Active Review.`, 'info')} className="text-gray-400 hover:text-white transition-colors">View SLA</button>
                 )}
               </div>
             </div>
@@ -453,7 +453,7 @@ const ClientDashboard = () => {
                 <td className="p-4 text-gray-300">ICICI Bank Ltd</td>
                 <td className="p-4"><span className="text-[10px] font-bold px-2 py-0.5 rounded border bg-emerald-500/10 text-emerald-400 border-emerald-500/20 uppercase">Approved</span></td>
                 <td className="p-4 text-gray-500">12 July 2026</td>
-                <td className="p-4 text-right"><button onClick={() => alert('Displaying integration logs for ICICI')} className="text-[#00E5FF] hover:underline font-semibold">Integrate</button></td>
+                <td className="p-4 text-right"><button onClick={() => showToast('Displaying integration logs for ICICI bank routing...', 'info')} className="text-[#00E5FF] hover:underline font-semibold">Integrate</button></td>
               </tr>
               <tr className="hover:bg-white/[0.01]">
                 <td className="p-4 font-mono text-gray-400">APP-2026-905</td>
@@ -461,7 +461,7 @@ const ClientDashboard = () => {
                 <td className="p-4 text-gray-300">HDFC Bank Ltd</td>
                 <td className="p-4"><span className="text-[10px] font-bold px-2 py-0.5 rounded border bg-orange-500/10 text-orange-400 border-orange-500/20 uppercase">Under Review</span></td>
                 <td className="p-4 text-gray-500">15 July 2026</td>
-                <td className="p-4 text-right"><button onClick={() => alert('HDFC review logs: Compliance checking signatures.')} className="text-gray-400 hover:text-white font-semibold">Check Logs</button></td>
+                <td className="p-4 text-right"><button onClick={() => showToast('HDFC review logs: Compliance checking signatures.', 'info')} className="text-gray-400 hover:text-white font-semibold">Check Logs</button></td>
               </tr>
               <tr className="hover:bg-white/[0.01]">
                 <td className="p-4 font-mono text-gray-400">APP-2026-906</td>
@@ -469,7 +469,7 @@ const ClientDashboard = () => {
                 <td className="p-4 text-gray-300">OnePG Settlement Core</td>
                 <td className="p-4"><span className="text-[10px] font-bold px-2 py-0.5 rounded border bg-blue-500/10 text-blue-400 border-blue-500/20 uppercase">Applied</span></td>
                 <td className="p-4 text-gray-500">15 July 2026</td>
-                <td className="p-4 text-right"><button onClick={() => alert('T+0 Settlement application is queued for active volume auditing.')} className="text-gray-400 hover:text-white font-semibold">Details</button></td>
+                <td className="p-4 text-right"><button onClick={() => showToast('T+0 Settlement application is queued for active volume auditing.', 'info')} className="text-gray-400 hover:text-white font-semibold">Details</button></td>
               </tr>
             </tbody>
           </table>
@@ -541,7 +541,7 @@ const ClientDashboard = () => {
                     </td>
                     <td className="p-4 text-right">
                       {inv.status === 'Paid' ? (
-                        <button onClick={() => alert(`Downloading invoice ${inv.id}...`)} className="text-[#00E5FF] hover:underline font-semibold flex items-center justify-end gap-1 ml-auto">
+                        <button onClick={() => showToast(`Downloading invoice ${inv.id} PDF... (Mock File Download)`, 'info')} className="text-[#00E5FF] hover:underline font-semibold flex items-center justify-end gap-1 ml-auto">
                           <Download size={12} /> Download
                         </button>
                       ) : (
@@ -883,7 +883,7 @@ const ClientDashboard = () => {
                   value={currentClient.id}
                   className="flex-grow bg-white/[0.02] border border-white/5 text-gray-400 font-mono rounded-lg px-3 py-2 text-xs focus:outline-none"
                 />
-                <button onClick={() => { navigator.clipboard.writeText(currentClient.id); alert('Client ID copied!'); }} className="p-2 rounded bg-white/5 border border-white/10 hover:border-white/20 text-gray-400 hover:text-white transition-all">
+                <button onClick={() => { navigator.clipboard.writeText(currentClient.id); showToast('Merchant Client ID copied to clipboard!', 'success'); }} className="p-2 rounded bg-white/5 border border-white/10 hover:border-white/20 text-gray-400 hover:text-white transition-all">
                   <Download size={14} className="rotate-[-90deg]" />
                 </button>
               </div>
@@ -933,12 +933,12 @@ const ClientDashboard = () => {
                     onChange={(e) => setWebhookUrl(e.target.value)}
                     className="flex-grow bg-white/[0.03] border border-white/10 text-white rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#FF5722]"
                   />
-                  <button onClick={() => alert('Webhook URL updated successfully!')} className="bg-[#FF5722] hover:bg-[#e64e1e] text-white px-3 py-2 rounded-lg text-xs font-bold transition-all">
+                  <button onClick={() => showToast('Webhook URL updated successfully!', 'success')} className="bg-[#FF5722] hover:bg-[#e64e1e] text-white px-3 py-2 rounded-lg text-xs font-bold transition-all">
                     Save
                   </button>
                 </div>
               </div>
-              <button onClick={() => alert('Webhook ping event sent! Response Code: 200 OK')} className="text-xs bg-white/[0.04] border border-white/10 hover:border-white/20 text-gray-300 hover:text-white px-4 py-2 rounded-lg transition-all font-semibold flex items-center justify-center gap-1.5 w-full">
+              <button onClick={() => showToast('Webhook ping event sent! Response Code: 200 OK', 'success')} className="text-xs bg-white/[0.04] border border-white/10 hover:border-white/20 text-gray-300 hover:text-white px-4 py-2 rounded-lg transition-all font-semibold flex items-center justify-center gap-1.5 w-full">
                 <Play size={10} /> Test Connection (Send Ping)
               </button>
             </div>
@@ -1195,14 +1195,14 @@ const ClientDashboard = () => {
 
           <div className="flex items-center gap-2 sm:gap-4 shrink-0">
             <button 
-              onClick={() => alert('Downloading Client Onboarding Summary report...')} 
+              onClick={() => showToast('Downloading Client Onboarding Summary report...', 'info')} 
               className="hidden md:flex items-center gap-2 bg-white/[0.03] border border-white/10 hover:border-white/20 text-gray-300 hover:text-white px-4 py-2 rounded-lg text-xs font-semibold transition-all"
             >
               <Download size={14} />
               Download Report
             </button>
             <button 
-              onClick={() => alert('Downloading Client Onboarding Summary report...')} 
+              onClick={() => showToast('Downloading Client Onboarding Summary report...', 'info')} 
               className="md:hidden flex items-center justify-center bg-white/[0.03] border border-white/10 hover:border-white/20 text-gray-300 hover:text-white p-2 rounded-lg text-xs transition-all"
               title="Download Report"
             >
@@ -1218,6 +1218,33 @@ const ClientDashboard = () => {
         <main className="flex-grow p-4 sm:p-6 md:p-8 space-y-6 overflow-y-auto max-w-[1440px] w-full mx-auto">
           {renderContent()}
         </main>
+
+        {/* Animated Mobile Footer */}
+        <motion.footer 
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
+          className="xl:hidden bg-[#0d0d0d]/80 backdrop-blur-md border-t border-white/5 py-4 px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] text-gray-500 font-mono"
+        >
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span>Secure connection active</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span>OnePG v2.4 • Client Portal</span>
+            <button 
+              onClick={() => {
+                showToast("Sandbox API gateway ping: 22ms latency", "info");
+              }}
+              className="text-[#FF5722] hover:underline transition-all bg-transparent border-none p-0 cursor-pointer"
+            >
+              Ping Node
+            </button>
+          </div>
+        </motion.footer>
       </div>
 
     </div>

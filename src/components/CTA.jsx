@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Gauge, Shield, Code2, Headphones, ArrowRight } from 'lucide-react';
 
@@ -177,13 +178,15 @@ export default function CTA() {
 
           {/* Right part: Orange CTA button */}
           <div className="relative z-10 shrink-0 w-full lg:w-auto">
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full lg:w-auto px-8 py-3.5 bg-[#FF5722] text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-[#e44d1c] transition-all cursor-pointer shadow-[0_4px_20px_rgba(255,87,34,0.25)] hover:shadow-[0_8px_30px_rgba(255,87,34,0.4)] select-none text-sm"
-            >
-              Get Started Now <ArrowRight className="w-4 h-4" />
-            </motion.button>
+            <Link to="/login" className="w-full lg:w-auto block">
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full lg:w-auto px-8 py-3.5 bg-[#FF5722] text-white font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-[#e44d1c] transition-all cursor-pointer shadow-[0_4px_20px_rgba(255,87,34,0.25)] hover:shadow-[0_8px_30px_rgba(255,87,34,0.4)] select-none text-sm"
+              >
+                Get Started Now <ArrowRight className="w-4 h-4" />
+              </motion.button>
+            </Link>
           </div>
         </motion.div>
 

@@ -119,6 +119,14 @@ const Footer = () => {
     }
   ];
 
+  const socialLinks = {
+    linkedin: 'https://www.linkedin.com/company/131434272',
+    twitter: 'https://twitter.com',
+    facebook: 'https://facebook.com',
+    instagram: 'https://www.instagram.com/onepg__/',
+    youtube: 'https://youtube.com',
+  };
+
   return (
     <footer className="bg-[#050505] border-t border-white/5 pt-12 lg:pt-16 pb-8 z-10 relative overflow-hidden">
       {/* Subtle Background Glow for mobile/desktop footer */}
@@ -142,7 +150,7 @@ const Footer = () => {
               {['linkedin', 'twitter', 'facebook', 'instagram', 'youtube'].map((social) => (
                 <a 
                   key={social}
-                  href={`https://${social}.com`} 
+                  href={socialLinks[social]} 
                   target="_blank" 
                   rel="noreferrer" 
                   className="w-8 h-8 rounded-full bg-white/[0.03] border border-white/5 flex items-center justify-center text-gray-400 hover:text-[#00E5FF] hover:border-[#00E5FF]/30 hover:bg-[#00E5FF]/5 transition-all duration-300 hover:scale-110"

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import desktopImage from '../assets/DESKTOP.avif';
 import tabletImage from '../assets/tablet.avif';
 import mobileImage from '../assets/mobile.avif';
@@ -18,14 +19,14 @@ const Hero = () => {
               Empower your business with a unified platform for fast, secure, and scalable financial operations. Global coverage tailored for local needs.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 w-full max-w-md mx-auto lg:mx-0">
-              <button className="w-full sm:w-auto flex items-center justify-center bg-[#FF5722] text-[#FFFFFF] hover:bg-[#e64e1e] px-8 py-3.5 rounded-md text-base font-medium transition-colors shadow-[0_0_20px_rgba(255,87,34,0.4)]">
+              <Link to="/login" className="w-full sm:w-auto flex items-center justify-center bg-[#FF5722] text-[#FFFFFF] hover:bg-[#e64e1e] px-8 py-3.5 rounded-md text-base font-medium transition-colors shadow-[0_0_20px_rgba(255,87,34,0.4)]">
                 Start for free
                 <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-              </button>
-              <button className="w-full sm:w-auto flex items-center justify-center bg-transparent border border-white/10 text-[#FFFFFF] hover:bg-white/5 px-8 py-3.5 rounded-md text-base font-medium transition-colors">
+              </Link>
+              <Link to="/contact" className="w-full sm:w-auto flex items-center justify-center bg-transparent border border-white/10 text-[#FFFFFF] hover:bg-white/5 px-8 py-3.5 rounded-md text-base font-medium transition-colors">
                 Contact sales
                 <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
-              </button>
+              </Link>
             </div>
           </div>
 

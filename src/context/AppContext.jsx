@@ -1,4 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { CheckCircle2, AlertTriangle, X, Info, AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const AppContext = createContext();
 
@@ -15,106 +17,96 @@ const initialClients = [
     amountPaid: 20000,
     pendingAmount: 10000,
     services: [
-      { name: 'Website Development', status: 'In Progress' },
-      { name: 'Payment Gateway', status: 'Approved' },
-      { name: 'Pay-In Process', status: 'Active' },
-      { name: 'Payout Process', status: 'Under Review' },
-      { name: 'T+0 Settlement', status: 'Applied' },
-      { name: 'International Payment Gateway', status: 'Pending' },
-      { name: 'Business Registration', status: 'Completed' },
-      { name: 'Android App Development', status: 'Not Started' },
-      { name: 'iOS App Development', status: 'Not Started' },
-      { name: 'Software Development', status: 'In Progress' }
+      { name: 'Payout Process', status: 'Active' },
+      { name: 'Payin Settlement', status: 'In Progress' },
+      { name: 'Advocate AI Integration', status: 'Applied' },
+      { name: 'Custom CRM Access', status: 'Pending' }
     ],
     timeline: [
-      { label: 'Documents Received', status: 'Completed', date: '10 July 2026' },
-      { label: 'Verification', status: 'Completed', date: '11 July 2026' },
-      { label: 'Partner Selection', status: 'Completed', date: '12 July 2026' },
-      { label: 'Submitted to Bank', status: 'Completed', date: '13 July 2026' },
-      { label: 'Bank Review', status: 'In Progress', date: '15 July 2026' },
-      { label: 'Live Activation', status: 'Pending', date: '' }
+      { date: '12 July 2026', action: 'KYC Document approved by compliance officer.' },
+      { date: '10 July 2026', action: 'Services setup initiated. ICICI Routing Node configured.' },
+      { date: '08 July 2026', action: 'Corporate account onboarding registration completed.' }
     ],
     invoices: [
-      { id: 'INV-2026-001', date: '09 July 2026', amount: 20000, status: 'Paid' },
-      { id: 'INV-2026-002', date: '--', amount: 10000, status: 'Pending' }
+      { id: 'INV-2026-0091', date: '08 July 2026', amount: 20000, status: 'Paid' },
+      { id: 'INV-2026-0092', date: '--', amount: 10000, status: 'Pending' }
     ],
     documents: [
-      { name: 'GST Certificate', status: 'Uploaded' },
-      { name: 'PAN Card', status: 'Uploaded' },
-      { name: 'Aadhaar Card', status: 'Uploaded' },
-      { name: 'Bank Statement', status: 'Under Review' },
-      { name: 'Cancelled Cheque', status: 'Uploaded' }
+      { name: 'Certificate of Incorporation', status: 'Uploaded' },
+      { name: 'Company PAN Card', status: 'Uploaded' },
+      { name: 'Corporate GST Certificate', status: 'Uploaded' },
+      { name: 'Technical Compliance Signoff', status: 'Under Review' }
+    ]
+  },
+  {
+    id: 'OPG-2026-1042',
+    name: 'Anjali Verma',
+    company: 'Verma Tech Solutions',
+    email: 'anjali@vermatech.com',
+    phone: '+91 98765 43211',
+    plan: 'Basic',
+    status: 'In Progress',
+    progress: 40,
+    amountPaid: 10000,
+    pendingAmount: 0,
+    services: [
+      { name: 'Payout Process', status: 'In Progress' },
+      { name: 'Payin Settlement', status: 'Not Started' }
+    ],
+    timeline: [
+      { date: '11 July 2026', action: 'Company GST verified.' }
+    ],
+    invoices: [
+      { id: 'INV-2026-0095', date: '08 July 2026', amount: 10000, status: 'Paid' }
+    ],
+    documents: [
+      { name: 'Certificate of Incorporation', status: 'Uploaded' },
+      { name: 'Company PAN Card', status: 'Uploaded' },
+      { name: 'Corporate GST Certificate', status: 'Uploaded' }
+    ]
+  },
+  {
+    id: 'OPG-2026-1043',
+    name: 'Vikram Singh',
+    company: 'Singh Logistics',
+    email: 'vikram@singhlogistics.com',
+    phone: '+91 98765 43212',
+    plan: 'Premium',
+    status: 'Completed',
+    progress: 100,
+    amountPaid: 30000,
+    pendingAmount: 0,
+    services: [
+      { name: 'Payout Process', status: 'Active' },
+      { name: 'Payin Settlement', status: 'Active' },
+      { name: 'Advocate AI Integration', status: 'Active' }
+    ],
+    timeline: [
+      { date: '13 July 2026', action: 'All services configured and active.' }
+    ],
+    invoices: [
+      { id: 'INV-2026-0098', date: '09 July 2026', amount: 30000, status: 'Paid' }
+    ],
+    documents: [
+      { name: 'Certificate of Incorporation', status: 'Uploaded' },
+      { name: 'Company PAN Card', status: 'Uploaded' },
+      { name: 'Corporate GST Certificate', status: 'Uploaded' }
     ]
   },
   {
     id: 'OPG-2026-1044',
-    name: 'Amit Verma',
-    company: 'Verma Solutions',
-    email: 'amit@vermasol.com',
-    phone: '+91 98765 43211',
-    plan: 'Premium',
-    status: 'In Progress',
-    progress: 40,
-    amountPaid: 15000,
-    pendingAmount: 15000,
-    services: [
-      { name: 'Website Development', status: 'In Progress' },
-      { name: 'Payment Gateway', status: 'Pending' }
-    ],
-    timeline: [],
-    invoices: [],
-    documents: []
-  },
-  {
-    id: 'OPG-2026-1043',
-    name: 'Neha Singh',
-    company: 'Singh Traders',
-    email: 'neha@singhtraders.com',
-    phone: '+91 98765 43212',
-    plan: 'Basic',
-    status: 'Pending',
-    progress: 20,
-    amountPaid: 5000,
-    pendingAmount: 5000,
-    services: [
-      { name: 'Website Development', status: 'Pending' }
-    ],
-    timeline: [],
-    invoices: [],
-    documents: []
-  },
-  {
-    id: 'OPG-2026-1042',
-    name: 'Vikram Mehta',
-    company: 'Mehta Corp',
-    email: 'vikram@mehtacorp.com',
+    name: 'Neha Gupta',
+    company: 'Gupta FinTech',
+    email: 'neha@guptafintech.com',
     phone: '+91 98765 43213',
     plan: 'Premium',
-    status: 'In Progress',
-    progress: 70,
-    amountPaid: 25000,
-    pendingAmount: 5000,
+    status: 'Under Review',
+    progress: 20,
+    amountPaid: 5000,
+    pendingAmount: 25000,
     services: [
-      { name: 'Website Development', status: 'Completed' },
-      { name: 'Payment Gateway', status: 'Approved' }
-    ],
-    timeline: [],
-    invoices: [],
-    documents: []
-  },
-  {
-    id: 'OPG-2026-1041',
-    name: 'Pooja Patel',
-    company: 'Patel Industries',
-    email: 'pooja@patelind.com',
-    phone: '+91 98765 43214',
-    plan: 'Basic',
-    status: 'Pending',
-    progress: 10,
-    amountPaid: 1000,
-    pendingAmount: 9000,
-    services: [
-      { name: 'Website Development', status: 'Not Started' }
+      { name: 'Payout Process', status: 'Under Review' },
+      { name: 'Payin Settlement', status: 'Not Started' }
     ],
     timeline: [],
     invoices: [],
@@ -140,18 +132,33 @@ export const AppContextProvider = ({ children }) => {
     return localStorage.getItem('onepg_role') || null;
   });
 
+  // Global Toast Notifications State
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    // Auto-clear after 4 seconds
+    const timer = setTimeout(() => {
+      setToast(prev => prev && prev.message === message ? null : prev);
+    }, 4000);
+    return () => clearTimeout(timer);
+  };
+
   useEffect(() => {
     localStorage.setItem('onepg_clients', JSON.stringify(clients));
   }, [clients]);
 
-  const login = (role, clientId = null) => {
+  useEffect(() => {
+    localStorage.setItem('onepg_current_client_id', currentClientId);
+  }, [currentClientId]);
+
+  const login = (role, clientId = '') => {
     setIsAuthenticated(true);
     setUserRole(role);
     localStorage.setItem('onepg_auth', 'true');
     localStorage.setItem('onepg_role', role);
     if (clientId) {
       setCurrentClientId(clientId);
-      localStorage.setItem('onepg_current_client_id', clientId);
     }
   };
 
@@ -160,92 +167,69 @@ export const AppContextProvider = ({ children }) => {
     setUserRole(null);
     localStorage.removeItem('onepg_auth');
     localStorage.removeItem('onepg_role');
-    localStorage.removeItem('onepg_current_client_id');
   };
 
   const addClient = (clientData) => {
     const nextIdNum = Math.max(...clients.map(c => parseInt(c.id.split('-')[2]))) + 1;
-    const newId = `OPG-2026-${nextIdNum}`;
-
+    const nextId = `OPG-2026-${nextIdNum}`;
+    
     const newClient = {
-      id: newId,
+      id: nextId,
       name: clientData.name,
       company: clientData.company,
       email: clientData.email,
-      phone: clientData.phone || '+91 98765 00000',
-      plan: clientData.plan || 'Basic',
+      phone: clientData.phone || '+91 99999 99999',
+      plan: clientData.plan,
       status: 'Pending',
       progress: 10,
-      amountPaid: 0,
-      pendingAmount: clientData.plan === 'Premium' ? 30000 : 10000,
+      amountPaid: clientData.plan === 'Premium' ? 5000 : 1000,
+      pendingAmount: clientData.plan === 'Premium' ? 25000 : 9000,
       services: [
-        { name: 'Website Development', status: 'Not Started' },
-        { name: 'Payment Gateway', status: 'Not Started' },
-        { name: 'Pay-In Process', status: 'Not Started' },
         { name: 'Payout Process', status: 'Not Started' },
-        { name: 'T+0 Settlement', status: 'Not Started' }
+        { name: 'Payin Settlement', status: 'Not Started' },
+        { name: 'Advocate AI Integration', status: 'Not Started' }
       ],
       timeline: [
-        { label: 'Documents Received', status: 'In Progress', date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) },
-        { label: 'Verification', status: 'Pending', date: '' },
-        { label: 'Partner Selection', status: 'Pending', date: '' },
-        { label: 'Submitted to Bank', status: 'Pending', date: '' },
-        { label: 'Bank Review', status: 'Pending', date: '' },
-        { label: 'Live Activation', status: 'Pending', date: '' }
+        { date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }), action: 'Account initialized by Administrator.' }
       ],
       invoices: [
-        { id: `INV-2026-${String(nextIdNum).slice(-3)}`, date: '--', amount: clientData.plan === 'Premium' ? 30000 : 10000, status: 'Pending' }
+        { id: `INV-2026-00${nextIdNum}`, date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }), amount: clientData.plan === 'Premium' ? 5000 : 1000, status: 'Paid' },
+        { id: `INV-2026-00${nextIdNum + 10}`, date: '--', amount: clientData.plan === 'Premium' ? 25000 : 9000, status: 'Pending' }
       ],
       documents: [
-        { name: 'GST Certificate', status: 'Pending' },
-        { name: 'PAN Card', status: 'Pending' },
-        { name: 'Aadhaar Card', status: 'Pending' },
-        { name: 'Bank Statement', status: 'Pending' },
-        { name: 'Cancelled Cheque', status: 'Pending' }
+        { name: 'Certificate of Incorporation', status: 'Pending' },
+        { name: 'Company PAN Card', status: 'Pending' },
+        { name: 'Corporate GST Certificate', status: 'Pending' }
       ]
     };
 
     setClients(prev => [newClient, ...prev]);
-    return newClient;
   };
 
-  const updateClientStatus = (clientId, serviceName, newStatus, notes) => {
+  const updateClientStatus = (clientId, serviceName, newStatus, notes = '') => {
     setClients(prev => prev.map(client => {
       if (client.id === clientId) {
-        // Update service status
         const updatedServices = client.services.map(s => 
           s.name === serviceName ? { ...s, status: newStatus } : s
         );
 
-        // Update overall client status & timeline based on service status changes
-        let overallStatus = client.status;
-        let progress = client.progress;
-        const updatedTimeline = [...client.timeline];
-
-        if (newStatus === 'Approved' || newStatus === 'Active' || newStatus === 'Completed') {
-          // Boost progress slightly
-          progress = Math.min(progress + 10, 100);
+        // Recompute general progress based on service statuses
+        const activeCount = updatedServices.filter(s => s.status === 'Active' || s.status === 'Completed').length;
+        const inProgressCount = updatedServices.filter(s => s.status === 'In Progress' || s.status === 'Under Review' || s.status === 'Applied').length;
+        
+        let progress = 10;
+        if (updatedServices.length > 0) {
+          progress = Math.round(((activeCount * 1.0 + inProgressCount * 0.5) / updatedServices.length) * 90) + 10;
         }
 
-        // If service is "Payout Process" and status updated, add comment/notes in timeline if appropriate
-        if (notes && updatedTimeline.length > 0) {
-          // Add a custom note to the active timeline node
-          const inProgressIdx = updatedTimeline.findIndex(t => t.status === 'In Progress');
-          if (inProgressIdx !== -1) {
-            updatedTimeline[inProgressIdx] = {
-              ...updatedTimeline[inProgressIdx],
-              status: 'Completed',
-              date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
-            };
-            if (inProgressIdx + 1 < updatedTimeline.length) {
-              updatedTimeline[inProgressIdx + 1] = {
-                ...updatedTimeline[inProgressIdx + 1],
-                status: 'In Progress',
-                notes: notes
-              };
-            }
-          }
-        }
+        // Add to timeline
+        const updatedTimeline = [
+          { 
+            date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }), 
+            action: notes || `Service status for "${serviceName}" modified to ${newStatus}.` 
+          },
+          ...client.timeline
+        ];
 
         return {
           ...client,
@@ -265,13 +249,9 @@ export const AppContextProvider = ({ children }) => {
           d.name === docName ? { ...d, status: newStatus } : d
         );
         
-        // Boost progress if a doc is uploaded
-        const progress = Math.min(client.progress + 5, 100);
-
         return {
           ...client,
-          documents: updatedDocs,
-          progress
+          documents: updatedDocs
         };
       }
       return client;
@@ -314,9 +294,49 @@ export const AppContextProvider = ({ children }) => {
       isAuthenticated,
       userRole,
       login,
-      logout
+      logout,
+      toast,
+      showToast
     }}>
       {children}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="fixed bottom-6 right-6 z-[9999] max-w-sm w-[90%] sm:w-full bg-[#0d0d0d]/90 backdrop-blur-md border border-white/10 rounded-xl p-4 shadow-[0_10px_35px_rgba(0,0,0,0.6)] flex items-start gap-3"
+          >
+            <div className={`mt-0.5 rounded-lg p-1.5 shrink-0 ${
+              toast.type === 'success' ? 'bg-emerald-500/10 text-emerald-400' :
+              toast.type === 'error' ? 'bg-red-500/10 text-red-400' :
+              toast.type === 'warning' ? 'bg-amber-500/10 text-amber-400' :
+              'bg-blue-500/10 text-[#00E5FF]'
+            }`}>
+              {toast.type === 'success' && <CheckCircle2 size={16} />}
+              {toast.type === 'error' && <AlertCircle size={16} />}
+              {toast.type === 'warning' && <AlertTriangle size={16} />}
+              {toast.type === 'info' && <Info size={16} />}
+            </div>
+            <div className="flex-grow min-w-0">
+              <p className="text-[10px] font-bold text-white uppercase tracking-wider mb-0.5">
+                {toast.type === 'success' ? 'Success' :
+                 toast.type === 'error' ? 'Error' :
+                 toast.type === 'warning' ? 'Warning' :
+                 'System Alert'}
+              </p>
+              <p className="text-xs text-gray-300 font-light leading-relaxed">{toast.message}</p>
+            </div>
+            <button 
+              onClick={() => setToast(null)}
+              className="text-gray-500 hover:text-white p-0.5 rounded transition-colors shrink-0"
+            >
+              <X size={14} />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </AppContext.Provider>
   );
 };

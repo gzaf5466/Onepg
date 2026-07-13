@@ -69,7 +69,7 @@ const ContactPage = () => {
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Call Us</h4>
-                    <p className="text-sm font-semibold text-white mt-1">+91 1234 567 890</p>
+                    <p className="text-sm font-semibold text-white mt-1">+91 74283 14487</p>
                   </div>
                 </div>
 
@@ -80,7 +80,7 @@ const ContactPage = () => {
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Email Us</h4>
-                    <p className="text-sm font-semibold text-white mt-1">support@onepg.in</p>
+                    <p className="text-sm font-semibold text-white mt-1">help@onepg.in</p>
                   </div>
                 </div>
 
@@ -91,7 +91,7 @@ const ContactPage = () => {
                   </div>
                   <div>
                     <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">WhatsApp</h4>
-                    <p className="text-sm font-semibold text-white mt-1">+91 1234 567 890</p>
+                    <p className="text-sm font-semibold text-white mt-1">+91 74283 14487</p>
                   </div>
                 </div>
 
@@ -104,8 +104,9 @@ const ContactPage = () => {
                     <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Office Address</h4>
                     <p className="text-xs font-semibold text-white mt-1 leading-relaxed">
                       OnePG Technologies Pvt. Ltd.,<br />
-                      HSR Layout, Bengaluru,<br />
-                      Karnataka 560102, India
+                      AltF Orchid Business Park, 1st Floor,<br />
+                      Badshahpur Sohna Road Highway, Central Park II,<br />
+                      Sector 48, Gurugram, Haryana 122004
                     </p>
                   </div>
                 </div>
