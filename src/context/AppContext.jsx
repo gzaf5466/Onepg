@@ -4,285 +4,292 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export const AppContext = createContext();
 
-const initialClients = [
-  {
-    id: 'OPG-2026-1045',
-    name: 'Rahul Sharma',
-    company: 'Sharma Enterprises',
-    email: 'rahul@sharmaent.com',
-    phone: '+91 98765 43210',
-    plan: 'Premium',
-    status: 'In Progress',
-    progress: 65,
-    amountPaid: 20000,
-    pendingAmount: 10000,
-    services: [
-      { name: 'Payout Process', status: 'Active' },
-      { name: 'Payin Settlement', status: 'In Progress' },
-      { name: 'Advocate AI Integration', status: 'Applied' },
-      { name: 'Custom CRM Access', status: 'Pending' }
-    ],
-    timeline: [
-      { date: '12 July 2026', action: 'KYC Document approved by compliance officer.' },
-      { date: '10 July 2026', action: 'Services setup initiated. ICICI Routing Node configured.' },
-      { date: '08 July 2026', action: 'Corporate account onboarding registration completed.' }
-    ],
-    invoices: [
-      { id: 'INV-2026-0091', date: '08 July 2026', amount: 20000, status: 'Paid' },
-      { id: 'INV-2026-0092', date: '--', amount: 10000, status: 'Pending' }
-    ],
-    documents: [
-      { name: 'Certificate of Incorporation', status: 'Uploaded' },
-      { name: 'Company PAN Card', status: 'Uploaded' },
-      { name: 'Corporate GST Certificate', status: 'Uploaded' },
-      { name: 'Technical Compliance Signoff', status: 'Under Review' }
-    ]
-  },
-  {
-    id: 'OPG-2026-1042',
-    name: 'Anjali Verma',
-    company: 'Verma Tech Solutions',
-    email: 'anjali@vermatech.com',
-    phone: '+91 98765 43211',
-    plan: 'Basic',
-    status: 'In Progress',
-    progress: 40,
-    amountPaid: 10000,
-    pendingAmount: 0,
-    services: [
-      { name: 'Payout Process', status: 'In Progress' },
-      { name: 'Payin Settlement', status: 'Not Started' }
-    ],
-    timeline: [
-      { date: '11 July 2026', action: 'Company GST verified.' }
-    ],
-    invoices: [
-      { id: 'INV-2026-0095', date: '08 July 2026', amount: 10000, status: 'Paid' }
-    ],
-    documents: [
-      { name: 'Certificate of Incorporation', status: 'Uploaded' },
-      { name: 'Company PAN Card', status: 'Uploaded' },
-      { name: 'Corporate GST Certificate', status: 'Uploaded' }
-    ]
-  },
-  {
-    id: 'OPG-2026-1043',
-    name: 'Vikram Singh',
-    company: 'Singh Logistics',
-    email: 'vikram@singhlogistics.com',
-    phone: '+91 98765 43212',
-    plan: 'Premium',
-    status: 'Completed',
-    progress: 100,
-    amountPaid: 30000,
-    pendingAmount: 0,
-    services: [
-      { name: 'Payout Process', status: 'Active' },
-      { name: 'Payin Settlement', status: 'Active' },
-      { name: 'Advocate AI Integration', status: 'Active' }
-    ],
-    timeline: [
-      { date: '13 July 2026', action: 'All services configured and active.' }
-    ],
-    invoices: [
-      { id: 'INV-2026-0098', date: '09 July 2026', amount: 30000, status: 'Paid' }
-    ],
-    documents: [
-      { name: 'Certificate of Incorporation', status: 'Uploaded' },
-      { name: 'Company PAN Card', status: 'Uploaded' },
-      { name: 'Corporate GST Certificate', status: 'Uploaded' }
-    ]
-  },
-  {
-    id: 'OPG-2026-1044',
-    name: 'Neha Gupta',
-    company: 'Gupta FinTech',
-    email: 'neha@guptafintech.com',
-    phone: '+91 98765 43213',
-    plan: 'Premium',
-    status: 'Under Review',
-    progress: 20,
-    amountPaid: 5000,
-    pendingAmount: 25000,
-    services: [
-      { name: 'Payout Process', status: 'Under Review' },
-      { name: 'Payin Settlement', status: 'Not Started' }
-    ],
-    timeline: [],
-    invoices: [],
-    documents: []
-  }
-];
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export const AppContextProvider = ({ children }) => {
-  const [clients, setClients] = useState(() => {
-    const saved = localStorage.getItem('onepg_clients');
-    return saved ? JSON.parse(saved) : initialClients;
-  });
-
-  const [currentClientId, setCurrentClientId] = useState(() => {
-    return localStorage.getItem('onepg_current_client_id') || 'OPG-2026-1045';
-  });
-
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem('onepg_auth') === 'true';
-  });
-
-  const [userRole, setUserRole] = useState(() => {
-    return localStorage.getItem('onepg_role') || null;
-  });
-
+  const [token, setToken] = useState(() => localStorage.getItem('onepg_token') || null);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem('onepg_token'));
+  const [userRole, setUserRole] = useState(() => localStorage.getItem('onepg_role') || null);
+  
+  const [clients, setClients] = useState([]);
+  const [currentClientId, setCurrentClientId] = useState(() => localStorage.getItem('onepg_current_client_id') || '');
+  const [tickets, setTickets] = useState([]);
+  
   // Global Toast Notifications State
   const [toast, setToast] = useState(null);
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
-    // Auto-clear after 4 seconds
     const timer = setTimeout(() => {
       setToast(prev => prev && prev.message === message ? null : prev);
     }, 4000);
     return () => clearTimeout(timer);
   };
 
-  useEffect(() => {
-    localStorage.setItem('onepg_clients', JSON.stringify(clients));
-  }, [clients]);
+  // Helper for authenticated HTTP headers
+  const getAuthHeaders = () => {
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+  };
 
-  useEffect(() => {
-    localStorage.setItem('onepg_current_client_id', currentClientId);
-  }, [currentClientId]);
-
-  const login = (role, clientId = '') => {
-    setIsAuthenticated(true);
-    setUserRole(role);
-    localStorage.setItem('onepg_auth', 'true');
-    localStorage.setItem('onepg_role', role);
-    if (clientId) {
-      setCurrentClientId(clientId);
+  // Fetch clients from the database
+  const fetchClients = async () => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_BASE}/clients`, {
+        headers: getAuthHeaders(),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setClients(data.clients);
+        if (data.clients.length > 0) {
+          // If no current client is selected, select the first one
+          const currentSavedId = localStorage.getItem('onepg_current_client_id');
+          const exists = data.clients.some(c => c.id === currentSavedId);
+          if (!currentSavedId || !exists) {
+            setCurrentClientId(data.clients[0].id);
+            localStorage.setItem('onepg_current_client_id', data.clients[0].id);
+          }
+        }
+      } else {
+        if (res.status === 401 || res.status === 403) {
+          logout();
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch clients:', err);
     }
   };
 
-  const logout = () => {
-    setIsAuthenticated(false);
-    setUserRole(null);
-    localStorage.removeItem('onepg_auth');
-    localStorage.removeItem('onepg_role');
+  // Fetch support tickets from database
+  const fetchTickets = async () => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_BASE}/tickets`, {
+        headers: getAuthHeaders()
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTickets(data.tickets);
+      }
+    } catch (err) {
+      console.error('Failed to fetch tickets:', err);
+    }
   };
 
-  const addClient = (clientData) => {
-    const nextIdNum = Math.max(...clients.map(c => parseInt(c.id.split('-')[2]))) + 1;
-    const nextId = `OPG-2026-${nextIdNum}`;
-    
-    const newClient = {
-      id: nextId,
-      name: clientData.name,
-      company: clientData.company,
-      email: clientData.email,
-      phone: clientData.phone || '+91 99999 99999',
-      plan: clientData.plan,
-      status: 'Pending',
-      progress: 10,
-      amountPaid: clientData.plan === 'Premium' ? 5000 : 1000,
-      pendingAmount: clientData.plan === 'Premium' ? 25000 : 9000,
-      services: [
-        { name: 'Payout Process', status: 'Not Started' },
-        { name: 'Payin Settlement', status: 'Not Started' },
-        { name: 'Advocate AI Integration', status: 'Not Started' }
-      ],
-      timeline: [
-        { date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }), action: 'Account initialized by Administrator.' }
-      ],
-      invoices: [
-        { id: `INV-2026-00${nextIdNum}`, date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }), amount: clientData.plan === 'Premium' ? 5000 : 1000, status: 'Paid' },
-        { id: `INV-2026-00${nextIdNum + 10}`, date: '--', amount: clientData.plan === 'Premium' ? 25000 : 9000, status: 'Pending' }
-      ],
-      documents: [
-        { name: 'Certificate of Incorporation', status: 'Pending' },
-        { name: 'Company PAN Card', status: 'Pending' },
-        { name: 'Corporate GST Certificate', status: 'Pending' }
-      ]
-    };
+  // Effect to load data upon login
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchClients();
+      fetchTickets();
+    } else {
+      setClients([]);
+      setTickets([]);
+    }
+  }, [isAuthenticated, token]);
 
-    setClients(prev => [newClient, ...prev]);
-  };
+  // Effect to keep current client ID persisted
+  useEffect(() => {
+    if (currentClientId) {
+      localStorage.setItem('onepg_current_client_id', currentClientId);
+    } else {
+      localStorage.removeItem('onepg_current_client_id');
+    }
+  }, [currentClientId]);
 
-  const updateClientStatus = (clientId, serviceName, newStatus, notes = '') => {
-    setClients(prev => prev.map(client => {
-      if (client.id === clientId) {
-        const updatedServices = client.services.map(s => 
-          s.name === serviceName ? { ...s, status: newStatus } : s
-        );
+  // Authenticate user via backend credentials
+  const login = async (email, password) => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
 
-        // Recompute general progress based on service statuses
-        const activeCount = updatedServices.filter(s => s.status === 'Active' || s.status === 'Completed').length;
-        const inProgressCount = updatedServices.filter(s => s.status === 'In Progress' || s.status === 'Under Review' || s.status === 'Applied').length;
-        
-        let progress = 10;
-        if (updatedServices.length > 0) {
-          progress = Math.round(((activeCount * 1.0 + inProgressCount * 0.5) / updatedServices.length) * 90) + 10;
+      if (data.success) {
+        setToken(data.token);
+        setIsAuthenticated(true);
+        setUserRole(data.user.role);
+        localStorage.setItem('onepg_token', data.token);
+        localStorage.setItem('onepg_role', data.user.role);
+
+        if (data.user.client_id) {
+          setCurrentClientId(data.user.client_id);
         }
 
-        // Add to timeline
-        const updatedTimeline = [
-          { 
-            date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }), 
-            action: notes || `Service status for "${serviceName}" modified to ${newStatus}.` 
-          },
-          ...client.timeline
-        ];
-
-        return {
-          ...client,
-          services: updatedServices,
-          progress,
-          timeline: updatedTimeline
-        };
+        showToast(`Welcome back, ${data.user.name}!`, 'success');
+        return { success: true, user: data.user };
+      } else {
+        return { success: false, message: data.message || 'Login failed.' };
       }
-      return client;
-    }));
+    } catch (err) {
+      console.error('Login request error:', err);
+      return { success: false, message: 'Connection to server failed.' };
+    }
   };
 
-  const uploadDocument = (clientId, docName, newStatus = 'Uploaded') => {
-    setClients(prev => prev.map(client => {
-      if (client.id === clientId) {
-        const updatedDocs = client.documents.map(d => 
-          d.name === docName ? { ...d, status: newStatus } : d
-        );
-        
-        return {
-          ...client,
-          documents: updatedDocs
-        };
-      }
-      return client;
-    }));
+  // Revoke credentials and reset state
+  const logout = () => {
+    setToken(null);
+    setIsAuthenticated(false);
+    setUserRole(null);
+    setClients([]);
+    setTickets([]);
+    setCurrentClientId('');
+    localStorage.removeItem('onepg_token');
+    localStorage.removeItem('onepg_role');
+    localStorage.removeItem('onepg_current_client_id');
+    showToast('Logged out of system successfully.', 'info');
   };
 
-  const makePayment = (clientId) => {
-    setClients(prev => prev.map(client => {
-      if (client.id === clientId) {
-        const amountToPay = client.pendingAmount;
-        if (amountToPay <= 0) return client;
-
-        const updatedInvoices = client.invoices.map(inv => 
-          inv.status === 'Pending' ? { ...inv, status: 'Paid', date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) } : inv
-        );
-
-        return {
-          ...client,
-          amountPaid: client.amountPaid + amountToPay,
-          pendingAmount: 0,
-          invoices: updatedInvoices
-        };
+  // Admin: Register a new merchant
+  const addClient = async (clientData) => {
+    try {
+      const res = await fetch(`${API_BASE}/clients`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(clientData)
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`Merchant profile for ${clientData.company} initialized.`, 'success');
+        fetchClients();
+      } else {
+        showToast(data.message || 'Failed to create client.', 'error');
       }
-      return client;
-    }));
+    } catch (err) {
+      showToast('Network error creating client.', 'error');
+    }
   };
 
-  const currentClient = clients.find(c => c.id === currentClientId) || clients[0];
+  // Admin: Update Status / Progress
+  const updateClientStatus = async (clientId, serviceName, newStatus, notes = '') => {
+    try {
+      const res = await fetch(`${API_BASE}/clients/${clientId}/status`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ serviceName, newStatus, notes })
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchClients();
+      } else {
+        showToast(data.message || 'Failed to update service status.', 'error');
+      }
+    } catch (err) {
+      showToast('Network error updating status.', 'error');
+    }
+  };
+
+  // Client: Upload KYC Document
+  const uploadDocument = async (clientId, docName, status = 'Uploaded') => {
+    try {
+      const res = await fetch(`${API_BASE}/clients/${clientId}/documents`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ name: docName, status })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`KYC Document "${docName}" submitted successfully.`, 'success');
+        fetchClients();
+      } else {
+        showToast(data.message || 'Upload failed.', 'error');
+      }
+    } catch (err) {
+      showToast('Network error during upload.', 'error');
+    }
+  };
+
+  // Client: Configure callback URL & regenerate client secret keys
+  const saveWebhookUrl = async (clientId, webhookUrl) => {
+    try {
+      const res = await fetch(`${API_BASE}/clients/${clientId}/webhook`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ webhookUrl })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('Webhook destination endpoint updated.', 'success');
+        fetchClients();
+        return { success: true, clientSecret: data.clientSecret };
+      } else {
+        showToast(data.message || 'Failed to configure webhook.', 'error');
+        return { success: false };
+      }
+    } catch (err) {
+      showToast('Network error configuring webhook.', 'error');
+      return { success: false };
+    }
+  };
+
+  // Client/Admin: Settle pending payments ledger
+  const makePayment = async (clientId) => {
+    try {
+      const res = await fetch(`${API_BASE}/clients/${clientId}/pay`, {
+        method: 'POST',
+        headers: getAuthHeaders()
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchClients();
+      } else {
+        showToast(data.message || 'Payment processing failed.', 'error');
+      }
+    } catch (err) {
+      showToast('Network error processing payment.', 'error');
+    }
+  };
+
+  // Support tickets creation
+  const createTicket = async (title, severity, desc) => {
+    try {
+      const res = await fetch(`${API_BASE}/tickets`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ title, severity, desc })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`Support ticket ${data.ticketId} created successfully.`, 'success');
+        fetchTickets();
+      } else {
+        showToast(data.message || 'Failed to submit ticket.', 'error');
+      }
+    } catch (err) {
+      showToast('Network error raising ticket.', 'error');
+    }
+  };
+
+  // Support tickets resolution
+  const resolveTicket = async (ticketId) => {
+    try {
+      const res = await fetch(`${API_BASE}/tickets/${ticketId}/resolve`, {
+        method: 'PUT',
+        headers: getAuthHeaders()
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.message || 'Support Ticket marked as Resolved successfully!', 'success');
+        fetchTickets();
+      } else {
+        showToast(data.message || 'Failed to resolve ticket.', 'error');
+      }
+    } catch (err) {
+      showToast('Network error resolving ticket.', 'error');
+    }
+  };
+
+  const currentClient = clients.find(c => c.id === currentClientId) || clients[0] || null;
 
   return (
     <AppContext.Provider value={{
+      API_BASE,
       clients,
       currentClientId,
       setCurrentClientId,
@@ -290,13 +297,18 @@ export const AppContextProvider = ({ children }) => {
       addClient,
       updateClientStatus,
       uploadDocument,
+      saveWebhookUrl,
       makePayment,
       isAuthenticated,
       userRole,
       login,
       logout,
       toast,
-      showToast
+      showToast,
+      tickets,
+      fetchTickets,
+      createTicket,
+      resolveTicket
     }}>
       {children}
       <AnimatePresence>

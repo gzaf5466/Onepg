@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
-import { Shield, Sparkles, Activity, Zap, CheckCircle, Eye, EyeOff, Globe, TrendingUp, ShieldCheck, ChevronRight } from 'lucide-react';
+import { Shield, Eye, EyeOff, Globe, TrendingUp, ShieldCheck, ChevronRight } from 'lucide-react';
 import loginImg from '../assets/login.avif';
 import logo from '../assets/Logo.svg';
 
@@ -14,37 +14,30 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setError('');
     if (!email || !password) {
       setError('Please fill in all fields');
       return;
     }
 
-    if (email === 'admin@onepg.in' && password === 'admin') {
-      login('admin');
-      navigate('/admin');
-    } else if (email === 'rahul@sharmaent.com' && password === 'password') {
-      login('client', 'OPG-2026-1045');
-      navigate('/dashboard');
-    } else {
-      setError('Invalid credentials. Use quick login buttons below to test.');
+    try {
+      const res = await login(email, password);
+      if (res.success) {
+        if (res.user.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
+      } else {
+        setError(res.message || 'Invalid email or password.');
+      }
+    } catch (err) {
+      setError('Network connection error. Server might be offline.');
     }
   };
 
-  const handleQuickLogin = (role) => {
-    if (role === 'client') {
-      setEmail('rahul@sharmaent.com');
-      setPassword('password');
-      login('client', 'OPG-2026-1045');
-      navigate('/dashboard');
-    } else if (role === 'admin') {
-      setEmail('admin@onepg.in');
-      setPassword('admin');
-      login('admin');
-      navigate('/admin');
-    }
-  };
 
   return (
     <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4 sm:p-6 md:p-8 lg:p-12 relative overflow-hidden font-sans">
@@ -195,26 +188,6 @@ const LoginPage = () => {
               </p>
             </div>
 
-            {/* Quick Testing Actions (highly useful) */}
-            <div className="mt-8 border-t border-white/5 pt-6">
-              <p className="text-center text-[10px] uppercase tracking-wider text-gray-500 font-bold mb-3">Quick Login (Testing Only)</p>
-              <div className="grid grid-cols-2 gap-3">
-                <button 
-                  onClick={() => handleQuickLogin('client')}
-                  className="bg-white/[0.02] border border-white/5 hover:border-[#FF5722]/30 text-gray-300 hover:text-white py-2 px-3 rounded-lg text-xs font-semibold transition-all flex flex-col items-center justify-center gap-1 group"
-                >
-                  <span className="text-gray-400 group-hover:text-[#FF5722] transition-colors">Client Portal</span>
-                  <span className="text-[9px] text-gray-600 font-normal">Rahul Sharma</span>
-                </button>
-                <button 
-                  onClick={() => handleQuickLogin('admin')}
-                  className="bg-white/[0.02] border border-white/5 hover:border-[#00E5FF]/30 text-gray-300 hover:text-white py-2 px-3 rounded-lg text-xs font-semibold transition-all flex flex-col items-center justify-center gap-1 group"
-                >
-                  <span className="text-gray-400 group-hover:text-[#00E5FF] transition-colors">Admin Portal</span>
-                  <span className="text-[9px] text-gray-600 font-normal">Admin View</span>
-                </button>
-              </div>
-            </div>
 
           </div>
         </div>

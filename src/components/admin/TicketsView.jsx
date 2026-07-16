@@ -1,14 +1,14 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { AppContext } from '../../context/AppContext';
 
 export default function TicketsView() {
-  const { showToast } = useContext(AppContext);
-  const [adminTickets, setAdminTickets] = useState([
-    { id: 'TCK-2026-9281', client: 'Rahul Sharma', company: 'Sharma Enterprises', title: 'Webhook fails to trigger on payment success', status: 'Resolved', date: '08 July 2026', desc: 'Webhook event payment.captured does not trigger after client pays.', severity: 'High' },
-    { id: 'TCK-2026-9310', client: 'Rahul Sharma', company: 'Sharma Enterprises', title: 'Request for T+0 settlement enablement', status: 'Open', date: '10 July 2026', desc: 'Our transaction volume has crossed ₹5L/day. Requesting activation of instant settlement rails.', severity: 'Medium' }
-  ]);
+  const { tickets, fetchTickets, resolveTicket } = useContext(AppContext);
 
-  const openTicketsCount = adminTickets.filter(t => t.status === 'Open').length;
+  useEffect(() => {
+    fetchTickets();
+  }, []);
+
+  const openTicketsCount = tickets.filter(t => t.status === 'Open').length;
 
   return (
     <div className="space-y-6">
@@ -36,7 +36,7 @@ export default function TicketsView() {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 text-sm">
-              {adminTickets.map((t) => (
+              {tickets.map((t) => (
                 <tr key={t.id} className="hover:bg-white/[0.02]">
                   <td className="px-6 py-4 font-mono text-gray-500">{t.id}</td>
                   <td className="px-6 py-4">
@@ -45,7 +45,7 @@ export default function TicketsView() {
                   </td>
                   <td className="px-6 py-4">
                     <span className="font-semibold text-white block">{t.title}</span>
-                    <span className="text-[11px] text-gray-400 font-light block mt-0.5">{t.desc}</span>
+                    <span className="text-[11px] text-gray-400 font-light block mt-0.5">{t.description || t.desc}</span>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${
@@ -64,10 +64,7 @@ export default function TicketsView() {
                   <td className="px-6 py-4 text-right">
                     {t.status === 'Open' ? (
                       <button 
-                        onClick={() => {
-                          setAdminTickets(prev => prev.map(tick => tick.id === t.id ? { ...tick, status: 'Resolved' } : tick));
-                          showToast('Support Ticket marked as Resolved successfully!', 'success');
-                        }}
+                        onClick={() => resolveTicket(t.id)}
                         className="bg-[#00E5FF] hover:bg-[#00bacc] text-black px-3 py-1 rounded text-xs font-bold transition-all shadow-[0_0_10px_rgba(0,229,255,0.15)]"
                       >
                         Resolve Ticket

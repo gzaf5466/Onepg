@@ -17,7 +17,7 @@ import TicketsView from '../components/admin/TicketsView';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const { clients, addClient, updateClientStatus, uploadDocument, makePayment, setCurrentClientId, logout, showToast } = useContext(AppContext);
+  const { clients, addClient, updateClientStatus, uploadDocument, makePayment, setCurrentClientId, logout, showToast, API_BASE } = useContext(AppContext);
   
   // Admin navigation state: 'all-clients', 'add-client', 'projects', 'services', 'payments', 'invoices', 'documents', 'tickets', 'settings'
   const [currentView, setCurrentView] = useState('all-clients');
@@ -31,6 +31,26 @@ const AdminDashboard = () => {
   const viewClientDashboard = (clientId) => {
     setCurrentClientId(clientId);
     navigate('/dashboard');
+  };
+
+  const handleCheckHealth = async () => {
+    try {
+      const token = localStorage.getItem('onepg_token');
+      const res = await fetch(`${API_BASE}/system/metrics`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await res.json();
+      if (data.success) {
+        const { cpuLoad, ramUsage, dbLatency } = data.metrics;
+        showToast(`System Health: CPU ${cpuLoad} | RAM ${ramUsage} | DB Latency ${dbLatency}`, "info");
+      } else {
+        showToast("Failed to fetch system metrics: " + (data.message || 'Unknown error'), "error");
+      }
+    } catch (err) {
+      showToast("Host system diagnostics offline.", "error");
+    }
   };
 
   const getStatusBadgeClass = (status) => {
@@ -147,16 +167,16 @@ const AdminDashboard = () => {
       </AnimatePresence>
 
       {/* Sidebar */}
-      <aside className="w-[280px] bg-white/[0.01] border-r border-white/5 flex-shrink-0 hidden xl:flex flex-col justify-between py-6">
-        <div className="flex flex-col">
-          <div className="px-6 mb-8">
+      <aside className="w-[280px] bg-[#050505] border-r border-white/5 hidden xl:flex flex-col justify-between py-6 fixed top-0 bottom-0 left-0 z-30">
+        <div className="flex flex-col min-h-0">
+          <div className="px-6 mb-8 flex-shrink-0">
             <Link to="/">
               <img src={logo} alt="OnePG" width="95" height="33" className="h-8 w-auto mb-1" />
             </Link>
             <span className="text-[10px] text-[#00E5FF] uppercase tracking-widest font-extrabold pl-0.5">Admin Panel</span>
           </div>
 
-          <nav className="space-y-1 px-4">
+          <nav className="space-y-1 px-4 overflow-y-auto min-h-0 flex-grow">
             {adminNavItems.map((item) => {
               const IconComp = item.icon;
               const isActive = currentView === item.view ||
@@ -179,10 +199,10 @@ const AdminDashboard = () => {
           </nav>
         </div>
 
-        <div className="px-4">
+        <div className="px-4 flex-shrink-0 mt-auto">
           <button 
             onClick={handleLogout}
-            className="w-full flex items-center px-4 py-3 rounded-lg text-sm font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all"
+            className="w-full flex items-center px-4 py-3 rounded-lg text-sm font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all cursor-pointer border-none bg-transparent"
           >
             <LogOut size={18} className="mr-3" />
             Logout
@@ -191,7 +211,7 @@ const AdminDashboard = () => {
       </aside>
 
       {/* Main Panel Content */}
-      <div className="flex-grow flex flex-col min-h-screen min-w-0">
+      <div className="flex-grow flex flex-col min-h-screen min-w-0 xl:pl-[280px]">
         
         {/* Admin Header */}
         <header className="h-20 bg-white/[0.01] border-b border-white/5 flex items-center justify-between px-4 sm:px-6 md:px-8 gap-3">
@@ -284,9 +304,7 @@ const AdminDashboard = () => {
           <div className="flex items-center gap-4">
             <span>OnePG v2.4 • Admin Console</span>
             <button 
-              onClick={() => {
-                showToast("System health metrics: CPU 12%, Mem 44%, Latency 14ms", "info");
-              }}
+              onClick={handleCheckHealth}
               className="text-[#00E5FF] hover:underline transition-all bg-transparent border-none p-0 cursor-pointer"
             >
               System Health
