@@ -22,10 +22,12 @@ const app = express();
 app.use(helmet());
 
 // 2. Cross-Origin Resource Sharing (CORS) Policy
+const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
 const allowedOrigins = [
-  process.env.CLIENT_URL || 'http://localhost:5173',
+  clientUrl,
   'http://localhost:3000'
 ];
+console.log('🔌 CORS Allowed Origins:', allowedOrigins);
 
 app.use(cors({
   origin: (origin, callback) => {
