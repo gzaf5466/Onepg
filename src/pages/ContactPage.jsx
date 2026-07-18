@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Phone, Mail, MessageSquare, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
@@ -41,17 +42,21 @@ const ContactPage = () => {
     <div className="min-h-screen bg-[#050505] text-white flex flex-col font-sans overflow-x-hidden">
       <Navbar />
 
-      <main className="flex-grow max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative w-full">
+      <main className="flex-grow max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8 md:pt-16 pb-12 md:pb-20 relative w-full">
         {/* Decorative background orbs */}
         <div className="absolute top-1/3 left-1/4 w-[35vw] h-[35vw] bg-[#FF5722]/5 rounded-full blur-[130px] pointer-events-none" />
         <div className="absolute bottom-1/4 right-1/4 w-[30vw] h-[30vw] bg-[#00E5FF]/5 rounded-full blur-[100px] pointer-events-none" />
 
-        <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16 space-y-4">
-          <span className="inline-block bg-[#FF5722]/10 text-[#FF5722] border border-[#FF5722]/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+        {/* Page Title & Breadcrumb Header */}
+        <div className="space-y-2 border-b border-white/10 pb-4 text-center lg:text-left mb-8 md:mb-12">
+          <div className="flex items-center justify-center lg:justify-start gap-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <Link to="/" className="hover:text-[#FF5722] transition-colors">Home</Link>
+            <span>/</span>
+            <span className="text-[#FF5722]">Contact</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#FF5722] to-[#00E5FF] tracking-tight">
             Contact Us
-          </span>
-          <h1 className="text-4xl font-extrabold text-white">Let's Connect</h1>
-          <p className="text-gray-400 text-sm sm:text-base">We're here to help you grow your business. Reach out to our teams for onboarding or customized configurations.</p>
+          </h1>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">

@@ -132,6 +132,68 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
+  // Request Password Reset OTP (AWS SES / Backend Endpoint)
+  const requestPasswordReset = async (email) => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.message, 'info');
+      } else {
+        showToast(data.message || 'Failed to send OTP code.', 'error');
+      }
+      return data;
+    } catch (err) {
+      console.error('Password reset request error:', err);
+      showToast('Network error processing request.', 'error');
+      return { success: false, message: 'Server connection failed.' };
+    }
+  };
+
+  // Verify OTP
+  const verifyResetOtp = async (email, otp) => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp })
+      });
+      const data = await res.json();
+      if (!data.success) {
+        showToast(data.message || 'Invalid verification code.', 'error');
+      }
+      return data;
+    } catch (err) {
+      showToast('Network error verifying code.', 'error');
+      return { success: false, message: 'Server connection failed.' };
+    }
+  };
+
+  // Set New Password
+  const resetPassword = async (email, otp, newPassword) => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp, newPassword })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('Password reset successfully! Please login.', 'success');
+      } else {
+        showToast(data.message || 'Failed to reset password.', 'error');
+      }
+      return data;
+    } catch (err) {
+      showToast('Network error resetting password.', 'error');
+      return { success: false, message: 'Server connection failed.' };
+    }
+  };
+
   // Revoke credentials and reset state
   const logout = () => {
     setToken(null);
@@ -303,6 +365,9 @@ export const AppContextProvider = ({ children }) => {
       userRole,
       login,
       logout,
+      requestPasswordReset,
+      verifyResetOtp,
+      resetPassword,
       toast,
       showToast,
       tickets,

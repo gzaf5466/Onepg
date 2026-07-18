@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Calendar, Clock, ArrowRight, ArrowLeft } from 'lucide-react';
@@ -127,7 +128,7 @@ const BlogPage = () => {
     <div className="min-h-screen bg-[#050505] text-white flex flex-col font-sans overflow-x-hidden">
       <Navbar />
 
-      <main className="flex-grow max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 w-full relative">
+      <main className="flex-grow max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8 md:pt-16 pb-12 md:pb-20 w-full relative">
         <div className="absolute top-0 right-1/4 w-[30vw] h-[30vw] bg-[#FF5722]/5 rounded-full blur-[100px] pointer-events-none" />
 
         {selectedBlog ? (
@@ -226,13 +227,16 @@ const BlogPage = () => {
         ) : (
           /* Article Grid View */
           <div className="space-y-12">
-            {/* Header Block */}
-            <div className="text-center max-w-2xl mx-auto space-y-4">
-              <span className="inline-block bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+            {/* Page Title & Breadcrumb Header */}
+            <div className="space-y-2 border-b border-white/10 pb-4 text-center lg:text-left mb-6 sm:mb-8">
+              <div className="flex items-center justify-center lg:justify-start gap-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                <Link to="/" className="hover:text-[#FF5722] transition-colors">Home</Link>
+                <span>/</span>
+                <span className="text-[#FF5722]">Resources & Blog</span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#FF5722] to-[#00E5FF] tracking-tight">
                 Resources & Blog
-              </span>
-              <h1 className="text-4xl font-extrabold text-white">Latest from Our Blog</h1>
-              <p className="text-gray-400 text-sm sm:text-base">Insights, updates, and guides on transaction optimization, compliance, and developer integrations.</p>
+              </h1>
             </div>
 
             {/* Blog Cards Grid */}

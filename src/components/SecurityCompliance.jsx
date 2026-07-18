@@ -63,43 +63,43 @@ const SecurityCompliance = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center max-w-5xl mx-auto">
           
           {/* Left Cards (Col 4) */}
-          <div className="lg:col-span-4 space-y-5">
+          <div className="lg:col-span-4 space-y-4">
             {securityItems.slice(0, 3).map((item) => {
               const IconComp = item.icon;
               return (
-                <div key={item.title} className="bg-white/[0.01] border border-white/5 p-5 rounded-xl space-y-2 hover:bg-white/[0.02] transition-colors hover:border-[#00E5FF]/20 text-left">
+                <div key={item.title} className="bg-white/[0.01] border border-white/5 p-4 sm:p-5 rounded-xl space-y-2 hover:bg-white/[0.02] transition-colors hover:border-[#00E5FF]/20 text-left">
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.color}`}>
                     <IconComp size={16} />
                   </div>
-                  <h4 className="text-xs font-bold text-white uppercase tracking-wider">{item.title}</h4>
-                  <p className="text-[10px] text-gray-500 leading-relaxed font-semibold">{item.desc}</p>
+                  <h4 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">{item.title}</h4>
+                  <p className="text-xs text-gray-400 leading-relaxed font-light">{item.desc}</p>
                 </div>
               );
             })}
           </div>
 
           {/* Center Graphic Shield Lock (Col 4) */}
-          <div className="lg:col-span-4 flex items-center justify-center py-6 lg:py-0">
+          <div className="lg:col-span-4 flex items-center justify-center py-4 lg:py-0">
             <img 
               src={securityImg} 
               alt="Security Compliance" 
               width="1024"
               height="1024"
-              className="w-[240px] h-[240px] object-contain transition-transform duration-700 hover:scale-105"
+              className="w-[180px] h-[180px] sm:w-[240px] sm:h-[240px] object-contain transition-transform duration-700 hover:scale-105"
             />
           </div>
 
           {/* Right Cards (Col 4) */}
-          <div className="lg:col-span-4 space-y-5">
+          <div className="lg:col-span-4 space-y-4">
             {securityItems.slice(3, 6).map((item) => {
               const IconComp = item.icon;
               return (
-                <div key={item.title} className="bg-white/[0.01] border border-white/5 p-5 rounded-xl space-y-2 hover:bg-white/[0.02] transition-colors hover:border-[#FF5722]/20 text-left">
+                <div key={item.title} className="bg-white/[0.01] border border-white/5 p-4 sm:p-5 rounded-xl space-y-2 hover:bg-white/[0.02] transition-colors hover:border-[#FF5722]/20 text-left">
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.color}`}>
                     <IconComp size={16} />
                   </div>
-                  <h4 className="text-xs font-bold text-white uppercase tracking-wider">{item.title}</h4>
-                  <p className="text-[10px] text-gray-500 leading-relaxed font-semibold">{item.desc}</p>
+                  <h4 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">{item.title}</h4>
+                  <p className="text-xs text-gray-400 leading-relaxed font-light">{item.desc}</p>
                 </div>
               );
             })}

@@ -54,9 +54,6 @@ const WhyChooseUs = () => {
       
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-4 relative z-10 space-y-12">
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <span className="inline-block bg-[#FF5722]/10 text-[#FF5722] border border-[#FF5722]/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-            Why Choose OnePG
-          </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white">OnePG vs Others</h2>
           <p className="text-gray-400 text-sm">See the difference in onboarding turnaround, success ratios, and dedicated business care.</p>
         </div>

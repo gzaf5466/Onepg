@@ -66,7 +66,7 @@ const compareFeatures = [
 export default function Pricing() {
   return (
     <div className="w-full bg-[#050505] text-white font-sans overflow-x-hidden">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 relative">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8 md:pb-16 relative">
         
         {/* Decorative background glows */}
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-brand-orange/5 blur-[120px] rounded-full pointer-events-none" />
@@ -74,17 +74,13 @@ export default function Pricing() {
 
         {/* Hero Header */}
         <div className="text-center mb-16 relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#FF5722]/20 bg-[#FF5722]/5 text-[#FF5722] text-xs font-bold uppercase tracking-widest mb-6">
-            Pricing Plans
-          </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight leading-none mb-6">
+            Flexible Solutions for <br />
+            <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#FF5722] to-[#00E5FF]">Every Stage of Growth</span>
+          </h2>
           
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight leading-none mb-6">
-            Simple, Transparent <br />
-            <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#FF5722] to-[#00E5FF]">Pricing Built for Scale</span>
-          </h1>
-          
-          <p className="text-[#88929b] text-base max-w-2xl mx-auto mt-6 font-light leading-relaxed">
-            Every business has unique needs. We offer flexible, custom-tailored pricing plans built to grow with your transaction volumes and development goals.
+          <p className="text-[#88929b] text-base max-w-2xl mx-auto mt-4 font-light leading-relaxed">
+            Every business has unique needs. Choose the tier that matches your integration timeline and disbursal requirements.
           </p>
         </div>
 

@@ -256,11 +256,8 @@ export default function Industries() {
           <div className="absolute -left-20 -bottom-20 w-[350px] h-[350px] bg-[#FF5722]/5 blur-[80px] rounded-full pointer-events-none z-0" />
 
           {/* Section Header */}
-          <div className="mb-16 flex flex-col sm:flex-row sm:items-end sm:justify-between relative z-10">
+          <div className="mb-12 md:mb-16 flex flex-col sm:flex-row sm:items-end sm:justify-between relative z-10">
           <div className="text-left">
-            <div className="text-[#00E5FF] text-xs font-bold uppercase tracking-[0.25em] mb-4 opacity-80">
-              Industries We Serve
-            </div>
             <h2 className="text-3xl lg:text-5xl font-light text-white tracking-[-0.03em] leading-tight">
               Solutions for <br className="sm:hidden" />
               <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#FF5722] to-[#00E5FF]">

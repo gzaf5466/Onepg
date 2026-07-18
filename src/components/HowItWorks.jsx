@@ -72,9 +72,6 @@ export default function HowItWorks() {
           
           {/* Left Side: Timeline Steps */}
           <div className="flex-1 w-full relative z-10 pr-0 lg:pr-16">
-            <div className="text-[#00E5FF] text-xs font-bold uppercase tracking-[0.25em] mb-4 opacity-80">
-              Process flow
-            </div>
             <h2 className="text-3xl lg:text-5xl font-light text-white mb-6 md:mb-20 tracking-[-0.03em] leading-tight">
               Get Started in <br className="hidden lg:block" />
               <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#FF5722] to-[#00E5FF]">

@@ -167,11 +167,11 @@ const Footer = () => {
 
           {/* Collapsible Section Links for Mobile, Grid columns for Desktop */}
           {sections.map((section) => (
-            <div key={section.title} className="border-b border-white/5 lg:border-none pb-4 lg:pb-0">
+            <div key={section.title} className="border-b border-white/5 lg:border-none pb-2 lg:pb-0">
               {/* Trigger Button */}
               <button 
                 onClick={() => toggleSection(section.title)}
-                className="w-full flex justify-between items-center lg:pointer-events-none text-left focus:outline-none py-2 lg:py-0 group"
+                className="w-full flex justify-between items-center lg:pointer-events-none text-left focus:outline-none py-3.5 lg:py-0 group min-h-[44px]"
               >
                 <h4 className="text-white font-bold text-xs sm:text-sm uppercase tracking-wider group-hover:text-[#FF5722] lg:group-hover:text-white transition-colors">
                   {section.title}
@@ -179,9 +179,9 @@ const Footer = () => {
                 <motion.div
                   animate={{ rotate: openSection === section.title ? 180 : 0 }}
                   transition={{ duration: 0.2 }}
-                  className="text-gray-500 lg:hidden p-1"
+                  className="text-gray-500 lg:hidden p-1.5"
                 >
-                  <ChevronDown size={16} />
+                  <ChevronDown size={18} />
                 </motion.div>
               </button>
 
