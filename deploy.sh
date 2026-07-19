@@ -9,17 +9,18 @@ echo "🚀 Starting OnePG Deployment..."
 
 # 1. Pull latest code from main branch
 echo "📥 Fetching latest code from Git..."
-git reset --hard HEAD
-git clean -fd
+git reset --hard origin/main || true
 git pull origin main
 
-# 2. Build production frontend SPA bundle
-echo "📦 Building production frontend with VITE_API_URL=/api..."
+# 2. Install dependencies & Build production frontend SPA bundle
+echo "📦 Installing dependencies & building production frontend with VITE_API_URL=/api..."
+npm install --silent
 VITE_API_URL=/api npm run build
 
-# 3. Deploy frontend bundle to Nginx web root
-echo "📂 Deploying dist assets..."
+# 3. Clean old assets & Deploy new bundle to Nginx web roots
+echo "📂 Cleaning old assets & copying new dist build..."
 mkdir -p /var/www/onepg /var/www/html
+rm -rf /var/www/onepg/* /var/www/html/*
 cp -r dist/* /var/www/onepg/
 cp -r dist/* /var/www/html/
 chown -R www-data:www-data /var/www/onepg /var/www/html
@@ -29,7 +30,7 @@ chmod -R 755 /var/www/onepg /var/www/html
 echo "⚙️ Managing PM2 Backend Service..."
 if [ -d "server" ]; then
   cd server
-  npm install --production
+  npm install --production --silent
   PORT=3000 pm2 restart onepg-backend 2>/dev/null || PORT=3000 pm2 start index.js --name "onepg-backend"
   pm2 save
   cd ..
