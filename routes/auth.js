@@ -314,9 +314,8 @@ router.post('/reset-password', forgotPasswordLimiter, [
   }
 });
 
-// POST /api/auth/social — Handle Google & GitHub Social Login/Signup
+// POST /api/auth/social — Handle Background Google & Microsoft Social Login/Signup
 router.post('/social', loginLimiter, [
-  body('email').isEmail().withMessage('Valid email required.').normalizeEmail(),
   body('provider').isIn(['google', 'microsoft']).withMessage('Unsupported social auth provider.')
 ], async (req, res) => {
   const errors = validationResult(req);
@@ -324,8 +323,32 @@ router.post('/social', loginLimiter, [
     return res.status(400).json({ success: false, message: errors.array()[0].msg });
   }
 
-  const { email, name, provider, companyName } = req.body;
-  const client = await db.connect();
+  let { email, name, provider, credential, accessToken, companyName } = req.body;
+
+  try {
+    // 1. Verify token with Google or Microsoft if provided via Client-Side SDK
+    if (provider === 'google' && credential) {
+      const googleRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`);
+      const payload = await googleRes.json();
+      if (!payload.email) throw new Error('Invalid Google Token verification.');
+      email = payload.email;
+      name = payload.name || name || email.split('@')[0];
+    } else if (provider === 'microsoft' && accessToken) {
+      const msRes = await fetch('https://graph.microsoft.com/v1.0/me', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+      const payload = await msRes.json();
+      const verifiedEmail = payload.mail || payload.userPrincipalName;
+      if (!verifiedEmail) throw new Error('Invalid Microsoft Token verification.');
+      email = verifiedEmail;
+      name = payload.displayName || name || email.split('@')[0];
+    }
+
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Email address is required for social login.' });
+    }
+
+    const client = await db.connect();
 
   try {
     await client.query('BEGIN');
