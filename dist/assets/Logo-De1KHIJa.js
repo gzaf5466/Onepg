@@ -1,0 +1,1 @@
+var e=`/assets/Logo-B0S0tUN_.svg`;export{e as t};
