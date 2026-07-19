@@ -349,8 +349,6 @@ router.post('/social', loginLimiter, [
     }
 
     const client = await db.connect();
-
-  try {
     await client.query('BEGIN');
 
     // 1. Check if user already exists
