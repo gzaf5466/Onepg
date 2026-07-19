@@ -24,15 +24,41 @@ const LoginPage = () => {
     const oauthError = searchParams.get('error');
     const social = searchParams.get('social');
 
+    // If running inside popup window, send token to parent window & close popup
+    if (window.opener && token) {
+      window.opener.postMessage({ type: 'ONEPG_OAUTH_SUCCESS', token, social }, '*');
+      window.close();
+      return;
+    }
+
     if (token && !handledOAuthRef.current) {
       handledOAuthRef.current = true;
+      // Clean URL immediately to hide token/params from address bar
+      window.history.replaceState({}, document.title, window.location.pathname);
       handleOAuthSuccess(token, 'client');
       showToast(`Signed in via ${social === 'google' ? 'Google' : 'Microsoft'}! Welcome back.`, 'success');
       navigate('/dashboard', { replace: true });
     } else if (oauthError) {
+      // Clean URL immediately
+      window.history.replaceState({}, document.title, window.location.pathname);
       setError(decodeURIComponent(oauthError));
     }
   }, [searchParams, navigate, showToast, handleOAuthSuccess]);
+
+  // Listen for popup window postMessage events
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.data && event.data.type === 'ONEPG_OAUTH_SUCCESS') {
+        const { token, social } = event.data;
+        setIsSocialLoading(false);
+        handleOAuthSuccess(token, 'client');
+        showToast(`Signed in via ${social === 'google' ? 'Google' : 'Microsoft'}! Welcome back.`, 'success');
+        navigate('/dashboard', { replace: true });
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [navigate, showToast, handleOAuthSuccess]);
 
   const handleSocialAuth = async (provider) => {
     setError('');
@@ -41,8 +67,22 @@ const LoginPage = () => {
     // Standard Production Passport.js OAuth Redirect
     const passportOAuthUrl = `${API_BASE}/auth/${provider}`;
     
-    // Redirect browser to Passport.js backend route
-    window.location.href = passportOAuthUrl;
+    // Open sleek centered popup window so main URL is never modified
+    const width = 500;
+    const height = 650;
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+    
+    const popup = window.open(
+      passportOAuthUrl,
+      `Sign in with ${provider}`,
+      `width=${width},height=${height},left=${left},top=${top},status=0,toolbar=0,menubar=0`
+    );
+
+    // Fallback if popups are blocked: standard redirect
+    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+      window.location.href = passportOAuthUrl;
+    }
   };
 
   const handleLogin = async (e) => {
