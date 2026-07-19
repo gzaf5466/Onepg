@@ -26,22 +26,34 @@ cp -r dist/* /var/www/html/
 chown -R www-data:www-data /var/www/onepg /var/www/html
 chmod -R 755 /var/www/onepg /var/www/html
 
-# 4. Check & Restart PM2 Backend Process
+# 4. Manage Backend Server Process (onepg-backend on Port 5000)
 echo "⚙️ Managing PM2 Backend Service..."
+if [ ! -d "server" ]; then
+  echo "📥 Fetching server backend code..."
+  git clone -b server https://github.com/gzaf5466/Onepg.git server
+else
+  echo "📥 Updating server backend code..."
+  cd server && git pull origin server && cd ..
+fi
+
 if [ -d "server" ]; then
   cd server
-  npm install --production --silent
-  PORT=3000 pm2 restart onepg-backend 2>/dev/null || PORT=3000 pm2 start index.js --name "onepg-backend"
+  npm install --silent
+  PORT=5000 pm2 restart onepg-backend 2>/dev/null || PORT=5000 pm2 start index.js --name "onepg-backend"
   pm2 save
   cd ..
 fi
 
-# 5. Ensure Nginx /api proxy configuration & Reload Nginx
+# 5. Ensure Nginx /api proxy configuration points to port 5000 & Reload Nginx
 echo "🔄 Checking Nginx configs for /api proxy rule..."
 for conf in /etc/nginx/sites-available/* /etc/nginx/sites-enabled/* /etc/nginx/conf.d/*.conf; do
-  if [ -f "$conf" ] && ! grep -q "location /api" "$conf"; then
-    echo "⚙️ Adding /api proxy block to $conf..."
-    sed -i '/location \/ {/i \    location /api {\n        proxy_pass http://localhost:3000;\n        proxy_http_version 1.1;\n        proxy_set_header Upgrade $http_upgrade;\n        proxy_set_header Connection "upgrade";\n        proxy_set_header Host $host;\n        proxy_cache_bypass $http_upgrade;\n    }\n' "$conf" 2>/dev/null || true
+  if [ -f "$conf" ]; then
+    # Replace any old 3000 port references with 5000
+    sed -i 's/proxy_pass http:\/\/localhost:3000;/proxy_pass http:\/\/localhost:5000;/g' "$conf" 2>/dev/null || true
+    if ! grep -q "location /api" "$conf"; then
+      echo "⚙️ Adding /api proxy block to $conf..."
+      sed -i '/location \/ {/i \    location /api {\n        proxy_pass http://localhost:5000;\n        proxy_http_version 1.1;\n        proxy_set_header Upgrade $http_upgrade;\n        proxy_set_header Connection "upgrade";\n        proxy_set_header Host $host;\n        proxy_cache_bypass $http_upgrade;\n    }\n' "$conf" 2>/dev/null || true
+    fi
   fi
 done
 
