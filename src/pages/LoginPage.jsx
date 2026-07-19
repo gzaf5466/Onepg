@@ -66,13 +66,13 @@ const LoginPage = () => {
 
     // Standard Production Passport.js OAuth Redirect
     const passportOAuthUrl = `${API_BASE}/auth/${provider}`;
-    
+
     // Open sleek centered popup window so main URL is never modified
     const width = 500;
     const height = 650;
     const left = window.screenX + (window.outerWidth - width) / 2;
     const top = window.screenY + (window.outerHeight - height) / 2;
-    
+
     const popup = window.open(
       passportOAuthUrl,
       `Sign in with ${provider}`,
@@ -118,7 +118,7 @@ const LoginPage = () => {
 
       {/* Center Wrapper */}
       <div className="w-full max-w-[1200px] grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-        
+
         {/* Left Side: Brand Promo (Hidden on Mobile/Tablet) */}
         <div className="hidden lg:flex lg:col-span-6 flex-col justify-between h-full min-h-[640px] pr-8 py-4">
           <div>
@@ -132,9 +132,9 @@ const LoginPage = () => {
 
           {/* 3D Glowing Card Graphic Mockup */}
           <div className="my-auto relative flex items-center justify-center h-[340px] w-full group">
-            <img 
-              src={loginImg} 
-              alt="Secure Payments" 
+            <img
+              src={loginImg}
+              alt="Secure Payments"
               width="1024"
               height="1024"
               className="w-full max-w-[420px] h-auto object-contain transition-transform duration-700 group-hover:scale-105 scale-110"
@@ -199,7 +199,7 @@ const LoginPage = () => {
 
             {/* Social OAuth Signup/Login Buttons */}
             <div className="grid grid-cols-2 gap-3 mb-6">
-              <button 
+              <button
                 type="button"
                 onClick={() => handleSocialAuth('google')}
                 disabled={!!isSocialLoading}
@@ -220,7 +220,7 @@ const LoginPage = () => {
                 )}
               </button>
 
-              <button 
+              <button
                 type="button"
                 onClick={() => handleSocialAuth('microsoft')}
                 disabled={!!isSocialLoading}
@@ -231,10 +231,10 @@ const LoginPage = () => {
                 ) : (
                   <>
                     <svg className="w-4 h-4" viewBox="0 0 23 23">
-                      <path fill="#f35325" d="M1 1h10v10H1z"/>
-                      <path fill="#81bc06" d="M12 1h10v10H12z"/>
-                      <path fill="#05a6f0" d="M1 12h10v10H1z"/>
-                      <path fill="#ffba08" d="M12 12h10v10H12z"/>
+                      <path fill="#f35325" d="M1 1h10v10H1z" />
+                      <path fill="#81bc06" d="M12 1h10v10H12z" />
+                      <path fill="#05a6f0" d="M1 12h10v10H1z" />
+                      <path fill="#ffba08" d="M12 12h10v10H12z" />
                     </svg>
                     Microsoft
                   </>
@@ -254,8 +254,8 @@ const LoginPage = () => {
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">Email / User ID</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); setError(''); }}
                   placeholder="Enter your email or user ID"
@@ -268,14 +268,14 @@ const LoginPage = () => {
                   <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Password</label>
                 </div>
                 <div className="relative">
-                  <input 
+                  <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => { setPassword(e.target.value); setError(''); }}
                     placeholder="Enter your password"
                     className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-lg pl-4 pr-10 py-3 text-sm focus:outline-none transition-all placeholder-gray-600"
                   />
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
@@ -287,18 +287,18 @@ const LoginPage = () => {
 
               <div className="flex items-center justify-between text-xs py-1">
                 <label className="flex items-center text-gray-400 cursor-pointer select-none">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     checked={rememberMe}
                     onChange={() => setRememberMe(!rememberMe)}
-                    className="mr-2 rounded border-white/10 bg-white/[0.03] text-[#FF5722] focus:ring-0 focus:ring-offset-0" 
+                    className="mr-2 rounded border-white/10 bg-white/[0.03] text-[#FF5722] focus:ring-0 focus:ring-offset-0"
                   />
                   Remember Me
                 </label>
                 <Link to="/forgot-password" className="text-[#FF5722] hover:underline font-medium">Forgot Password?</Link>
               </div>
 
-              <button 
+              <button
                 type="submit"
                 className="w-full bg-[#FF5722] hover:bg-[#e64e1e] text-white py-3 rounded-lg font-semibold text-sm transition-colors shadow-[0_4px_20px_rgba(255,87,34,0.25)] flex items-center justify-center relative"
               >
