@@ -4,7 +4,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export const AppContext = createContext();
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const getApiBase = () => {
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return '/api';
+  }
+  return 'http://localhost:5000/api';
+};
+
+const API_BASE = getApiBase();
 
 export const AppContextProvider = ({ children }) => {
   const [token, setToken] = useState(() => localStorage.getItem('onepg_token') || null);

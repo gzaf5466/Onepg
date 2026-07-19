@@ -27,7 +27,7 @@ const LoginPage = () => {
     if (token && !handledOAuthRef.current) {
       handledOAuthRef.current = true;
       handleOAuthSuccess(token, 'client');
-      showToast(`Signed in via ${social === 'google' ? 'Google' : 'GitHub'}! Welcome back.`, 'success');
+      showToast(`Signed in via ${social === 'google' ? 'Google' : 'Apple'}! Welcome back.`, 'success');
       navigate('/dashboard', { replace: true });
     } else if (oauthError) {
       setError(decodeURIComponent(oauthError));
@@ -182,18 +182,18 @@ const LoginPage = () => {
 
               <button 
                 type="button"
-                onClick={() => handleSocialAuth('github')}
+                onClick={() => handleSocialAuth('apple')}
                 disabled={!!isSocialLoading}
                 className="flex items-center justify-center gap-2 py-2.5 px-4 bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-white/20 rounded-xl text-xs font-semibold text-white transition-all disabled:opacity-50"
               >
-                {isSocialLoading === 'github' ? (
+                {isSocialLoading === 'apple' ? (
                   <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>
-                    <svg className="w-4 h-4 fill-current text-white" viewBox="0 0 24 24">
-                      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                    <svg className="w-4 h-4 fill-current text-white" viewBox="0 0 170 170">
+                      <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-5.01.12-9.93-1.92-14.77-6.12-3.37-2.83-7.25-7.53-11.64-14.1-6.32-9.47-11.27-20.08-14.86-31.84-3.59-11.75-5.38-23.01-5.38-33.77 0-14.46 3.69-26.46 11.08-36 7.39-9.54 16.55-14.39 27.48-14.56 5.13 0 10.46 1.25 15.99 3.75 5.53 2.5 9.4 3.75 11.61 3.75 1.7 0 5.48-1.2 11.35-3.6 5.86-2.4 10.9-3.55 15.12-3.45 12.09.47 21.92 4.96 29.5 13.48-10.74 6.5-16.01 15.53-15.8 27.09.21 9.17 3.77 16.89 10.68 23.16 6.91 6.27 15.15 9.87 24.71 10.8-2.61 7.73-6.04 15.46-10.29 23.18zM119.22 31.42c0-7.39 2.71-14.46 8.13-21.21 5.42-6.75 12.18-10.63 20.28-11.64.12 1.05.18 1.98.18 2.79 0 7.33-2.78 14.42-8.33 21.26-5.56 6.84-12.44 10.75-20.64 11.73-.06-.93-.09-1.9-.09-2.93z"/>
                     </svg>
-                    GitHub
+                    Apple
                   </>
                 )}
               </button>
