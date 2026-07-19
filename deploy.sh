@@ -36,8 +36,14 @@ if [ -d "server" ]; then
   cd ..
 fi
 
-# 5. Reload Nginx Web Server
-echo "🔄 Reloading Nginx..."
-sudo systemctl reload nginx
+# 5. Ensure Nginx /api proxy configuration & Reload Nginx
+echo "🔄 Reloading Nginx with /api proxy config..."
+NGINX_CONF="/etc/nginx/sites-available/default"
+if [ -f "$NGINX_CONF" ] && ! grep -q "location /api" "$NGINX_CONF"; then
+  echo "⚙️ Adding /api proxy block to Nginx..."
+  sed -i '/location \/ {/i \    location /api {\n        proxy_pass http://localhost:3000;\n        proxy_http_version 1.1;\n        proxy_set_header Upgrade $http_upgrade;\n        proxy_set_header Connection "upgrade";\n        proxy_set_header Host $host;\n        proxy_cache_bypass $http_upgrade;\n    }\n' "$NGINX_CONF"
+fi
+
+sudo nginx -t && sudo systemctl reload nginx
 
 echo "✅ OnePG Deployment Complete! Live at https://onepg.co.in"
