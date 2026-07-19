@@ -14,15 +14,16 @@ git clean -fd
 git pull origin main
 
 # 2. Build production frontend SPA bundle
-echo "📦 Building production frontend..."
-npm run build
+echo "📦 Building production frontend with VITE_API_URL=/api..."
+VITE_API_URL=/api npm run build
 
 # 3. Deploy frontend bundle to Nginx web root
-echo "📂 Deploying dist assets to /var/www/onepg..."
-mkdir -p /var/www/onepg
+echo "📂 Deploying dist assets..."
+mkdir -p /var/www/onepg /var/www/html
 cp -r dist/* /var/www/onepg/
-chown -R www-data:www-data /var/www/onepg
-chmod -R 755 /var/www/onepg
+cp -r dist/* /var/www/html/
+chown -R www-data:www-data /var/www/onepg /var/www/html
+chmod -R 755 /var/www/onepg /var/www/html
 
 # 4. Check & Restart PM2 Backend Process
 echo "⚙️ Managing PM2 Backend Service..."
