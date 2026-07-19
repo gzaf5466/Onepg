@@ -4,11 +4,13 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 
-// Route Imports
+// Route & Middleware Imports
 import authRouter from './routes/auth.js';
 import clientsRouter from './routes/clients.js';
 import ticketsRouter from './routes/tickets.js';
 import systemRouter from './routes/system.js';
+import paymentsRouter from './routes/payments.js';
+import passport from './config/passport.js';
 
 // Verify JWT_SECRET is configured
 if (!process.env.JWT_SECRET) {
@@ -20,22 +22,35 @@ const app = express();
 
 // 1. Strict Helmet Configuration
 app.use(helmet());
+app.use(passport.initialize());
 
 // 2. Cross-Origin Resource Sharing (CORS) Policy
 const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/$/, '');
 const allowedOrigins = [
   clientUrl,
-  'http://localhost:3000'
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:5175',
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:5174'
 ];
 console.log('🔌 CORS Allowed Origins:', allowedOrigins);
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl)
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (like mobile apps, Postman or curl)
+    if (!origin) return callback(null, true);
+
+    const isAllowed = allowedOrigins.includes(origin) ||
+                      /^http:\/\/localhost:\d+$/.test(origin) ||
+                      /^http:\/\/127\.0\.0\.1:\d+$/.test(origin);
+
+    if (isAllowed || process.env.NODE_ENV !== 'production') {
       callback(null, true);
     } else {
-      callback(new Error('Blocked by CORS policy.'));
+      console.warn(`⚠️ CORS blocked request from origin: ${origin}`);
+      callback(null, false);
     }
   },
   credentials: true,
@@ -62,6 +77,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/clients', clientsRouter);
 app.use('/api/tickets', ticketsRouter);
 app.use('/api/system', systemRouter);
+app.use('/api/payments', paymentsRouter);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

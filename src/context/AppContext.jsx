@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { CheckCircle2, AlertTriangle, X, Info, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -18,13 +18,13 @@ export const AppContextProvider = ({ children }) => {
   // Global Toast Notifications State
   const [toast, setToast] = useState(null);
 
-  const showToast = (message, type = 'success') => {
+  const showToast = useCallback((message, type = 'success') => {
     setToast({ message, type });
     const timer = setTimeout(() => {
       setToast(prev => prev && prev.message === message ? null : prev);
     }, 4000);
     return () => clearTimeout(timer);
-  };
+  }, []);
 
   // Helper for authenticated HTTP headers
   const getAuthHeaders = () => {
@@ -129,6 +129,122 @@ export const AppContextProvider = ({ children }) => {
     } catch (err) {
       console.error('Login request error:', err);
       return { success: false, message: 'Connection to server failed.' };
+    }
+  };
+
+  // Register a new merchant user
+  const signup = async (name, company, email, password, phone, plan) => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, company, email, password, phone, plan })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setToken(data.token);
+        setIsAuthenticated(true);
+        setUserRole(data.user.role);
+        localStorage.setItem('onepg_token', data.token);
+        localStorage.setItem('onepg_role', data.user.role);
+
+        if (data.user.client_id) {
+          setCurrentClientId(data.user.client_id);
+        }
+
+        showToast(`Account created successfully! Welcome, ${data.user.name}.`, 'success');
+        return { success: true, user: data.user };
+      } else {
+        return { success: false, message: data.message || 'Registration failed.' };
+      }
+    } catch (err) {
+      console.error('Signup error:', err);
+      return { success: false, message: 'Server connection failed.' };
+    }
+  };
+
+  const handleOAuthSuccess = useCallback((newToken, role = 'client') => {
+    setToken(newToken);
+    setIsAuthenticated(true);
+    setUserRole(role);
+    localStorage.setItem('onepg_token', newToken);
+    localStorage.setItem('onepg_role', role);
+  }, []);
+
+  // Social Auth (Google / GitHub)
+  const socialLogin = async (provider, email, name) => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/social`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider, email, name })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setToken(data.token);
+        setIsAuthenticated(true);
+        setUserRole(data.user.role);
+        localStorage.setItem('onepg_token', data.token);
+        localStorage.setItem('onepg_role', data.user.role);
+
+        if (data.user.client_id) {
+          setCurrentClientId(data.user.client_id);
+        }
+
+        showToast(`Signed in with ${provider === 'google' ? 'Google' : 'GitHub'}! Welcome, ${data.user.name}.`, 'success');
+        return { success: true, user: data.user };
+      } else {
+        return { success: false, message: data.message || 'Social sign in failed.' };
+      }
+    } catch (err) {
+      console.error('Social login error:', err);
+      return { success: false, message: 'Server connection failed.' };
+    }
+  };
+
+  // Create Razorpay Order
+  const createRazorpayOrder = async (amount, planName) => {
+    try {
+      const res = await fetch(`${API_BASE}/payments/create-order`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ amount, planName })
+      });
+      return await res.json();
+    } catch (err) {
+      console.error('Razorpay order creation error:', err);
+      showToast('Network error initializing payment.', 'error');
+      return { success: false, message: 'Failed to create payment order.' };
+    }
+  };
+
+  // Verify Razorpay Payment Signature
+  const verifyRazorpayPayment = async (orderId, paymentId, signature, amountPaid) => {
+    try {
+      const res = await fetch(`${API_BASE}/payments/verify-payment`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          razorpay_order_id: orderId,
+          razorpay_payment_id: paymentId,
+          razorpay_signature: signature,
+          amountPaid
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.message || 'Payment completed successfully!', 'success');
+        fetchClients();
+      } else {
+        showToast(data.message || 'Payment verification failed.', 'error');
+      }
+      return data;
+    } catch (err) {
+      console.error('Razorpay verification error:', err);
+      showToast('Network error verifying payment.', 'error');
+      return { success: false, message: 'Server connection failed.' };
     }
   };
 
@@ -364,7 +480,12 @@ export const AppContextProvider = ({ children }) => {
       isAuthenticated,
       userRole,
       login,
+      signup,
+      socialLogin,
+      handleOAuthSuccess,
       logout,
+      createRazorpayOrder,
+      verifyRazorpayPayment,
       requestPasswordReset,
       verifyResetOtp,
       resetPassword,

@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Send } from 'lucide-react';
 import { AppContext } from '../../context/AppContext';
+import CustomSelect from '../ui/CustomSelect';
 
 export default function SupportDesk() {
   const { tickets, fetchTickets, createTicket } = useContext(AppContext);
@@ -8,6 +9,13 @@ export default function SupportDesk() {
   const [newTicketTitle, setNewTicketTitle] = useState('');
   const [newTicketDesc, setNewTicketDesc] = useState('');
   const [newTicketSeverity, setNewTicketSeverity] = useState('Medium');
+
+  const severityOptions = [
+    { value: 'Low', label: 'Low - Minor Query' },
+    { value: 'Medium', label: 'Medium - Standard Query' },
+    { value: 'High', label: 'High - Integration Blocked' },
+    { value: 'Critical', label: 'Critical - Production Failure' }
+  ];
 
   useEffect(() => {
     fetchTickets();
@@ -50,19 +58,12 @@ export default function SupportDesk() {
                 className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-lg px-4 py-3 text-xs focus:outline-none transition-all placeholder-gray-600"
               />
             </div>
-            <div>
-              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Severity Level</label>
-              <select 
-                value={newTicketSeverity}
-                onChange={(e) => setNewTicketSeverity(e.target.value)}
-                className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-lg px-4 py-3 text-xs focus:outline-none transition-all cursor-pointer"
-              >
-                <option value="Low" className="bg-[#050505]">Low - Minor Query</option>
-                <option value="Medium" className="bg-[#050505]">Medium - Standard Query</option>
-                <option value="High" className="bg-[#050505]">High - Integration Blocked</option>
-                <option value="Critical" className="bg-[#050505]">Critical - Production Failure</option>
-              </select>
-            </div>
+            <CustomSelect 
+              label="Severity Level"
+              options={severityOptions}
+              value={newTicketSeverity}
+              onChange={(val) => setNewTicketSeverity(val)}
+            />
             <div>
               <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Description</label>
               <textarea 

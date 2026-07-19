@@ -1,12 +1,14 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, HelpCircle, ArrowRight, Minus, Plus } from 'lucide-react';
+import { Check, HelpCircle, ArrowRight, Minus, Plus, CreditCard, ShieldCheck } from 'lucide-react';
+import { AppContext } from '../context/AppContext';
 
 const plans = [
   {
     name: 'Payin Solution',
     price: '₹15,000',
+    numericPrice: 15000,
     period: 'Starting from',
     popular: false,
     features: [
@@ -17,12 +19,13 @@ const plans = [
       'Standard API & Webhook Integration',
       '24/7 Email & Chat Support'
     ],
-    buttonText: 'Inquire Now',
+    buttonText: 'Pay via Razorpay Test',
     highlighted: false,
   },
   {
     name: 'Web Development',
     price: '₹20,000',
+    numericPrice: 20000,
     period: 'Starting from',
     popular: true,
     features: [
@@ -33,12 +36,13 @@ const plans = [
       'Admin Control Panel & Dashboard',
       'SEO Optimized & High Performance'
     ],
-    buttonText: 'Build with Us',
+    buttonText: 'Pay via Razorpay Test',
     highlighted: true,
   },
   {
     name: 'Payout Solution',
     price: '₹50,000',
+    numericPrice: 50000,
     period: 'Starting from',
     popular: false,
     features: [
@@ -49,7 +53,7 @@ const plans = [
       'Custom SLA & 99.99% Uptime Guarantee',
       'Dedicated Account Manager'
     ],
-    buttonText: 'Setup Payouts',
+    buttonText: 'Pay via Razorpay Test',
     highlighted: false,
   }
 ];
@@ -64,6 +68,86 @@ const compareFeatures = [
 ];
 
 export default function Pricing() {
+  const navigate = useNavigate();
+  const { isAuthenticated, createRazorpayOrder, verifyRazorpayPayment, currentClient, showToast } = useContext(AppContext);
+  const [processingPlan, setProcessingPlan] = useState(null);
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if (window.Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handleRazorpayTestPayment = async (plan) => {
+    if (!isAuthenticated) {
+      showToast('Please sign up or log in to initiate Razorpay test payments.', 'info');
+      navigate('/signup');
+      return;
+    }
+
+    setProcessingPlan(plan.name);
+    try {
+      const isScriptLoaded = await loadRazorpayScript();
+      if (!isScriptLoaded && process.env.NODE_ENV === 'production') {
+        showToast('Razorpay SDK failed to load. Please check internet connection.', 'error');
+        setProcessingPlan(null);
+        return;
+      }
+
+      const res = await createRazorpayOrder(plan.numericPrice, plan.name);
+      setProcessingPlan(null);
+
+      if (!res.success) {
+        showToast(res.message || 'Failed to create Razorpay test order.', 'error');
+        return;
+      }
+
+      // If key is dummy/simulated mode
+      if (res.isSimulated || !window.Razorpay) {
+        await verifyRazorpayPayment(res.order.id, 'pay_test_' + Date.now(), 'simulated_sig', plan.numericPrice);
+        return;
+      }
+
+      // Trigger standard Razorpay Checkout modal
+      const options = {
+        key: res.key,
+        amount: res.order.amount,
+        currency: res.order.currency,
+        name: 'OnePG Technologies',
+        description: `Plan Subscription: ${plan.name}`,
+        order_id: res.order.id,
+        handler: async function (response) {
+          await verifyRazorpayPayment(
+            response.razorpay_order_id,
+            response.razorpay_payment_id,
+            response.razorpay_signature,
+            plan.numericPrice
+          );
+        },
+        prefill: {
+          name: currentClient?.name || 'Merchant',
+          email: currentClient?.email || ''
+        },
+        theme: { color: '#FF5722' }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      setProcessingPlan(null);
+      console.error('Payment error:', err);
+      showToast('Error initializing Razorpay payment flow.', 'error');
+    }
+  };
+
   return (
     <div className="w-full bg-[#050505] text-white font-sans overflow-x-hidden">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8 md:pb-16 relative">
@@ -74,13 +158,17 @@ export default function Pricing() {
 
         {/* Hero Header */}
         <div className="text-center mb-16 relative z-10">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.03] border border-white/10 text-xs font-semibold text-[#00E5FF] mb-4">
+            <CreditCard size={14} />
+            Razorpay Test Environment Active
+          </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight leading-none mb-6">
             Flexible Solutions for <br />
             <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#FF5722] to-[#00E5FF]">Every Stage of Growth</span>
           </h2>
           
           <p className="text-[#88929b] text-base max-w-2xl mx-auto mt-4 font-light leading-relaxed">
-            Every business has unique needs. Choose the tier that matches your integration timeline and disbursal requirements.
+            Every business has unique needs. Sign up or log in to test transactions directly via Razorpay Test Environment.
           </p>
         </div>
 
@@ -121,16 +209,24 @@ export default function Pricing() {
                   </ul>
                 </div>
 
-                <Link 
-                  to="/login"
-                  className={`w-full py-3.5 rounded-xl font-bold text-sm text-center block transition-all ${
+                <button 
+                  onClick={() => handleRazorpayTestPayment(plan)}
+                  disabled={processingPlan === plan.name}
+                  className={`w-full py-3.5 rounded-xl font-bold text-sm text-center block transition-all flex items-center justify-center gap-2 ${
                     plan.highlighted 
                       ? 'bg-[#FF5722] hover:bg-[#e64e1e] text-white shadow-[0_4px_15px_rgba(255,87,34,0.3)]' 
                       : 'bg-white/5 border border-white/10 hover:bg-white/10 text-white'
                   }`}
                 >
-                  {plan.buttonText}
-                </Link>
+                  {processingPlan === plan.name ? (
+                    <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <CreditCard size={16} />
+                      {plan.buttonText}
+                    </>
+                  )}
+                </button>
               </div>
             );
           })}

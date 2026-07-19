@@ -3,6 +3,7 @@ import { Search, Plus, Info, Edit3, ChevronLeft, ChevronDown } from 'lucide-reac
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppContext } from '../../context/AppContext';
 import addNewClientImg from '../../assets/add new client.avif';
+import CustomSelect from '../ui/CustomSelect';
 
 export default function ClientsView({ 
   clients, 
@@ -189,17 +190,15 @@ export default function ClientsView({
                   className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#00E5FF]/50 text-white rounded-lg px-4 py-3 text-xs focus:outline-none transition-all placeholder-gray-600"
                 />
               </div>
-              <div>
-                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Select Plan</label>
-                <select 
-                  value={newClientPlan}
-                  onChange={(e) => setNewClientPlan(e.target.value)}
-                  className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#00E5FF]/50 text-white rounded-lg px-4 py-3 text-xs focus:outline-none transition-all cursor-pointer"
-                >
-                  <option value="Basic" className="bg-[#050505]">Basic (₹10,000)</option>
-                  <option value="Premium" className="bg-[#050505]">Premium (₹30,000)</option>
-                </select>
-              </div>
+              <CustomSelect 
+                label="Select Plan"
+                options={[
+                  { value: 'Basic', label: 'Basic (₹10,000)' },
+                  { value: 'Premium', label: 'Premium (₹30,000)' }
+                ]}
+                value={newClientPlan}
+                onChange={(val) => setNewClientPlan(val)}
+              />
             </div>
 
             <div className="flex items-center gap-3 pt-4">
@@ -235,6 +234,11 @@ export default function ClientsView({
   }
 
   if (currentView === 'update-status' && selectedClientForUpdate) {
+    const serviceOptions = (selectedClientForUpdate.services || []).map(s => ({ value: s.name, label: s.name }));
+    const statusOptions = [
+      'Not Started', 'In Progress', 'Pending', 'Under Review', 'Applied', 'Approved', 'Active', 'Completed'
+    ];
+
     return (
       <div className="max-w-[700px] bg-white/[0.01] border border-white/5 rounded-xl p-6 md:p-8">
         <div className="flex items-center gap-2 mb-6">
@@ -248,22 +252,16 @@ export default function ClientsView({
         </div>
 
         <form onSubmit={handleUpdateStatusSubmit} className="space-y-4">
-          <div>
-            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Select Service to Modify</label>
-            <select 
-              value={updateService}
-              onChange={(e) => {
-                setUpdateService(e.target.value);
-                const svc = selectedClientForUpdate.services.find(s => s.name === e.target.value);
-                if (svc) setUpdateStatusVal(svc.status);
-              }}
-              className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#00E5FF]/50 text-white rounded-lg px-4 py-3 text-xs focus:outline-none transition-all cursor-pointer"
-            >
-              {selectedClientForUpdate.services && selectedClientForUpdate.services.map(s => (
-                <option key={s.name} value={s.name} className="bg-[#050505]">{s.name}</option>
-              ))}
-            </select>
-          </div>
+          <CustomSelect 
+            label="Select Service to Modify"
+            options={serviceOptions}
+            value={updateService}
+            onChange={(val) => {
+              setUpdateService(val);
+              const svc = selectedClientForUpdate.services.find(s => s.name === val);
+              if (svc) setUpdateStatusVal(svc.status);
+            }}
+          />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -273,23 +271,12 @@ export default function ClientsView({
               </div>
             </div>
 
-            <div>
-              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Update Status To</label>
-              <select 
-                value={updateStatusVal}
-                onChange={(e) => setUpdateStatusVal(e.target.value)}
-                className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#00E5FF]/50 text-white rounded-lg px-4 py-3 text-xs focus:outline-none transition-all cursor-pointer"
-              >
-                <option value="Not Started" className="bg-[#050505]">Not Started</option>
-                <option value="In Progress" className="bg-[#050505]">In Progress</option>
-                <option value="Pending" className="bg-[#050505]">Pending</option>
-                <option value="Under Review" className="bg-[#050505]">Under Review</option>
-                <option value="Applied" className="bg-[#050505]">Applied</option>
-                <option value="Approved" className="bg-[#050505]">Approved</option>
-                <option value="Active" className="bg-[#050505]">Active</option>
-                <option value="Completed" className="bg-[#050505]">Completed</option>
-              </select>
-            </div>
+            <CustomSelect 
+              label="Update Status To"
+              options={statusOptions}
+              value={updateStatusVal}
+              onChange={(val) => setUpdateStatusVal(val)}
+            />
           </div>
 
           <div>

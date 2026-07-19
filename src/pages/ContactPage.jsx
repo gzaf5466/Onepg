@@ -3,6 +3,15 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Phone, Mail, MessageSquare, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
+import CustomSelect from '../components/ui/CustomSelect';
+
+const serviceOptions = [
+  { value: 'Payment Gateway', label: 'Payment Gateway Integration' },
+  { value: 'T+0 Settlement', label: 'T+0 Immediate Settlement' },
+  { value: 'Payout Gateway', label: 'Payouts API Disbursals' },
+  { value: 'International Gateway', label: 'International Currencies Processing' },
+  { value: 'Custom Development', label: 'Website / Mobile Application Suite' }
+];
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -197,21 +206,12 @@ const ContactPage = () => {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Service Interested In</label>
-                  <select 
-                    name="service"
-                    value={formData.service}
-                    onChange={handleChange}
-                    className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-lg px-4 py-3 text-xs focus:outline-none transition-all cursor-pointer"
-                  >
-                    <option value="Payment Gateway" className="bg-[#050505]">Payment Gateway Integration</option>
-                    <option value="T+0 Settlement" className="bg-[#050505]">T+0 Immediate Settlement</option>
-                    <option value="Payout Gateway" className="bg-[#050505]">Payouts API Disbursals</option>
-                    <option value="International Gateway" className="bg-[#050505]">International Currencies Processing</option>
-                    <option value="Custom Development" className="bg-[#050505]">Website / Mobile Application Suite</option>
-                  </select>
-                </div>
+                <CustomSelect 
+                  label="Service Interested In"
+                  options={serviceOptions}
+                  value={formData.service}
+                  onChange={(val) => setFormData(prev => ({ ...prev, service: val }))}
+                />
 
                 <div>
                   <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Message</label>

@@ -50,16 +50,22 @@ const Navbar = () => {
           </div>
 
           {/* Right: Actions (Login & Contact Us buttons always in topbar) */}
-          <div className="flex items-center space-x-2 sm:space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-3">
             <Link 
               to="/login"
-              className="hidden lg:inline-flex text-[#FFFFFF] bg-transparent border border-transparent hover:border-white/10 px-4 py-2 rounded-md text-sm font-medium transition-all"
+              className="hidden lg:inline-flex text-[#FFFFFF] bg-transparent border border-transparent hover:border-white/10 px-3 py-2 rounded-md text-xs font-semibold transition-all"
             >
               Login
             </Link>
             <Link 
+              to="/signup"
+              className="hidden lg:inline-flex text-[#00E5FF] bg-[#00E5FF]/10 border border-[#00E5FF]/30 hover:bg-[#00E5FF]/20 px-4 py-2 rounded-md text-xs font-semibold transition-all"
+            >
+              Sign Up
+            </Link>
+            <Link 
               to="/contact"
-              className="hidden lg:inline-flex bg-[#FF5722] text-[#FFFFFF] hover:bg-[#e64e1e] px-6 py-2 rounded-md text-sm font-medium transition-colors shadow-[0_0_15px_rgba(255,87,34,0.3)]"
+              className="hidden lg:inline-flex bg-[#FF5722] text-[#FFFFFF] hover:bg-[#e64e1e] px-5 py-2 rounded-md text-xs font-semibold transition-colors shadow-[0_0_15px_rgba(255,87,34,0.3)]"
             >
               Contact Us
             </Link>
@@ -123,13 +129,22 @@ const Navbar = () => {
               
               {/* Mobile Actions inside Drawer */}
               <div className="pt-4 flex flex-col gap-3">
-                <Link
-                  to="/login"
-                  onClick={() => setIsOpen(false)}
-                  className="w-full text-center text-[#FFFFFF] bg-white/[0.03] hover:bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm font-semibold transition-all"
-                >
-                  Login
-                </Link>
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    to="/login"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full text-center text-[#FFFFFF] bg-white/[0.03] hover:bg-white/5 border border-white/10 px-4 py-3 rounded-lg text-sm font-semibold transition-all"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/signup"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full text-center text-[#00E5FF] bg-[#00E5FF]/10 border border-[#00E5FF]/30 px-4 py-3 rounded-lg text-sm font-semibold transition-all"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
                 <Link
                   to="/contact"
                   onClick={() => setIsOpen(false)}
