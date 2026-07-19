@@ -37,12 +37,13 @@ if [ -d "server" ]; then
 fi
 
 # 5. Ensure Nginx /api proxy configuration & Reload Nginx
-echo "🔄 Reloading Nginx with /api proxy config..."
-NGINX_CONF="/etc/nginx/sites-available/default"
-if [ -f "$NGINX_CONF" ] && ! grep -q "location /api" "$NGINX_CONF"; then
-  echo "⚙️ Adding /api proxy block to Nginx..."
-  sed -i '/location \/ {/i \    location /api {\n        proxy_pass http://localhost:3000;\n        proxy_http_version 1.1;\n        proxy_set_header Upgrade $http_upgrade;\n        proxy_set_header Connection "upgrade";\n        proxy_set_header Host $host;\n        proxy_cache_bypass $http_upgrade;\n    }\n' "$NGINX_CONF"
-fi
+echo "🔄 Checking Nginx configs for /api proxy rule..."
+for conf in /etc/nginx/sites-available/* /etc/nginx/sites-enabled/* /etc/nginx/conf.d/*.conf; do
+  if [ -f "$conf" ] && ! grep -q "location /api" "$conf"; then
+    echo "⚙️ Adding /api proxy block to $conf..."
+    sed -i '/location \/ {/i \    location /api {\n        proxy_pass http://localhost:3000;\n        proxy_http_version 1.1;\n        proxy_set_header Upgrade $http_upgrade;\n        proxy_set_header Connection "upgrade";\n        proxy_set_header Host $host;\n        proxy_cache_bypass $http_upgrade;\n    }\n' "$conf" 2>/dev/null || true
+  fi
+done
 
 sudo nginx -t && sudo systemctl reload nginx
 
