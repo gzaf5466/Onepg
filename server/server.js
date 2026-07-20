@@ -76,7 +76,10 @@ app.get("/api/health", (_req, res) => res.json({ status: "healthy", message: "On
 
 // REST routes
 // Microsoft Entra ID Publisher Domain Verification
-app.get("/.well-known/microsoft-identity-association.json", (req, res) => {
+app.get([
+  "/.well-known/microsoft-identity-association.json",
+  "/.well-known/microsoft-identity-association.json/.well-known/microsoft-identity-association.json"
+], (req, res) => {
   res.setHeader("Content-Type", "application/json");
   res.json({
     associatedApplications: [

@@ -31,12 +31,12 @@ export default function BillingView({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white/[0.02] border border-white/5 rounded-xl p-5">
           <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Total Platform Collections</p>
-          <h3 className="text-3xl font-bold text-emerald-400 mt-1">₹{totalRevenue.toLocaleString('en-IN')}</h3>
+          <h3 className="text-3xl font-bold text-emerald-400 mt-1">₹{(totalRevenue ?? 0).toLocaleString('en-IN')}</h3>
           <p className="text-[10px] text-gray-500 mt-1">Slipped into core bank account nodes</p>
         </div>
         <div className="bg-white/[0.02] border border-white/5 rounded-xl p-5">
           <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">Pending Accounts Receivables</p>
-          <h3 className="text-3xl font-bold text-[#FF5722] mt-1">₹{totalOutstanding.toLocaleString('en-IN')}</h3>
+          <h3 className="text-3xl font-bold text-[#FF5722] mt-1">₹{(totalOutstanding ?? 0).toLocaleString('en-IN')}</h3>
           <p className="text-[10px] text-gray-500 mt-1">Awaiting setup completion milestones</p>
         </div>
       </div>
@@ -59,8 +59,8 @@ export default function BillingView({
                 <tr key={c.id} className="hover:bg-white/[0.02]">
                   <td className="px-6 py-4 font-bold text-white">{c.name}</td>
                   <td className="px-6 py-4 text-gray-400">{c.company}</td>
-                  <td className="px-6 py-4 text-center font-bold text-emerald-400">₹{c.amountPaid.toLocaleString('en-IN')}</td>
-                  <td className="px-6 py-4 text-center font-bold text-[#FF5722]">₹{c.pendingAmount.toLocaleString('en-IN')}</td>
+                  <td className="px-6 py-4 text-center font-bold text-emerald-400">₹{(c?.amountPaid ?? 0).toLocaleString('en-IN')}</td>
+                  <td className="px-6 py-4 text-center font-bold text-[#FF5722]">₹{(c?.pendingAmount ?? 0).toLocaleString('en-IN')}</td>
                   <td className="px-6 py-4 text-center">
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-white/5 border border-white/5">{c.plan}</span>
                   </td>
@@ -69,7 +69,7 @@ export default function BillingView({
                       <button 
                         onClick={() => {
                           makePayment(c.id);
-                          showToast(`Recorded payment of ₹${c.pendingAmount.toLocaleString('en-IN')} from ${c.company}`, 'success');
+                          showToast(`Recorded payment of ₹${(c?.pendingAmount ?? 0).toLocaleString('en-IN')} from ${c.company}`, 'success');
                         }}
                         className="text-[#00E5FF] hover:underline font-bold text-xs"
                       >
@@ -119,7 +119,7 @@ export default function BillingView({
                       <span className="text-[10px] text-gray-500">{c.name}</span>
                     </td>
                     <td className="px-6 py-4 text-gray-400">{inv.date === '--' ? 'Awaiting Payment' : inv.date}</td>
-                    <td className="px-6 py-4 font-bold text-white">₹{inv.amount.toLocaleString('en-IN')}</td>
+                    <td className="px-6 py-4 font-bold text-white">₹{(inv?.amount ?? 0).toLocaleString('en-IN')}</td>
                     <td className="px-6 py-4">
                       <span className={`text-[9px] font-bold px-2 py-0.5 rounded border uppercase ${
                         inv.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'

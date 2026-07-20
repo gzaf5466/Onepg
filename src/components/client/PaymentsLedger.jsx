@@ -8,7 +8,7 @@ export default function PaymentsLedger() {
   const handlePayNow = () => {
     if (currentClient.pendingAmount > 0) {
       makePayment(currentClient.id);
-      showToast('Payment of ₹' + currentClient.pendingAmount.toLocaleString('en-IN') + ' completed successfully!', 'success');
+      showToast('Payment of ₹' + (currentClient.pendingAmount ?? 0).toLocaleString('en-IN') + ' completed successfully!', 'success');
     }
   };
 
@@ -27,12 +27,12 @@ export default function PaymentsLedger() {
         </div>
         <div className="bg-white/[0.02] border border-white/5 rounded-xl p-5">
           <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-2">Total Amount Paid</p>
-          <h3 className="text-2xl font-bold text-emerald-400">₹{currentClient.amountPaid.toLocaleString('en-IN')}</h3>
+          <h3 className="text-2xl font-bold text-emerald-400">₹{(currentClient?.amountPaid ?? 0).toLocaleString('en-IN')}</h3>
           <p className="text-[10px] text-gray-500 mt-1">Settled invoices amount</p>
         </div>
         <div className="bg-white/[0.02] border border-white/5 rounded-xl p-5 relative overflow-hidden">
           <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-2">Outstanding Amount</p>
-          <h3 className="text-2xl font-bold text-[#FF5722]">₹{currentClient.pendingAmount.toLocaleString('en-IN')}</h3>
+          <h3 className="text-2xl font-bold text-[#FF5722]">₹{(currentClient?.pendingAmount ?? 0).toLocaleString('en-IN')}</h3>
           {currentClient.pendingAmount > 0 ? (
             <button onClick={handlePayNow} className="mt-2 text-xs bg-[#FF5722] hover:bg-[#e64e1e] text-white px-3 py-1.5 rounded font-bold transition-all shadow-[0_0_10px_rgba(255,87,34,0.2)] border-none cursor-pointer">
               Settle Pending Balance
@@ -64,7 +64,7 @@ export default function PaymentsLedger() {
                     <td className="p-4 font-mono font-bold text-white">{inv.id}</td>
                     <td className="p-4 text-gray-400">{inv.date === '--' ? 'Pending settlement' : inv.date}</td>
                     <td className="p-4 text-gray-300">{inv.id === 'INV-2026-001' ? 'First Onboarding Advance Milestone' : 'Second Project Handover Milestone'}</td>
-                    <td className="p-4 font-bold text-white">₹{inv.amount.toLocaleString('en-IN')}</td>
+                    <td className="p-4 font-bold text-white">₹{(inv?.amount ?? 0).toLocaleString('en-IN')}</td>
                     <td className="p-4">
                       <span className={`text-[9px] font-bold px-2 py-0.5 rounded border uppercase ${
                         inv.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'

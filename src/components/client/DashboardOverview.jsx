@@ -21,7 +21,7 @@ export default function DashboardOverview({ setActiveTab }) {
   const handlePayNow = () => {
     if (currentClient.pendingAmount > 0) {
       makePayment(currentClient.id);
-      showToast('Payment of ₹' + currentClient.pendingAmount.toLocaleString('en-IN') + ' completed successfully!', 'success');
+      showToast('Payment of ₹' + (currentClient.pendingAmount ?? 0).toLocaleString('en-IN') + ' completed successfully!', 'success');
     }
   };
 
@@ -42,7 +42,7 @@ export default function DashboardOverview({ setActiveTab }) {
         <div className="bg-white/[0.02] border border-white/5 rounded-xl p-5 relative overflow-hidden flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Amount Paid</p>
-            <h3 className="text-2xl font-bold text-white">₹{currentClient.amountPaid.toLocaleString('en-IN')}</h3>
+            <h3 className="text-2xl font-bold text-white">₹{(currentClient?.amountPaid ?? 0).toLocaleString('en-IN')}</h3>
             <button onClick={() => setActiveTab('Payments & Invoices')} className="text-[10px] text-[#00E5FF] hover:underline font-semibold flex items-center mt-1 bg-transparent border-none cursor-pointer">
               View History <ChevronRight size={10} />
             </button>
@@ -55,7 +55,7 @@ export default function DashboardOverview({ setActiveTab }) {
         <div className="bg-white/[0.02] border border-white/5 rounded-xl p-5 relative overflow-hidden flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Pending Amount</p>
-            <h3 className="text-2xl font-bold text-[#FF5722]">₹{currentClient.pendingAmount.toLocaleString('en-IN')}</h3>
+            <h3 className="text-2xl font-bold text-[#FF5722]">₹{(currentClient?.pendingAmount ?? 0).toLocaleString('en-IN')}</h3>
             {currentClient.pendingAmount > 0 ? (
               <button onClick={handlePayNow} className="text-[10px] text-[#FF5722] hover:underline font-bold flex items-center mt-1 bg-transparent border-none cursor-pointer">
                 Pay Now <ArrowUpRight size={10} />
@@ -161,11 +161,11 @@ export default function DashboardOverview({ setActiveTab }) {
               </div>
               <div className="flex justify-between text-sm text-gray-400">
                 <span>Amount Paid</span>
-                <span className="font-semibold text-emerald-400">₹{currentClient.amountPaid.toLocaleString('en-IN')}</span>
+                <span className="font-semibold text-emerald-400">₹{(currentClient?.amountPaid ?? 0).toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between text-sm text-gray-400">
                 <span>Pending Amount</span>
-                <span className="font-semibold text-[#FF5722]">₹{currentClient.pendingAmount.toLocaleString('en-IN')}</span>
+                <span className="font-semibold text-[#FF5722]">₹{(currentClient?.pendingAmount ?? 0).toLocaleString('en-IN')}</span>
               </div>
               {currentClient.pendingAmount > 0 && (
                 <button 
@@ -191,7 +191,7 @@ export default function DashboardOverview({ setActiveTab }) {
                     <span className="text-[10px] text-gray-500">{inv.date}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-bold text-white">₹{inv.amount.toLocaleString('en-IN')}</span>
+                    <span className="text-xs font-bold text-white">₹{(inv?.amount ?? 0).toLocaleString('en-IN')}</span>
                     <span className={`text-[9px] font-bold px-2 py-0.5 rounded border uppercase ${
                       inv.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
                     }`}>
