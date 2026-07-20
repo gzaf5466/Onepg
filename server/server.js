@@ -13,6 +13,8 @@ import usersRouter from "./src/routes/users.js";
 import chatsRouter from "./src/routes/chats.js";
 import messagesRouter from "./src/routes/messages.js";
 import rtcRouter from "./src/routes/rtc.js";
+import clientsRouter from "./src/routes/clients.js";
+import ticketsRouter from "./src/routes/tickets.js";
 
 // Socket signaling
 import { attachRTC } from "./src/realtime/rtc.js";
@@ -50,6 +52,8 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/chats", chatsRouter);
 app.use("/api/messages", messagesRouter);
+app.use("/api/clients", clientsRouter);
+app.use("/api/tickets", ticketsRouter);
 app.use("/api/rtc", rtcRouter); // ICE config
 
 // 404 fallback
