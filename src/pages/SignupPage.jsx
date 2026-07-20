@@ -1,15 +1,16 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
-import { Shield, Eye, EyeOff, Globe, TrendingUp, ShieldCheck, ChevronRight, User, Building, Mail, Phone, Lock } from 'lucide-react';
+import { Shield, Eye, EyeOff, Globe, TrendingUp, ShieldCheck, ChevronRight, User, Building, Mail, Phone, Lock, CheckCircle2, AlertCircle, ArrowLeft, RefreshCw } from 'lucide-react';
 import loginImg from '../assets/login.avif';
 import logo from '../assets/Logo.svg';
 
 const SignupPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { signup, socialLogin, handleOAuthSuccess, API_BASE, showToast } = useContext(AppContext);
+  const { sendSignupOtp, signup, socialLogin, handleOAuthSuccess, showToast } = useContext(AppContext);
 
+  const [step, setStep] = useState(1); // 1: Registration Form, 2: Mail Verification OTP
   const [formData, setFormData] = useState({
     name: '',
     company: '',
@@ -19,6 +20,7 @@ const SignupPage = () => {
     confirmPassword: ''
   });
 
+  const [otp, setOtp] = useState(['', '', '', '']);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,6 +49,45 @@ const SignupPage = () => {
     setError('');
   };
 
+  // Password Strength & Requirement Evaluator ("Password Look")
+  const getPasswordMetrics = (pass) => {
+    const minLength = pass.length >= 6;
+    const hasUpper = /[A-Z]/.test(pass);
+    const hasNumOrSpecial = /[0-9!@#$%^&*()]/.test(pass);
+    
+    let score = 0;
+    if (pass.length >= 6) score += 1;
+    if (pass.length >= 8) score += 1;
+    if (hasUpper) score += 1;
+    if (hasNumOrSpecial) score += 1;
+
+    let label = 'Weak';
+    let color = 'bg-red-500';
+    let text = 'text-red-400';
+    let width = '25%';
+
+    if (score === 2) {
+      label = 'Fair';
+      color = 'bg-amber-500';
+      text = 'text-amber-400';
+      width = '50%';
+    } else if (score === 3) {
+      label = 'Good';
+      color = 'bg-blue-500';
+      text = 'text-blue-400';
+      width = '75%';
+    } else if (score >= 4) {
+      label = 'Strong';
+      color = 'bg-emerald-500';
+      text = 'text-emerald-400';
+      width = '100%';
+    }
+
+    return { minLength, hasUpper, hasNumOrSpecial, score, label, color, text, width };
+  };
+
+  const passMetrics = getPasswordMetrics(formData.password);
+
   const handleSocialAuth = async (provider) => {
     setError('');
     setIsSocialLoading(provider);
@@ -65,12 +106,18 @@ const SignupPage = () => {
     }
   };
 
-  const handleSignup = async (e) => {
+  // Step 1: Request Email OTP Verification Code
+  const handleInitiateSignup = async (e) => {
     e.preventDefault();
     const { name, company, email, phone, password, confirmPassword } = formData;
 
     if (!name || !company || !email || !password) {
       setError('Please fill in all required fields.');
+      return;
+    }
+
+    if (!email.includes('@') || !email.includes('.')) {
+      setError('Please enter a valid work email address.');
       return;
     }
 
@@ -88,17 +135,59 @@ const SignupPage = () => {
     setIsSubmitting(true);
 
     try {
-      const res = await signup(name, company, email, password, phone, 'Basic');
+      const res = await sendSignupOtp(email, name);
+      setIsSubmitting(false);
+
+      if (res.success) {
+        setStep(2);
+      } else {
+        setError(res.message || 'Failed to send mail verification code.');
+      }
+    } catch (err) {
+      setIsSubmitting(false);
+      setError('Network connection error. Server might be offline.');
+    }
+  };
+
+  // Handle OTP digit input
+  const handleOtpChange = (index, value) => {
+    if (value.length > 1) return;
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    // Auto-focus next input
+    if (value && index < 3) {
+      const nextInput = document.getElementById(`signup-otp-${index + 1}`);
+      if (nextInput) nextInput.focus();
+    }
+  };
+
+  // Step 2: Submit OTP & Complete Registration
+  const handleVerifyAndComplete = async (e) => {
+    e.preventDefault();
+    const otpCode = otp.join('');
+    if (otpCode.length < 4) {
+      setError('Please enter the complete 4-digit mail verification code.');
+      return;
+    }
+
+    setError('');
+    setIsSubmitting(true);
+
+    try {
+      const { name, company, email, phone, password } = formData;
+      const res = await signup(name, company, email, password, phone, otpCode, 'Basic');
       setIsSubmitting(false);
 
       if (res.success) {
         navigate('/dashboard');
       } else {
-        setError(res.message || 'Registration failed. Please try again.');
+        setError(res.message || 'Verification failed. Please check your code.');
       }
     } catch (err) {
       setIsSubmitting(false);
-      setError('Network connection error. Server might be offline.');
+      setError('Network connection error.');
     }
   };
 
@@ -171,217 +260,344 @@ const SignupPage = () => {
           <div className="w-full max-w-[520px] bg-white/[0.02] border border-white/5 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative">
             <div className="absolute top-0 right-0 w-24 h-24 bg-[#FF5722]/10 rounded-full blur-xl pointer-events-none" />
 
-            <div className="mb-6 flex flex-col items-center text-center lg:items-start lg:text-left">
-              <Link to="/" className="lg:hidden mb-4">
-                <img src={logo} alt="OnePG" width="95" height="33" className="h-8 w-auto" />
-              </Link>
-              <h3 className="text-2xl font-bold text-white mb-1">Get Started with OnePG</h3>
-              <p className="text-gray-400 text-sm">Create your merchant account & start accepting payments</p>
-            </div>
+            {/* Step 1: Form Details */}
+            {step === 1 && (
+              <>
+                <div className="mb-6 flex flex-col items-center text-center lg:items-start lg:text-left">
+                  <Link to="/" className="lg:hidden mb-4">
+                    <img src={logo} alt="OnePG" width="95" height="33" className="h-8 w-auto" />
+                  </Link>
+                  <h3 className="text-2xl font-bold text-white mb-1">Get Started with OnePG</h3>
+                  <p className="text-gray-400 text-sm">Create your merchant account & start accepting payments</p>
+                </div>
 
-            {error && (
-              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-xs font-medium">
-                {error}
-              </div>
+                {error && (
+                  <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-xs font-medium flex items-center gap-2">
+                    <AlertCircle size={16} className="shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
+
+                {/* Social OAuth Signup Buttons */}
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                  <button 
+                    type="button"
+                    onClick={() => handleSocialAuth('google')}
+                    disabled={!!isSocialLoading}
+                    className="flex items-center justify-center gap-2 py-2.5 px-4 bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-white/20 rounded-xl text-xs font-semibold text-white transition-all disabled:opacity-50"
+                  >
+                    {isSocialLoading === 'google' ? (
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4" viewBox="0 0 24 24">
+                          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                        </svg>
+                        Google Signup
+                      </>
+                    )}
+                  </button>
+
+                  <button 
+                    type="button"
+                    onClick={() => handleSocialAuth('github')}
+                    disabled={!!isSocialLoading}
+                    className="flex items-center justify-center gap-2 py-2.5 px-4 bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-white/20 rounded-xl text-xs font-semibold text-white transition-all disabled:opacity-50"
+                  >
+                    {isSocialLoading === 'github' ? (
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4 fill-current text-white" viewBox="0 0 24 24">
+                          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                        </svg>
+                        GitHub Signup
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Divider */}
+                <div className="relative flex items-center justify-center mb-5">
+                  <div className="border-t border-white/10 w-full" />
+                  <span className="bg-[#0b0c10] px-3 text-[10px] uppercase tracking-wider text-gray-500 font-semibold shrink-0">
+                    Or with Work Email
+                  </span>
+                  <div className="border-t border-white/10 w-full" />
+                </div>
+
+                <form onSubmit={handleInitiateSignup} className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                        Full Name <span className="text-red-400">*</span>
+                      </label>
+                      <div className="relative">
+                        <input 
+                          type="text"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          placeholder="John Doe"
+                          className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-xl pl-10 pr-3 py-2.5 text-sm focus:outline-none transition-all placeholder-gray-600"
+                        />
+                        <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                        Business / Company <span className="text-red-400">*</span>
+                      </label>
+                      <div className="relative">
+                        <input 
+                          type="text"
+                          name="company"
+                          value={formData.company}
+                          onChange={handleChange}
+                          placeholder="Acme Tech Pvt Ltd"
+                          className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-xl pl-10 pr-3 py-2.5 text-sm focus:outline-none transition-all placeholder-gray-600"
+                        />
+                        <Building size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                        Work Email <span className="text-red-400">*</span>
+                      </label>
+                      <div className="relative">
+                        <input 
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          placeholder="merchant@company.com"
+                          className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-xl pl-10 pr-3 py-2.5 text-sm focus:outline-none transition-all placeholder-gray-600"
+                        />
+                        <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                        Phone Number
+                      </label>
+                      <div className="relative">
+                        <input 
+                          type="text"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleChange}
+                          placeholder="+91 98765 43210"
+                          className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-xl pl-10 pr-3 py-2.5 text-sm focus:outline-none transition-all placeholder-gray-600"
+                        />
+                        <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                        Password <span className="text-red-400">*</span>
+                      </label>
+                      <div className="relative">
+                        <input 
+                          type={showPassword ? 'text' : 'password'}
+                          name="password"
+                          value={formData.password}
+                          onChange={handleChange}
+                          placeholder="Min 6 characters"
+                          className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-xl pl-10 pr-10 py-2.5 text-sm focus:outline-none transition-all placeholder-gray-600"
+                        />
+                        <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                        <button 
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
+                        >
+                          {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                        Confirm Password <span className="text-red-400">*</span>
+                      </label>
+                      <div className="relative">
+                        <input 
+                          type="password"
+                          name="confirmPassword"
+                          value={formData.confirmPassword}
+                          onChange={handleChange}
+                          placeholder="Re-enter password"
+                          className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-xl pl-10 pr-3 py-2.5 text-sm focus:outline-none transition-all placeholder-gray-600"
+                        />
+                        <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Password Look: Live Requirements & Strength Meter */}
+                  {formData.password.length > 0 && (
+                    <div className="bg-white/[0.02] border border-white/10 rounded-xl p-3 space-y-2 text-xs">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-400 text-[11px]">Password Security:</span>
+                        <span className={`font-bold text-[11px] ${passMetrics.text}`}>
+                          {passMetrics.label}
+                        </span>
+                      </div>
+                      
+                      {/* Strength Bar */}
+                      <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+                        <div className={`h-full transition-all duration-300 ${passMetrics.color}`} style={{ width: passMetrics.width }} />
+                      </div>
+
+                      {/* Requirement Indicators */}
+                      <div className="grid grid-cols-2 gap-1.5 pt-1 text-[10px]">
+                        <div className={`flex items-center gap-1 ${passMetrics.minLength ? 'text-emerald-400' : 'text-gray-500'}`}>
+                          <CheckCircle2 size={12} /> Min 6 characters
+                        </div>
+                        <div className={`flex items-center gap-1 ${passMetrics.hasUpper ? 'text-emerald-400' : 'text-gray-500'}`}>
+                          <CheckCircle2 size={12} /> Uppercase letter
+                        </div>
+                        <div className={`flex items-center gap-1 ${passMetrics.hasNumOrSpecial ? 'text-emerald-400' : 'text-gray-500'}`}>
+                          <CheckCircle2 size={12} /> Number or symbol
+                        </div>
+                        <div className={`flex items-center gap-1 ${formData.password && formData.password === formData.confirmPassword ? 'text-emerald-400' : 'text-gray-500'}`}>
+                          <CheckCircle2 size={12} /> Passwords match
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="text-[11px] text-gray-400 pt-1 leading-relaxed">
+                    By creating an account, you agree to OnePG's{' '}
+                    <span className="text-[#FF5722] hover:underline cursor-pointer">Terms of Service</span> and{' '}
+                    <span className="text-[#FF5722] hover:underline cursor-pointer">Privacy Policy</span>.
+                  </div>
+
+                  <button 
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-[#FF5722] hover:bg-[#e64e1e] text-white py-3.5 rounded-xl font-bold text-sm transition-all shadow-[0_4px_20px_rgba(255,87,34,0.3)] flex items-center justify-center gap-2 relative disabled:opacity-50 mt-2"
+                  >
+                    {isSubmitting ? (
+                      <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        Verify Work Email & Continue
+                        <ChevronRight size={16} />
+                      </>
+                    )}
+                  </button>
+                </form>
+
+                <div className="mt-6 text-center pt-4 border-t border-white/5">
+                  <p className="text-xs text-gray-400">
+                    Already registered?{' '}
+                    <Link to="/login" className="text-[#FF5722] hover:underline font-bold">
+                      Login to your account
+                    </Link>
+                  </p>
+                </div>
+              </>
             )}
 
-            {/* Social OAuth Signup Buttons */}
-            <div className="grid grid-cols-2 gap-3 mb-5">
-              <button 
-                type="button"
-                onClick={() => handleSocialAuth('google')}
-                disabled={!!isSocialLoading}
-                className="flex items-center justify-center gap-2 py-2.5 px-4 bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-white/20 rounded-xl text-xs font-semibold text-white transition-all disabled:opacity-50"
-              >
-                {isSocialLoading === 'google' ? (
-                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <svg className="w-4 h-4" viewBox="0 0 24 24">
-                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                    </svg>
-                    Google Signup
-                  </>
+            {/* Step 2: Email OTP Mail Verification Screen */}
+            {step === 2 && (
+              <div className="space-y-6 animate-fadeIn">
+                <div>
+                  <button 
+                    type="button" 
+                    onClick={() => setStep(1)}
+                    className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-white mb-4 transition-colors"
+                  >
+                    <ArrowLeft size={14} /> Back to details
+                  </button>
+                  
+                  <div className="w-12 h-12 rounded-2xl bg-[#FF5722]/10 border border-[#FF5722]/20 flex items-center justify-center text-[#FF5722] mb-4">
+                    <Mail size={24} />
+                  </div>
+                  
+                  <h3 className="text-2xl font-bold text-white mb-1">Verify Your Email</h3>
+                  <p className="text-xs sm:text-sm text-gray-400 font-light leading-relaxed">
+                    We sent a 4-digit verification code to <span className="text-white font-medium">{formData.email}</span>. Please enter it below to complete your registration.
+                  </p>
+                </div>
+
+                {error && (
+                  <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-xs font-medium flex items-center gap-2">
+                    <AlertCircle size={16} className="shrink-0" />
+                    <span>{error}</span>
+                  </div>
                 )}
-              </button>
 
-              <button 
-                type="button"
-                onClick={() => handleSocialAuth('github')}
-                disabled={!!isSocialLoading}
-                className="flex items-center justify-center gap-2 py-2.5 px-4 bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-white/20 rounded-xl text-xs font-semibold text-white transition-all disabled:opacity-50"
-              >
-                {isSocialLoading === 'github' ? (
-                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <svg className="w-4 h-4 fill-current text-white" viewBox="0 0 24 24">
-                      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-                    </svg>
-                    GitHub Signup
-                  </>
-                )}
-              </button>
-            </div>
-
-            {/* Divider */}
-            <div className="relative flex items-center justify-center mb-5">
-              <div className="border-t border-white/10 w-full" />
-              <span className="bg-[#0b0c10] px-3 text-[10px] uppercase tracking-wider text-gray-500 font-semibold shrink-0">
-                Or with Work Email
-              </span>
-              <div className="border-t border-white/10 w-full" />
-            </div>
-
-            <form onSubmit={handleSignup} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
-                    Full Name <span className="text-red-400">*</span>
-                  </label>
-                  <div className="relative">
-                    <input 
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      placeholder="John Doe"
-                      className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-xl pl-10 pr-3 py-2.5 text-sm focus:outline-none transition-all placeholder-gray-600"
-                    />
-                    <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                <form onSubmit={handleVerifyAndComplete} className="space-y-6">
+                  <div className="flex justify-between gap-3">
+                    {otp.map((digit, idx) => (
+                      <input 
+                        key={idx}
+                        id={`signup-otp-${idx}`}
+                        type="text"
+                        maxLength={1}
+                        value={digit}
+                        onChange={(e) => handleOtpChange(idx, e.target.value)}
+                        className="w-14 h-14 bg-white/[0.03] border border-white/15 focus:border-[#FF5722] text-center text-xl font-bold text-white rounded-xl focus:outline-none transition-all"
+                      />
+                    ))}
                   </div>
-                </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
-                    Business / Company <span className="text-red-400">*</span>
-                  </label>
-                  <div className="relative">
-                    <input 
-                      type="text"
-                      name="company"
-                      value={formData.company}
-                      onChange={handleChange}
-                      placeholder="Acme Tech Pvt Ltd"
-                      className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-xl pl-10 pr-3 py-2.5 text-sm focus:outline-none transition-all placeholder-gray-600"
-                    />
-                    <Building size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                  <button 
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-[#FF5722] hover:bg-[#e64e1e] text-white py-3.5 rounded-xl font-bold text-sm transition-all shadow-[0_4px_20px_rgba(255,87,34,0.3)] flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {isSubmitting ? (
+                      <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      'Verify & Create Merchant Account'
+                    )}
+                  </button>
+
+                  <div className="text-center text-xs text-gray-500 space-y-2">
+                    <p>
+                      Didn't receive the code?{' '}
+                      <button 
+                        type="button" 
+                        onClick={async () => {
+                          setError('');
+                          const res = await sendSignupOtp(formData.email, formData.name);
+                          if (res.success) {
+                            showToast('A new verification code has been sent to your email.', 'info');
+                          }
+                        }} 
+                        className="text-[#FF5722] hover:underline font-semibold"
+                      >
+                        Resend Verification Code
+                      </button>
+                    </p>
+                    <p className="text-[11px] text-gray-600">
+                      Wrong email?{' '}
+                      <button 
+                        type="button" 
+                        onClick={() => setStep(1)} 
+                        className="text-gray-400 hover:text-white underline"
+                      >
+                        Edit Email Address
+                      </button>
+                    </p>
                   </div>
-                </div>
+                </form>
               </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
-                    Work Email <span className="text-red-400">*</span>
-                  </label>
-                  <div className="relative">
-                    <input 
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="merchant@company.com"
-                      className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-xl pl-10 pr-3 py-2.5 text-sm focus:outline-none transition-all placeholder-gray-600"
-                    />
-                    <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
-                    Phone Number
-                  </label>
-                  <div className="relative">
-                    <input 
-                      type="text"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      placeholder="+91 98765 43210"
-                      className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-xl pl-10 pr-3 py-2.5 text-sm focus:outline-none transition-all placeholder-gray-600"
-                    />
-                    <Phone size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
-                    Password <span className="text-red-400">*</span>
-                  </label>
-                  <div className="relative">
-                    <input 
-                      type={showPassword ? 'text' : 'password'}
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      placeholder="Min 6 characters"
-                      className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-xl pl-10 pr-10 py-2.5 text-sm focus:outline-none transition-all placeholder-gray-600"
-                    />
-                    <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-                    <button 
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
-                    >
-                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
-                    Confirm Password <span className="text-red-400">*</span>
-                  </label>
-                  <div className="relative">
-                    <input 
-                      type="password"
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      placeholder="Re-enter password"
-                      className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-xl pl-10 pr-3 py-2.5 text-sm focus:outline-none transition-all placeholder-gray-600"
-                    />
-                    <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-[11px] text-gray-400 pt-1 leading-relaxed">
-                By creating an account, you agree to OnePG's{' '}
-                <span className="text-[#FF5722] hover:underline cursor-pointer">Terms of Service</span> and{' '}
-                <span className="text-[#FF5722] hover:underline cursor-pointer">Privacy Policy</span>.
-              </div>
-
-              <button 
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-[#FF5722] hover:bg-[#e64e1e] text-white py-3.5 rounded-xl font-bold text-sm transition-all shadow-[0_4px_20px_rgba(255,87,34,0.3)] flex items-center justify-center gap-2 relative disabled:opacity-50 mt-2"
-              >
-                {isSubmitting ? (
-                  <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <>
-                    Create Merchant Account
-                    <ChevronRight size={16} />
-                  </>
-                )}
-              </button>
-            </form>
-
-            <div className="mt-6 text-center pt-4 border-t border-white/5">
-              <p className="text-xs text-gray-400">
-                Already registered?{' '}
-                <Link to="/login" className="text-[#FF5722] hover:underline font-bold">
-                  Login to your account
-                </Link>
-              </p>
-            </div>
+            )}
 
           </div>
         </div>

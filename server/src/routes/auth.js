@@ -1,13 +1,17 @@
-// v7/backend/src/routes/auth.js
 import { Router } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { findUserByEmail, createUser } from "../models/userModel.js";
+import { findUserByEmail, createUser, updateUserPassword } from "../models/userModel.js";
+import { sendSignupOtpEmail, sendPasswordResetOtpEmail } from "../utils/mailer.js";
 
 const router = Router();
 
 const SESSION_DAYS = parseInt(process.env.SESSION_DAYS || "180", 10);
 const REFRESH_THRESHOLD_DAYS = parseInt(process.env.SESSION_REFRESH_THRESHOLD_DAYS || "7", 10);
+
+// In-memory OTP stores (email -> { otp, expiresAt })
+const signupOtpStore = new Map();
+const passwordResetOtpStore = new Map();
 
 function cookieOptions() {
   const secure = String(process.env.COOKIE_SECURE).toLowerCase() === "true";
@@ -21,14 +25,13 @@ function cookieOptions() {
 }
 
 function signToken(payloadLike) {
-  // payloadLike: { id/email/role } or JWT payload from verify()
   const id = payloadLike.id ?? payloadLike.sub;
   const role = payloadLike.role;
   const email = payloadLike.email;
   return jwt.sign(
     { sub: id, role, email },
     process.env.JWT_SECRET,
-    { expiresIn: `${SESSION_DAYS}d` } // long-lived
+    { expiresIn: `${SESSION_DAYS}d` }
   );
 }
 
@@ -38,7 +41,85 @@ function issueSession(res, user) {
   return token;
 }
 
-// POST /api/auth/register  (client/lawyer only)
+// POST /api/auth/send-signup-otp
+router.post("/send-signup-otp", async (req, res) => {
+  try {
+    const { email, name } = req.body;
+    if (!email || !email.includes("@")) {
+      return res.status(400).json({ success: false, message: "Valid email is required" });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const existing = await findUserByEmail(normalizedEmail);
+    if (existing.rowCount > 0) {
+      return res.status(409).json({ success: false, message: "An account with this email already exists." });
+    }
+
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+    const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+    signupOtpStore.set(normalizedEmail, { otp, expiresAt });
+
+    await sendSignupOtpEmail(normalizedEmail, otp, name || "Merchant");
+
+    res.json({ success: true, message: "Verification code sent to your email address." });
+  } catch (err) {
+    console.error("send-signup-otp error:", err);
+    res.status(500).json({ success: false, message: "Failed to send verification code." });
+  }
+});
+
+// POST /api/auth/signup  (with Mail OTP verification)
+router.post("/signup", async (req, res) => {
+  try {
+    const { name, company, email, password, phone, otp } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ success: false, message: "Name, email and password are required." });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const existing = await findUserByEmail(normalizedEmail);
+    if (existing.rowCount > 0) {
+      return res.status(409).json({ success: false, message: "Email already registered." });
+    }
+
+    // OTP Verification
+    if (!otp) {
+      return res.status(400).json({ success: false, message: "Email verification code is required." });
+    }
+
+    const otpData = signupOtpStore.get(normalizedEmail);
+    if (!otpData || otpData.otp !== otp || otpData.expiresAt < Date.now()) {
+      return res.status(400).json({ success: false, message: "Invalid or expired verification code." });
+    }
+
+    // Clear OTP after successful check
+    signupOtpStore.delete(normalizedEmail);
+
+    const passwordHash = await bcrypt.hash(password, 12);
+    const insert = await createUser({ name, email: normalizedEmail, passwordHash, role: "client" });
+    const user = insert.rows[0];
+
+    const token = issueSession(res, user);
+    res.status(201).json({
+      success: true,
+      message: "Account registered successfully!",
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (err) {
+    console.error("signup error:", err);
+    res.status(500).json({ success: false, message: "Server error during registration." });
+  }
+});
+
+// POST /api/auth/register (legacy compatibility)
 router.post("/register", async (req, res) => {
   try {
     let { name, email, password, role = "client" } = req.body;
@@ -72,18 +153,101 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const q = await findUserByEmail(email);
-    if (q.rowCount === 0) return res.status(401).json({ message: "Invalid credentials" });
+    const normalizedEmail = (email || "").trim().toLowerCase();
+    const q = await findUserByEmail(normalizedEmail);
+    if (q.rowCount === 0) return res.status(401).json({ success: false, message: "Invalid credentials" });
 
     const user = q.rows[0];
     const ok = await bcrypt.compare(password, user.password_hash);
-    if (!ok) return res.status(401).json({ message: "Invalid credentials" });
+    if (!ok) return res.status(401).json({ success: false, message: "Invalid credentials" });
 
-    issueSession(res, user);
-    res.json({ id: user.id, name: user.name, email: user.email, role: user.role });
+    const token = issueSession(res, user);
+    res.json({
+      success: true,
+      token,
+      user: { id: user.id, name: user.name, email: user.email, role: user.role }
+    });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+// POST /api/auth/forgot-password
+router.post("/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email || !email.includes("@")) {
+      return res.status(400).json({ success: false, message: "Valid email address required" });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await findUserByEmail(normalizedEmail);
+    if (user.rowCount === 0) {
+      return res.status(404).json({ success: false, message: "No registered merchant found with this email." });
+    }
+
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+    const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+    passwordResetOtpStore.set(normalizedEmail, { otp, expiresAt });
+
+    await sendPasswordResetOtpEmail(normalizedEmail, otp);
+
+    res.json({ success: true, message: `Verification code sent to ${normalizedEmail}` });
+  } catch (err) {
+    console.error("forgot-password error:", err);
+    res.status(500).json({ success: false, message: "Failed to send reset code." });
+  }
+});
+
+// POST /api/auth/verify-otp
+router.post("/verify-otp", async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ success: false, message: "Email and OTP required." });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const data = passwordResetOtpStore.get(normalizedEmail);
+
+    if (!data || data.otp !== otp || data.expiresAt < Date.now()) {
+      return res.status(400).json({ success: false, message: "Invalid or expired verification code." });
+    }
+
+    res.json({ success: true, message: "Code verified successfully." });
+  } catch (err) {
+    console.error("verify-otp error:", err);
+    res.status(500).json({ success: false, message: "Server error verifying code." });
+  }
+});
+
+// POST /api/auth/reset-password
+router.post("/reset-password", async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({ success: false, message: "Email, OTP and new password are required." });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const data = passwordResetOtpStore.get(normalizedEmail);
+
+    if (!data || data.otp !== otp || data.expiresAt < Date.now()) {
+      return res.status(400).json({ success: false, message: "Invalid or expired verification code." });
+    }
+
+    // Remove OTP after verification
+    passwordResetOtpStore.delete(normalizedEmail);
+
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+    await updateUserPassword(normalizedEmail, passwordHash);
+
+    res.json({ success: true, message: "Password updated successfully!" });
+  } catch (err) {
+    console.error("reset-password error:", err);
+    res.status(500).json({ success: false, message: "Server error resetting password." });
   }
 });
 
@@ -93,15 +257,13 @@ router.get("/me", (req, res) => {
     const token = req.cookies?.token;
     if (!token) return res.status(401).json({ message: "Not authenticated" });
 
-    const payload = jwt.verify(token, process.env.JWT_SECRET); // { sub, role, email, iat, exp }
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Sliding session: if token is close to expiring, silently refresh it
     const nowSec = Math.floor(Date.now() / 1000);
     const remainingSec = (payload.exp || 0) - nowSec;
     const thresholdSec = REFRESH_THRESHOLD_DAYS * 24 * 60 * 60;
 
     if (remainingSec > 0 && remainingSec < thresholdSec) {
-      // re-issue with same identity info
       issueSession(res, { id: payload.sub, role: payload.role, email: payload.email });
     }
 
@@ -159,3 +321,4 @@ router.post("/logout", (req, res) => {
 });
 
 export default router;
+

@@ -124,6 +124,9 @@ export const AppContextProvider = ({ children }) => {
         setUserRole(data.user.role);
         localStorage.setItem('onepg_token', data.token);
         localStorage.setItem('onepg_role', data.user.role);
+        if (data.user.name) localStorage.setItem('onepg_user_name', data.user.name);
+        if (data.user.email) localStorage.setItem('onepg_email', data.user.email);
+        if (data.user.company) localStorage.setItem('onepg_company', data.user.company);
 
         if (data.user.client_id) {
           setCurrentClientId(data.user.client_id);
@@ -140,13 +143,35 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
-  // Register a new merchant user
-  const signup = async (name, company, email, password, phone, plan) => {
+  // Send verification OTP code for Signup
+  const sendSignupOtp = async (email, name) => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/send-signup-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.message, 'info');
+      } else {
+        showToast(data.message || 'Failed to send verification code.', 'error');
+      }
+      return data;
+    } catch (err) {
+      console.error('Send signup OTP error:', err);
+      showToast('Network error sending verification code.', 'error');
+      return { success: false, message: 'Server connection failed.' };
+    }
+  };
+
+  // Register a new merchant user (with OTP verification)
+  const signup = async (name, company, email, password, phone, otp, plan = 'Basic') => {
     try {
       const res = await fetch(`${API_BASE}/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, company, email, password, phone, plan })
+        body: JSON.stringify({ name, company, email, password, phone, otp, plan })
       });
       const data = await res.json();
 
@@ -156,6 +181,9 @@ export const AppContextProvider = ({ children }) => {
         setUserRole(data.user.role);
         localStorage.setItem('onepg_token', data.token);
         localStorage.setItem('onepg_role', data.user.role);
+        if (data.user.name) localStorage.setItem('onepg_user_name', data.user.name);
+        if (data.user.email) localStorage.setItem('onepg_email', data.user.email);
+        if (company) localStorage.setItem('onepg_company', company);
 
         if (data.user.client_id) {
           setCurrentClientId(data.user.client_id);
@@ -333,6 +361,9 @@ export const AppContextProvider = ({ children }) => {
     localStorage.removeItem('onepg_token');
     localStorage.removeItem('onepg_role');
     localStorage.removeItem('onepg_current_client_id');
+    localStorage.removeItem('onepg_user_name');
+    localStorage.removeItem('onepg_email');
+    localStorage.removeItem('onepg_company');
     showToast('Logged out of system successfully.', 'info');
   };
 
@@ -475,7 +506,22 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
-  const currentClient = clients.find(c => c.id === currentClientId) || clients[0] || null;
+  // Merchant user details fallback from localStorage
+  const fallbackClient = {
+    id: currentClientId || 'CLI-MERCHANT-01',
+    name: localStorage.getItem('onepg_user_name') || 'Merchant Partner',
+    company: localStorage.getItem('onepg_company') || 'My Merchant Enterprise',
+    email: localStorage.getItem('onepg_email') || 'merchant@onepg.co.in',
+    status: 'Active',
+    plan: 'Merchant Pro',
+    created_at: new Date().toISOString(),
+    services: [
+      { name: 'Payment Gateway Routing', status: 'Active' },
+      { name: 'Instant Settlement Payouts', status: 'Active' }
+    ]
+  };
+
+  const currentClient = clients.find(c => c.id === currentClientId) || clients[0] || fallbackClient;
 
   return (
     <AppContext.Provider value={{
@@ -492,6 +538,7 @@ export const AppContextProvider = ({ children }) => {
       isAuthenticated,
       userRole,
       login,
+      sendSignupOtp,
       signup,
       socialLogin,
       handleOAuthSuccess,

@@ -75,6 +75,18 @@ app.get("/", (_req, res) => res.send("API OK (OnePG Backend Operational)"));
 app.get("/api/health", (_req, res) => res.json({ status: "healthy", message: "OnePG Backend Operational" }));
 
 // REST routes
+// Microsoft Entra ID Publisher Domain Verification
+app.get("/.well-known/microsoft-identity-association.json", (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.json({
+    associatedApplications: [
+      {
+        applicationId: "7b52ce07-8da8-41d9-ae78-27bafb5f6406"
+      }
+    ]
+  });
+});
+
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/chats", chatsRouter);

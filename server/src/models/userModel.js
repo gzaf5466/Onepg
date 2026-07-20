@@ -34,3 +34,11 @@ export async function ensureSingleAdmin({ name, email, passwordHash }) {
   );
   return res.rows[0];
 }
+
+export async function updateUserPassword(email, passwordHash) {
+  return pool.query(
+    "UPDATE users SET password_hash = $1 WHERE email = $2 RETURNING id, name, email, role",
+    [passwordHash, email]
+  );
+}
+
