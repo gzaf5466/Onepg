@@ -127,6 +127,10 @@ export const AppContextProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        return { success: false, message: 'Server returned unexpected response.' };
+      }
       const data = await res.json();
 
       if (data.success) {
@@ -162,6 +166,11 @@ export const AppContextProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, name })
       });
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        showToast('Server returned unexpected response.', 'error');
+        return { success: false, message: 'Server returned unexpected response.' };
+      }
       const data = await res.json();
       if (data.success) {
         showToast(data.message, 'info');
@@ -184,6 +193,10 @@ export const AppContextProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, company, email, password, phone, otp, plan })
       });
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        return { success: false, message: 'Server returned unexpected response.' };
+      }
       const data = await res.json();
 
       if (data.success) {
@@ -230,6 +243,10 @@ export const AppContextProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ provider, email: defaultEmail, name: defaultName })
       });
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        return { success: false, message: 'Server returned unexpected response.' };
+      }
       const data = await res.json();
 
       if (data.success) {
@@ -263,6 +280,11 @@ export const AppContextProvider = ({ children }) => {
         headers: getAuthHeaders(),
         body: JSON.stringify({ amount, planName })
       });
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        showToast('Server returned non-JSON response.', 'error');
+        return { success: false, message: 'Failed to create payment order.' };
+      }
       return await res.json();
     } catch (err) {
       console.error('Razorpay order creation error:', err);
@@ -284,6 +306,11 @@ export const AppContextProvider = ({ children }) => {
           amountPaid
         })
       });
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        showToast('Server returned non-JSON response.', 'error');
+        return { success: false, message: 'Server connection failed.' };
+      }
       const data = await res.json();
       if (data.success) {
         showToast(data.message || 'Payment completed successfully!', 'success');
@@ -307,6 +334,11 @@ export const AppContextProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
       });
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        showToast('Server returned non-JSON response.', 'error');
+        return { success: false, message: 'Server connection failed.' };
+      }
       const data = await res.json();
       if (data.success) {
         showToast(data.message, 'info');
@@ -329,6 +361,11 @@ export const AppContextProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp })
       });
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        showToast('Server returned non-JSON response.', 'error');
+        return { success: false, message: 'Server connection failed.' };
+      }
       const data = await res.json();
       if (!data.success) {
         showToast(data.message || 'Invalid verification code.', 'error');
@@ -348,6 +385,11 @@ export const AppContextProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, newPassword })
       });
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        showToast('Server returned non-JSON response.', 'error');
+        return { success: false, message: 'Server connection failed.' };
+      }
       const data = await res.json();
       if (data.success) {
         showToast('Password reset successfully! Please login.', 'success');
@@ -386,6 +428,11 @@ export const AppContextProvider = ({ children }) => {
         headers: getAuthHeaders(),
         body: JSON.stringify(clientData)
       });
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        showToast('Server returned non-JSON response.', 'error');
+        return;
+      }
       const data = await res.json();
       if (data.success) {
         showToast(`Merchant profile for ${clientData.company} initialized.`, 'success');
@@ -406,6 +453,11 @@ export const AppContextProvider = ({ children }) => {
         headers: getAuthHeaders(),
         body: JSON.stringify({ serviceName, newStatus, notes })
       });
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        showToast('Server returned non-JSON response.', 'error');
+        return;
+      }
       const data = await res.json();
       if (data.success) {
         fetchClients();
@@ -425,6 +477,11 @@ export const AppContextProvider = ({ children }) => {
         headers: getAuthHeaders(),
         body: JSON.stringify({ name: docName, status })
       });
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        showToast('Server returned non-JSON response.', 'error');
+        return;
+      }
       const data = await res.json();
       if (data.success) {
         showToast(`KYC Document "${docName}" submitted successfully.`, 'success');
@@ -445,6 +502,11 @@ export const AppContextProvider = ({ children }) => {
         headers: getAuthHeaders(),
         body: JSON.stringify({ webhookUrl })
       });
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        showToast('Server returned non-JSON response.', 'error');
+        return { success: false };
+      }
       const data = await res.json();
       if (data.success) {
         showToast('Webhook destination endpoint updated.', 'success');
@@ -467,6 +529,11 @@ export const AppContextProvider = ({ children }) => {
         method: 'POST',
         headers: getAuthHeaders()
       });
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        showToast('Server returned non-JSON response.', 'error');
+        return;
+      }
       const data = await res.json();
       if (data.success) {
         fetchClients();
@@ -486,6 +553,11 @@ export const AppContextProvider = ({ children }) => {
         headers: getAuthHeaders(),
         body: JSON.stringify({ title, severity, desc })
       });
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        showToast('Server returned non-JSON response.', 'error');
+        return;
+      }
       const data = await res.json();
       if (data.success) {
         showToast(`Support ticket ${data.ticketId} created successfully.`, 'success');
@@ -505,6 +577,11 @@ export const AppContextProvider = ({ children }) => {
         method: 'PUT',
         headers: getAuthHeaders()
       });
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        showToast('Server returned non-JSON response.', 'error');
+        return;
+      }
       const data = await res.json();
       if (data.success) {
         showToast(data.message || 'Support Ticket marked as Resolved successfully!', 'success');
