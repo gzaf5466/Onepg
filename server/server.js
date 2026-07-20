@@ -42,7 +42,8 @@ app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
 
 // Health
-app.get("/", (_req, res) => res.send("API OK (PERN + RBAC + Chat + RTC)"));
+app.get("/", (_req, res) => res.send("API OK (OnePG Backend Operational)"));
+app.get("/api/health", (_req, res) => res.json({ status: "healthy", message: "OnePG Backend Operational" }));
 
 // REST routes
 app.use("/api/auth", authRouter);
@@ -61,7 +62,7 @@ app.use((err, _req, res, _next) => {
 });
 
 // --- HTTP + Socket.IO ---
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
 
 const io = new Server(server, {

@@ -1,42 +1,58 @@
 #!/bin/bash
 # ============================================================
-# OnePG VPS Automated Deployment Script
+# OnePG VPS Automated Full-Stack Clean Deployment Script
 # ============================================================
 
 set -e
 
-echo "🚀 Starting OnePG Deployment..."
+echo "🚀 Starting OnePG Clean Full-Stack Deployment..."
 
-# 1. Pull latest code from main branch
+# 1. Pull latest code cleanly from Git
 echo "📥 Fetching latest code from Git..."
-git reset --hard origin/main || true
-git pull origin main
+git reset --hard || true
+git pull || true
 
-# 2. Install dependencies & Build production frontend SPA bundle
-echo "📦 Installing dependencies & building production frontend with VITE_API_URL=/api..."
+# 2. Clean old frontend build files completely
+echo "🧹 Cleaning old frontend static build files..."
+mkdir -p /var/www/onepg /var/www/html
+rm -rf /var/www/onepg/* /var/www/html/*
+
+# 3. Install frontend dependencies & Build clean SPA bundle
+echo "📦 Installing frontend dependencies & building production SPA..."
 npm install --silent
 VITE_API_URL=/api npm run build
 
-# 3. Clean old assets & Deploy new bundle to Nginx web roots
-echo "📂 Cleaning old assets & copying new dist build..."
-mkdir -p /var/www/onepg /var/www/html
-rm -rf /var/www/onepg/* /var/www/html/*
+# 4. Deploy fresh SPA dist files to Nginx web root
+echo "📂 Copying fresh dist assets to /var/www/onepg..."
 cp -r dist/* /var/www/onepg/
 cp -r dist/* /var/www/html/
 chown -R www-data:www-data /var/www/onepg /var/www/html
 chmod -R 755 /var/www/onepg /var/www/html
 
-# 4. Reload Nginx Web Server
+# 5. Install backend dependencies in server/
+echo "⚙️ Setting up backend server in server/..."
+if [ -d "server" ]; then
+  cd server
+  npm install --silent
+  cd ..
+fi
+
+# 6. Stop old PM2 processes & Start/Restart fresh PM2 backend
+echo "🔄 Starting/Restarting PM2 backend server process..."
+if command -v pm2 &> /dev/null; then
+  pm2 delete onepg-backend 2>/dev/null || true
+  if [ -f "server/server.js" ]; then
+    pm2 start server/server.js --name "onepg-backend"
+  elif [ -f "server/index.js" ]; then
+    pm2 start server/index.js --name "onepg-backend"
+  else
+    pm2 restart all || true
+  fi
+  pm2 save || true
+fi
+
+# 7. Reload Nginx Web Server
 echo "🔄 Reloading Nginx..."
 sudo systemctl reload nginx
 
-# 5. Restart Backend Process via PM2
-echo "🔄 Installing backend dependencies & restarting PM2..."
-if [ -d "server" ]; then
-  (cd server && npm install --silent) || true
-fi
-if command -v pm2 &> /dev/null; then
-  pm2 restart onepg-backend || pm2 restart 0 || pm2 restart all || true
-fi
-
-echo "✅ OnePG Deployment Complete! Live at https://onepg.co.in"
+echo "✅ OnePG Clean Deployment Completed Successfully! Live at https://onepg.co.in"
