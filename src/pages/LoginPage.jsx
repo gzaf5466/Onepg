@@ -64,24 +64,21 @@ const LoginPage = () => {
     setError('');
     setIsSocialLoading(provider);
 
-    // Standard Production Passport.js OAuth Redirect
-    const passportOAuthUrl = `${API_BASE}/auth/${provider}`;
-
-    // Open sleek centered popup window so main URL is never modified
-    const width = 500;
-    const height = 650;
-    const left = window.screenX + (window.outerWidth - width) / 2;
-    const top = window.screenY + (window.outerHeight - height) / 2;
-
-    const popup = window.open(
-      passportOAuthUrl,
-      `Sign in with ${provider}`,
-      `width=${width},height=${height},left=${left},top=${top},status=0,toolbar=0,menubar=0`
-    );
-
-    // Fallback if popups are blocked: standard redirect
-    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
-      window.location.href = passportOAuthUrl;
+    try {
+      const res = await socialLogin(provider);
+      setIsSocialLoading('');
+      if (res.success) {
+        if (res.user.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
+      } else {
+        setError(res.message || `Failed to sign in with ${provider}.`);
+      }
+    } catch (err) {
+      setIsSocialLoading('');
+      setError(`Network error authenticating with ${provider}.`);
     }
   };
 

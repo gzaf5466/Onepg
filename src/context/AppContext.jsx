@@ -180,13 +180,16 @@ export const AppContextProvider = ({ children }) => {
     localStorage.setItem('onepg_role', role);
   }, []);
 
-  // Social Auth (Google / GitHub)
+  // Social Auth (Google / Microsoft / GitHub)
   const socialLogin = async (provider, email, name) => {
+    const defaultEmail = email || (provider === 'google' ? 'merchant.google@onepg.co.in' : provider === 'microsoft' ? 'merchant.microsoft@onepg.co.in' : 'developer.github@onepg.co.in');
+    const defaultName = name || (provider === 'google' ? 'Google Merchant' : provider === 'microsoft' ? 'Microsoft Merchant' : 'GitHub Developer');
+
     try {
       const res = await fetch(`${API_BASE}/auth/social`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ provider, email, name })
+        body: JSON.stringify({ provider, email: defaultEmail, name: defaultName })
       });
       const data = await res.json();
 
@@ -201,7 +204,8 @@ export const AppContextProvider = ({ children }) => {
           setCurrentClientId(data.user.client_id);
         }
 
-        showToast(`Signed in with ${provider === 'google' ? 'Google' : 'GitHub'}! Welcome, ${data.user.name}.`, 'success');
+        const providerLabel = provider.charAt(0).toUpperCase() + provider.slice(1);
+        showToast(`Signed in with ${providerLabel}! Welcome, ${data.user.name}.`, 'success');
         return { success: true, user: data.user };
       } else {
         return { success: false, message: data.message || 'Social sign in failed.' };

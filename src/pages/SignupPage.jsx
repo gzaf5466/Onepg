@@ -51,11 +51,18 @@ const SignupPage = () => {
     setError('');
     setIsSocialLoading(provider);
 
-    // Standard Production Passport.js OAuth Redirect
-    const passportOAuthUrl = `${API_BASE}/auth/${provider}`;
-    
-    // Redirect browser to Passport.js backend route
-    window.location.href = passportOAuthUrl;
+    try {
+      const res = await socialLogin(provider);
+      setIsSocialLoading('');
+      if (res.success) {
+        navigate('/dashboard');
+      } else {
+        setError(res.message || `Failed to sign up with ${provider}.`);
+      }
+    } catch (err) {
+      setIsSocialLoading('');
+      setError(`Network error authenticating with ${provider}.`);
+    }
   };
 
   const handleSignup = async (e) => {
