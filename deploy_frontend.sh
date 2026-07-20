@@ -1,11 +1,11 @@
 #!/bin/bash
 # ============================================================
-# OnePG VPS Automated Full-Stack Clean Deployment Script
+# OnePG VPS Automated Clean Deployment Script - FRONTEND
 # ============================================================
 
 set -e
 
-echo "🚀 Starting OnePG Clean Full-Stack Deployment..."
+echo "🚀 Starting OnePG Clean Frontend Deployment..."
 
 # 1. Pull latest code cleanly from Git
 echo "📥 Fetching latest code from Git..."
@@ -29,30 +29,8 @@ cp -r dist/* /var/www/html/
 chown -R www-data:www-data /var/www/onepg /var/www/html
 chmod -R 755 /var/www/onepg /var/www/html
 
-# 5. Install backend dependencies in server/
-echo "⚙️ Setting up backend server in server/..."
-if [ -d "server" ]; then
-  cd server
-  npm install --silent
-  cd ..
-fi
-
-# 6. Stop old PM2 processes & Start/Restart fresh PM2 backend
-echo "🔄 Starting/Restarting PM2 backend server process..."
-if command -v pm2 &> /dev/null; then
-  pm2 delete onepg-backend 2>/dev/null || true
-  if [ -f "server/server.js" ]; then
-    pm2 start server/server.js --name "onepg-backend"
-  elif [ -f "server/index.js" ]; then
-    pm2 start server/index.js --name "onepg-backend"
-  else
-    pm2 restart all || true
-  fi
-  pm2 save || true
-fi
-
-# 7. Reload Nginx Web Server
+# 5. Reload Nginx Web Server
 echo "🔄 Reloading Nginx..."
 sudo systemctl reload nginx
 
-echo "✅ OnePG Clean Deployment Completed Successfully! Live at https://onepg.co.in"
+echo "✅ OnePG Frontend Deployment Completed Successfully! Live at https://onepg.co.in"
