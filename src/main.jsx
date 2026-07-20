@@ -10,7 +10,7 @@ import { MsalProvider } from '@azure/msal-react';
 const msalConfig = {
   auth: {
     clientId: import.meta.env.VITE_MICROSOFT_CLIENT_ID || "c57f20db-9fc1-46dc-a079-9ffc059728cb",
-    authority: "https://login.microsoftonline.com/consumers",
+    authority: "https://login.microsoftonline.com/common",
     redirectUri: "/",
   }
 };
