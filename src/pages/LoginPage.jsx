@@ -1,6 +1,8 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
+import { useGoogleLogin } from '@react-oauth/google';
+import { useMsal } from '@azure/msal-react';
 import { Shield, Eye, EyeOff, Globe, TrendingUp, ShieldCheck, ChevronRight } from 'lucide-react';
 import loginImg from '../assets/login.avif';
 import logo from '../assets/Logo.svg';
@@ -60,12 +62,48 @@ const LoginPage = () => {
     return () => window.removeEventListener('message', handleMessage);
   }, [navigate, showToast, handleOAuthSuccess]);
 
-  const handleSocialAuth = async (provider) => {
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        setIsSocialLoading('google');
+        const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+        });
+        const userInfo = await res.json();
+        handleSocialAuth('google', userInfo.email, userInfo.name);
+      } catch (err) {
+        setIsSocialLoading('');
+        setError('Failed to fetch Google profile.');
+      }
+    },
+    onError: () => {
+      setError('Google login was cancelled or failed.');
+    }
+  });
+
+  const { instance: msalInstance } = useMsal();
+
+  const microsoftLogin = async () => {
+    try {
+      setIsSocialLoading('microsoft');
+      const loginResponse = await msalInstance.loginPopup({
+        scopes: ["User.Read"]
+      });
+      handleSocialAuth('microsoft', loginResponse.account.username, loginResponse.account.name);
+    } catch (err) {
+      setIsSocialLoading('');
+      if (err.name !== 'BrowserAuthError') {
+        setError('Microsoft login failed.');
+      }
+    }
+  };
+
+  const handleSocialAuth = async (provider, email = null, name = null) => {
     setError('');
     setIsSocialLoading(provider);
 
     try {
-      const res = await socialLogin(provider);
+      const res = await socialLogin(provider, email, name);
       setIsSocialLoading('');
       if (res.success) {
         if (res.user.role === 'admin') {
@@ -198,7 +236,7 @@ const LoginPage = () => {
             <div className="grid grid-cols-2 gap-3 mb-6">
               <button
                 type="button"
-                onClick={() => handleSocialAuth('google')}
+                onClick={() => googleLogin()}
                 disabled={!!isSocialLoading}
                 className="flex items-center justify-center gap-2 py-2.5 px-4 bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-white/20 rounded-xl text-xs font-semibold text-white transition-all disabled:opacity-50"
               >
@@ -219,7 +257,7 @@ const LoginPage = () => {
 
               <button
                 type="button"
-                onClick={() => handleSocialAuth('microsoft')}
+                onClick={() => microsoftLogin()}
                 disabled={!!isSocialLoading}
                 className="flex items-center justify-center gap-2 py-2.5 px-4 bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-white/20 rounded-xl text-xs font-semibold text-white transition-all disabled:opacity-50"
               >
