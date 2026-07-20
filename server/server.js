@@ -27,18 +27,45 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
 }));
 
-const rawOrigins = process.env.CLIENT_URLS || process.env.CLIENT_URL || "http://localhost:5173";
-const CLIENT_ORIGINS = rawOrigins
+const defaultOrigins = [
+  "https://onepg.co.in",
+  "https://www.onepg.co.in",
+  "http://onepg.co.in",
+  "http://www.onepg.co.in",
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "http://localhost:5000",
+  "http://127.0.0.1:5173"
+];
+
+const envOrigins = (process.env.CLIENT_URLS || process.env.CLIENT_URL || "")
   .split(",")
   .map((s) => s.trim())
   .filter(Boolean);
 
-app.use(cors({
-  origin: CLIENT_ORIGINS.length > 1 ? CLIENT_ORIGINS : CLIENT_ORIGINS[0],
+const ALLOWED_ORIGINS = Array.from(new Set([...defaultOrigins, ...envOrigins]));
+
+const isOriginAllowed = (origin) => {
+  if (!origin) return true;
+  if (ALLOWED_ORIGINS.includes(origin)) return true;
+  if (/^https?:\/\/(.+\.)?onepg\.co\.in$/i.test(origin)) return true;
+  return false;
+};
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (isOriginAllowed(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS policy violation: Origin '${origin}' is not permitted.`));
+    }
+  },
   credentials: true,
-  methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
-  allowedHeaders: ["Content-Type","Authorization"],
-}));
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
@@ -62,7 +89,7 @@ app.use((req, res) => res.status(404).json({ message: "Not Found" }));
 // Error guard
 app.use((err, _req, res, _next) => {
   console.error("Unhandled error:", err);
-  res.status(500).json({ message: "Server error" });
+  res.status(500).json({ message: err.message || "Server error" });
 });
 
 // --- HTTP + Socket.IO ---
@@ -70,7 +97,16 @@ const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  cors: { origin: CLIENT_ORIGINS.length > 1 ? CLIENT_ORIGINS : CLIENT_ORIGINS[0], credentials: true },
+  cors: {
+    origin: (origin, callback) => {
+      if (isOriginAllowed(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Socket CORS policy violation"));
+      }
+    },
+    credentials: true,
+  },
 });
 
 attachRTC(io); // <-- WebRTC signaling (auth + rooms + signaling events)
