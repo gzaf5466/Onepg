@@ -9,7 +9,7 @@ import { MsalProvider } from '@azure/msal-react';
 
 const msalConfig = {
   auth: {
-    clientId: import.meta.env.VITE_MICROSOFT_CLIENT_ID || "c57f20db-9fc1-46dc-a079-9ffc059728cb",
+    clientId: import.meta.env.VITE_MICROSOFT_CLIENT_ID || "7b52ce07-8da8-41d9-ae78-27bafb5f6406",
     authority: "https://login.microsoftonline.com/common",
     redirectUri: "/",
   }
@@ -18,7 +18,7 @@ const msalInstance = new PublicClientApplication(msalConfig);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || "371191060934-n3r7sh9r7mngc5409j3f5ssngs4518g1.apps.googleusercontent.com"}>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || "820468676697-c0rgcdn6dbsjbkab1a87v4io4t7ct6ta.apps.googleusercontent.com"}>
       <MsalProvider instance={msalInstance}>
         <App />
       </MsalProvider>

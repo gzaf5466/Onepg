@@ -50,6 +50,12 @@ export const AppContextProvider = ({ children }) => {
       const res = await fetch(`${API_BASE}/clients`, {
         headers: getAuthHeaders(),
       });
+      const contentType = res.headers.get('content-type');
+      if (!res.ok || !contentType || !contentType.includes('application/json')) {
+        console.warn('Backend API returned non-JSON response:', res.status);
+        if (res.status === 401 || res.status === 403) logout();
+        return;
+      }
       const data = await res.json();
       if (data.success) {
         setClients(data.clients);
@@ -79,6 +85,11 @@ export const AppContextProvider = ({ children }) => {
       const res = await fetch(`${API_BASE}/tickets`, {
         headers: getAuthHeaders()
       });
+      const contentType = res.headers.get('content-type');
+      if (!res.ok || !contentType || !contentType.includes('application/json')) {
+        console.warn('Backend API returned non-JSON response:', res.status);
+        return;
+      }
       const data = await res.json();
       if (data.success) {
         setTickets(data.tickets);
