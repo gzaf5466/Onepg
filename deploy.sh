@@ -30,4 +30,13 @@ chmod -R 755 /var/www/onepg /var/www/html
 echo "🔄 Reloading Nginx..."
 sudo systemctl reload nginx
 
-echo "✅ OnePG Frontend Deployment Complete! Live at https://onepg.co.in"
+# 5. Restart Backend Process via PM2
+echo "🔄 Installing backend dependencies & restarting PM2..."
+if [ -d "server" ]; then
+  (cd server && npm install --silent) || true
+fi
+if command -v pm2 &> /dev/null; then
+  pm2 restart onepg-backend || pm2 restart 0 || pm2 restart all || true
+fi
+
+echo "✅ OnePG Deployment Complete! Live at https://onepg.co.in"

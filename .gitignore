@@ -12,9 +12,6 @@ dist
 dist-ssr
 *.local
 
-# Server backend directory
-server/
-
 # Environment variables & secrets
 .env
 *.env
