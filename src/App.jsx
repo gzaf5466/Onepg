@@ -16,6 +16,11 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const ProductsPage = lazy(() => import('./pages/ProductsPage'));
 const SolutionsPage = lazy(() => import('./pages/SolutionsPage'));
 const PricingPage = lazy(() => import('./pages/PricingPage'));
+const RefundPolicyPage = lazy(() => import('./pages/RefundPolicyPage'));
+const TermsOfServicePage = lazy(() => import('./pages/TermsOfServicePage'));
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
+const SecurityPage = lazy(() => import('./pages/SecurityPage'));
+const CompliancePage = lazy(() => import('./pages/CompliancePage'));
 
 // Premium Loading Indicator
 const LoadingScreen = () => (
@@ -69,6 +74,11 @@ function App() {
               <Route path="/services" element={<ServicesPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/blog" element={<BlogPage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+              <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+              <Route path="/refund-policy" element={<RefundPolicyPage />} />
+              <Route path="/security" element={<SecurityPage />} />
+              <Route path="/compliance" element={<CompliancePage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />

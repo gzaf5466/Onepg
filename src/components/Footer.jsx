@@ -44,12 +44,12 @@ const Footer = () => {
       ]
     },
     'Refund Policy': {
-      title: 'Refund & Settlement Policy',
-      lastUpdated: 'August 18, 2025',
+      title: 'Refund & Cancellation Policy',
+      lastUpdated: 'July 18, 2026',
       content: [
-        'This policy applies to commercial transactions and customer chargebacks processed through the OnePG rails.',
-        'Refund requests must be initiated via the Client Dashboard or our automated Refund API. Funds will be returned directly to the customer’s original payment instrument (credit card, bank account, or wallet) within 5 to 7 banking business days.',
-        'Standard processing fees (MDR) are non-refundable in the event of customer cancellations, except where negotiated under custom enterprise partner plans.'
+        'Welcome to OnePG. By purchasing or using our services, you agree to the terms of this Refund & Cancellation Policy.',
+        'OnePG is a technology, consulting, and onboarding service provider that assists businesses with payment gateway integration, website development, software solutions, and related services.',
+        'OnePG is not a bank, payment gateway, payment aggregator, or financial institution. Final approvals, account activation, settlement timelines, transaction limits, reserve policies, and other decisions are made solely by the respective payment gateway provider, bank, financial institution, or regulatory authority.'
       ]
     },
     'Security': {
@@ -109,11 +109,11 @@ const Footer = () => {
     {
       title: 'Legal',
       links: [
-        { label: 'Privacy Policy', action: () => setActivePolicy('Privacy Policy') },
-        { label: 'Terms of Service', action: () => setActivePolicy('Terms of Service') },
-        { label: 'Refund Policy', action: () => setActivePolicy('Refund Policy') },
-        { label: 'Security', action: () => setActivePolicy('Security') },
-        { label: 'Compliance', action: () => setActivePolicy('Compliance') }
+        { label: 'Privacy Policy', path: '/privacy-policy' },
+        { label: 'Terms of Service', path: '/terms-of-service' },
+        { label: 'Refund Policy', path: '/refund-policy' },
+        { label: 'Security', path: '/security' },
+        { label: 'Compliance', path: '/compliance' }
       ],
       hoverColor: 'hover:text-[#FF5722]'
     }

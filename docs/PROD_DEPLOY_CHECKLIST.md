@@ -53,7 +53,20 @@ pm2 startOrReload ecosystem.config.js
  - Verify `GET /api/health` returns healthy status.
  - In an incognito browser, attempt Google sign-in and verify popup flow closes and completes.
 
-7) Troubleshooting
+7) VPS / Hostinger frontend header configuration
+ - If your frontend is deployed on a VPS or Hostinger-managed server, add the COOP header in your webserver configuration.
+ - For Nginx:
+```nginx
+add_header Cross-Origin-Opener-Policy "same-origin-allow-popups" always;
+```
+ - For Apache:
+```apache
+Header always set Cross-Origin-Opener-Policy "same-origin-allow-popups"
+```
+ - If your hosting panel exposes custom HTTP headers, set `Cross-Origin-Opener-Policy` to `same-origin-allow-popups` for your site.
+ - Ensure this header is present on the root HTML page served to users, not just in the app build.
+
+8) Troubleshooting
  - If you see `[BHK] install: missing/invalid publicKey or merchantId` in console, open DevTools → Network → filter `script` to locate the script URL. If that script is injected by an extension, test in incognito to confirm.
  - If Google sign-in fails: check browser console for blocked popups (COOP) or CORS errors; ensure OAuth client origins/redirects are correct.
 
