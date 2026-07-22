@@ -168,15 +168,22 @@ export const AppContextProvider = ({ children }) => {
       });
       const contentType = res.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
+        console.error('[sendSignupOtp] Non-JSON response:', res.status, contentType);
         showToast('Server returned unexpected response.', 'error');
         return { success: false, message: 'Server returned unexpected response.' };
       }
       const data = await res.json();
-      if (data.success) {
-        showToast(data.message, 'info');
-      } else {
-        showToast(data.message || 'Failed to send verification code.', 'error');
+      
+      // Check both status code and data.success
+      if (!res.ok || !data.success) {
+        const errorMsg = data.message || 'Failed to send verification code.';
+        console.error('[sendSignupOtp] Error:', res.status, errorMsg);
+        showToast(errorMsg, 'error');
+        return { success: false, message: errorMsg };
       }
+      
+      console.log('[sendSignupOtp] Success:', data.message);
+      showToast(data.message, 'info');
       return data;
     } catch (err) {
       console.error('Send signup OTP error:', err);
@@ -195,11 +202,12 @@ export const AppContextProvider = ({ children }) => {
       });
       const contentType = res.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
+        console.error('[signup] Non-JSON response:', res.status, contentType);
         return { success: false, message: 'Server returned unexpected response.' };
       }
       const data = await res.json();
 
-      if (data.success) {
+      if (data.success && res.ok) {
         setToken(data.token);
         setIsAuthenticated(true);
         setUserRole(data.user.role);
@@ -213,10 +221,13 @@ export const AppContextProvider = ({ children }) => {
           setCurrentClientId(data.user.client_id);
         }
 
+        console.log('[signup] Account created successfully:', data.user.email);
         showToast(`Account created successfully! Welcome, ${data.user.name}.`, 'success');
         return { success: true, user: data.user };
       } else {
-        return { success: false, message: data.message || 'Registration failed.' };
+        const errorMsg = data.message || 'Registration failed.';
+        console.error('[signup] Failed:', res.status, errorMsg);
+        return { success: false, message: errorMsg };
       }
     } catch (err) {
       console.error('Signup error:', err);

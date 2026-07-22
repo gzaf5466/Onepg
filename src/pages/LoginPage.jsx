@@ -27,8 +27,8 @@ const LoginPage = () => {
     const social = searchParams.get('social');
 
     // If running inside popup window, send token to parent window & close popup
-    if (window.opener && token) {
-      window.opener.postMessage({ type: 'ONEPG_OAUTH_SUCCESS', token, social }, '*');
+    if (window.opener && !window.opener.closed && token) {
+      window.opener.postMessage({ type: 'ONEPG_OAUTH_SUCCESS', token, social }, window.location.origin);
       window.close();
       return;
     }
@@ -50,6 +50,12 @@ const LoginPage = () => {
   // Listen for popup window postMessage events
   useEffect(() => {
     const handleMessage = (event) => {
+      // Validate sender origin to prevent accepting postMessage from untrusted sources
+      if (event.origin !== window.location.origin) {
+        console.warn('Ignoring postMessage from untrusted origin:', event.origin);
+        return;
+      }
+
       if (event.data && event.data.type === 'ONEPG_OAUTH_SUCCESS') {
         const { token, social } = event.data;
         setIsSocialLoading(false);

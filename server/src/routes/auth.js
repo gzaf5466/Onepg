@@ -59,8 +59,15 @@ router.post("/send-signup-otp", async (req, res) => {
     const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
 
     signupOtpStore.set(normalizedEmail, { otp, expiresAt });
+    console.log(`[OTP] Generated for ${normalizedEmail}: ${otp} (expires in 10 min)`);
 
-    await sendSignupOtpEmail(normalizedEmail, otp, name || "Merchant");
+    const sent = await sendSignupOtpEmail(normalizedEmail, otp, name || "Merchant");
+    if (!sent && process.env.NODE_ENV === "production") {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send verification code email. Please check server SMTP configuration."
+      });
+    }
 
     res.json({ success: true, message: "Verification code sent to your email address." });
   } catch (err) {
@@ -86,16 +93,29 @@ router.post("/signup", async (req, res) => {
 
     // OTP Verification
     if (!otp) {
+      console.log(`[OTP] Missing OTP for ${normalizedEmail}`);
       return res.status(400).json({ success: false, message: "Email verification code is required." });
     }
 
     const otpData = signupOtpStore.get(normalizedEmail);
-    if (!otpData || otpData.otp !== otp || otpData.expiresAt < Date.now()) {
-      return res.status(400).json({ success: false, message: "Invalid or expired verification code." });
+    console.log(`[OTP] Verifying ${normalizedEmail}: stored=${!!otpData}, provided=${otp}, match=${otpData?.otp === otp}, expired=${otpData?.expiresAt < Date.now()}`);
+
+    if (!otpData) {
+      return res.status(400).json({ success: false, message: "Verification code not found. Please request a new one." });
+    }
+
+    if (otpData.expiresAt < Date.now()) {
+      signupOtpStore.delete(normalizedEmail);
+      return res.status(400).json({ success: false, message: "Verification code has expired. Please request a new one." });
+    }
+
+    if (otpData.otp !== otp) {
+      return res.status(400).json({ success: false, message: "Invalid verification code. Please check and try again." });
     }
 
     // Clear OTP after successful check
     signupOtpStore.delete(normalizedEmail);
+    console.log(`[OTP] Successfully verified ${normalizedEmail}`);
 
     const passwordHash = await bcrypt.hash(password, 12);
     const insert = await createUser({ name, email: normalizedEmail, passwordHash, role: "client" });
@@ -192,7 +212,13 @@ router.post("/forgot-password", async (req, res) => {
 
     passwordResetOtpStore.set(normalizedEmail, { otp, expiresAt });
 
-    await sendPasswordResetOtpEmail(normalizedEmail, otp);
+    const sent = await sendPasswordResetOtpEmail(normalizedEmail, otp);
+    if (!sent && process.env.NODE_ENV === "production") {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send reset code email. Please check server SMTP configuration."
+      });
+    }
 
     res.json({ success: true, message: `Verification code sent to ${normalizedEmail}` });
   } catch (err) {

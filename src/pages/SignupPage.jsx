@@ -4,6 +4,7 @@ import { AppContext } from '../context/AppContext';
 import { Shield, Eye, EyeOff, Globe, TrendingUp, ShieldCheck, ChevronRight, User, Building, Mail, Phone, Lock, CheckCircle2, AlertCircle, ArrowLeft, RefreshCw } from 'lucide-react';
 import loginImg from '../assets/login.avif';
 import logo from '../assets/Logo.svg';
+import { useGoogleLogin } from '@react-oauth/google';
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -88,14 +89,15 @@ const SignupPage = () => {
 
   const passMetrics = getPasswordMetrics(formData.password);
 
-  const handleSocialAuth = async (provider) => {
+  const handleSocialAuth = async (provider, email, name) => {
     setError('');
     setIsSocialLoading(provider);
 
     try {
-      const res = await socialLogin(provider);
+      const res = await socialLogin(provider, email, name);
       setIsSocialLoading('');
       if (res.success) {
+        showToast(`Registered & Signed in via ${provider === 'google' ? 'Google' : provider}!`, 'success');
         navigate('/dashboard');
       } else {
         setError(res.message || `Failed to sign up with ${provider}.`);
@@ -105,6 +107,26 @@ const SignupPage = () => {
       setError(`Network error authenticating with ${provider}.`);
     }
   };
+
+  const googleSignup = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        setIsSocialLoading('google');
+        const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+        });
+        const userInfo = await res.json();
+        handleSocialAuth('google', userInfo.email, userInfo.name);
+      } catch (err) {
+        setIsSocialLoading('');
+        setError('Failed to fetch Google profile.');
+      }
+    },
+    onError: () => {
+      setIsSocialLoading('');
+      setError('Google signup was cancelled or failed.');
+    }
+  });
 
   // Step 1: Request Email OTP Verification Code
   const handleInitiateSignup = async (e) => {
@@ -135,16 +157,20 @@ const SignupPage = () => {
     setIsSubmitting(true);
 
     try {
+      console.log('[OTP] Requesting OTP for:', email);
       const res = await sendSignupOtp(email, name);
       setIsSubmitting(false);
 
       if (res.success) {
+        console.log('[OTP] Successfully sent OTP');
         setStep(2);
       } else {
+        console.error('[OTP] Failed to send:', res.message);
         setError(res.message || 'Failed to send mail verification code.');
       }
     } catch (err) {
       setIsSubmitting(false);
+      console.error('[OTP] Network error:', err);
       setError('Network connection error. Server might be offline.');
     }
   };
@@ -167,6 +193,7 @@ const SignupPage = () => {
   const handleVerifyAndComplete = async (e) => {
     e.preventDefault();
     const otpCode = otp.join('');
+    
     if (otpCode.length < 4) {
       setError('Please enter the complete 4-digit mail verification code.');
       return;
@@ -177,16 +204,20 @@ const SignupPage = () => {
 
     try {
       const { name, company, email, phone, password } = formData;
+      console.log('[OTP] Verifying OTP:', otpCode, 'for email:', email);
       const res = await signup(name, company, email, password, phone, otpCode, 'Basic');
       setIsSubmitting(false);
 
       if (res.success) {
+        console.log('[OTP] Signup successful, redirecting...');
         navigate('/dashboard');
       } else {
+        console.error('[OTP] Signup failed:', res.message);
         setError(res.message || 'Verification failed. Please check your code.');
       }
     } catch (err) {
       setIsSubmitting(false);
+      console.error('[OTP] Signup error:', err);
       setError('Network connection error.');
     }
   };
@@ -282,7 +313,7 @@ const SignupPage = () => {
                 <div className="grid grid-cols-2 gap-3 mb-5">
                   <button 
                     type="button"
-                    onClick={() => handleSocialAuth('google')}
+                    onClick={() => googleSignup()}
                     disabled={!!isSocialLoading}
                     className="flex items-center justify-center gap-2 py-2.5 px-4 bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-white/20 rounded-xl text-xs font-semibold text-white transition-all disabled:opacity-50"
                   >

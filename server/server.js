@@ -25,28 +25,8 @@ app.set("trust proxy", 1); // behind Nginx/ELB
 // --- Basic hardening ---
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
-  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+  crossOriginOpenerPolicy: { policy: "unsafe-none" },
 }));
-
-// Ensure COOP header is present for all responses (helps popup postMessage/close flows)
-app.use((req, res, next) => {
-  try {
-    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
-  } catch (e) {
-    // ignore if headers already sent or unsupported
-  }
-  next();
-});
-
-// Ensure COOP header is present on all responses (explicit middleware)
-app.use((req, res, next) => {
-  try {
-    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
-  } catch (e) {
-    // ignore if headers already sent
-  }
-  next();
-});
 
 const defaultOrigins = [
   "https://onepg.co.in",
