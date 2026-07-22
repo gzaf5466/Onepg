@@ -69,6 +69,8 @@ const LoginPage = () => {
   }, [navigate, showToast, handleOAuthSuccess]);
 
   const googleLogin = useGoogleLogin({
+    ux_mode: 'redirect',
+    redirect_uri: `${window.location.origin}/login`,
     onSuccess: async (tokenResponse) => {
       try {
         setIsSocialLoading('google');
@@ -89,13 +91,27 @@ const LoginPage = () => {
 
   const { instance: msalInstance } = useMsal();
 
+  // Check if returning from MSAL Redirect flow
+  useEffect(() => {
+    const savedAccount = window.sessionStorage.getItem('msal_redirect_account');
+    if (savedAccount) {
+      window.sessionStorage.removeItem('msal_redirect_account');
+      try {
+        const { username, name } = JSON.parse(savedAccount);
+        handleSocialAuth('microsoft', username, name);
+      } catch (e) {
+        console.error('Error handling MSAL redirect account:', e);
+      }
+    }
+  }, []);
+
   const microsoftLogin = async () => {
     try {
       setIsSocialLoading('microsoft');
-      const loginResponse = await msalInstance.loginPopup({
-        scopes: ["User.Read"]
+      await msalInstance.loginRedirect({
+        scopes: ["User.Read"],
+        redirectUri: `${window.location.origin}/redirect.html`
       });
-      handleSocialAuth('microsoft', loginResponse.account.username, loginResponse.account.name);
     } catch (err) {
       setIsSocialLoading('');
       if (err.name !== 'BrowserAuthError') {

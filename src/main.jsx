@@ -21,7 +21,13 @@ const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const initAndRender = async () => {
   try {
     await msalInstance.initialize();
-    await msalInstance.handleRedirectPromise();
+    const response = await msalInstance.handleRedirectPromise();
+    if (response && response.account) {
+      window.sessionStorage.setItem('msal_redirect_account', JSON.stringify({
+        username: response.account.username,
+        name: response.account.name
+      }));
+    }
   } catch (err) {
     console.error('MSAL initialization error:', err);
   }
