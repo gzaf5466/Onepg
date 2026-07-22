@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>OAuth Callback (Simulated)</title>
+  </head>
+  <body style="font-family:system-ui,Arial;padding:24px;">
+    <h2>Simulated OAuth Callback</h2>
+    <p>This page will postMessage the token to the opener and then close itself.</p>
+
+    <script>
+      function getQuery(name) {
+        const url = new URL(window.location.href);
+        return url.searchParams.get(name);
+      }
+
+      const token = getQuery('token');
+      const social = getQuery('social');
+
+      if (window.opener && token) {
+        // Simulate the popup behavior in LoginPage.jsx
+        window.opener.postMessage({ type: 'ONEPG_OAUTH_SUCCESS', token, social }, '*');
+        // Try to close popup
+        window.close();
+      } else if (token) {
+        document.body.insertAdjacentHTML('beforeend', '<p>Received token: ' + token + '</p>');
+      } else {
+        document.body.insertAdjacentHTML('beforeend', '<p>No token provided.</p>');
+      }
+    </script>
+  </body>
+</html>
