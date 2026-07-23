@@ -30,6 +30,9 @@ const initAndRender = async () => {
     }
   } catch (err) {
     console.error('MSAL initialization error:', err);
+    if (err && err.name !== 'BrowserAuthError') {
+      window.sessionStorage.setItem('msal_redirect_error', err.message || 'Microsoft authentication failed.');
+    }
   }
 
   if (import.meta.env.PROD && !googleClientId) {

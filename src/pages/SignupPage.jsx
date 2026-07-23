@@ -4,7 +4,6 @@ import { AppContext } from '../context/AppContext';
 import { Shield, Eye, EyeOff, Globe, TrendingUp, ShieldCheck, ChevronRight, User, Building, Mail, Phone, Lock, CheckCircle2, AlertCircle, ArrowLeft, RefreshCw } from 'lucide-react';
 import loginImg from '../assets/login.avif';
 import logo from '../assets/Logo.svg';
-import { useGoogleLogin } from '@react-oauth/google';
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -108,25 +107,64 @@ const SignupPage = () => {
     }
   };
 
-  const googleSignup = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      try {
-        setIsSocialLoading('google');
-        const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-        });
-        const userInfo = await res.json();
-        handleSocialAuth('google', userInfo.email, userInfo.name);
-      } catch (err) {
-        setIsSocialLoading('');
-        setError('Failed to fetch Google profile.');
-      }
-    },
-    onError: () => {
-      setIsSocialLoading('');
-      setError('Google signup was cancelled or failed.');
+  // Handle Google OAuth Redirect Response (#access_token=... or ?access_token=... or #error=...)
+  useEffect(() => {
+    const hash = window.location.hash;
+    const search = window.location.search;
+
+    let accessToken = null;
+    let oauthError = null;
+
+    if (hash && hash.includes('access_token=')) {
+      const params = new URLSearchParams(hash.substring(1));
+      accessToken = params.get('access_token');
+      oauthError = params.get('error');
+    } else if (search && search.includes('access_token=')) {
+      const params = new URLSearchParams(search);
+      accessToken = params.get('access_token');
+      oauthError = params.get('error');
     }
-  });
+
+    if (oauthError) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setError('Google signup was cancelled or failed.');
+      return;
+    }
+
+    if (accessToken && !handledOAuthRef.current) {
+      handledOAuthRef.current = true;
+      setIsSocialLoading('google');
+      // Clean URL hash/search immediately
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+      fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+        .then((res) => res.json())
+        .then((userInfo) => {
+          if (userInfo && userInfo.email) {
+            handleSocialAuth('google', userInfo.email, userInfo.name);
+          } else {
+            setError('Failed to fetch Google profile.');
+            setIsSocialLoading('');
+          }
+        })
+        .catch((err) => {
+          console.error('Google profile fetch error:', err);
+          setError('Failed to fetch Google profile.');
+          setIsSocialLoading('');
+        });
+    }
+  }, []);
+
+  const handleGoogleRedirect = () => {
+    setIsSocialLoading('google');
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "820468676697-c0rgcdn6dbsjbkab1a87v4io4t7ct6ta.apps.googleusercontent.com";
+    const redirectUri = `${window.location.origin}/redirect.html`;
+    const scope = encodeURIComponent('email profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile');
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${scope}&include_granted_scopes=true&state=google_oauth`;
+    window.location.href = googleAuthUrl;
+  };
 
   // Step 1: Request Email OTP Verification Code
   const handleInitiateSignup = async (e) => {
@@ -313,7 +351,7 @@ const SignupPage = () => {
                 <div className="grid grid-cols-2 gap-3 mb-5">
                   <button 
                     type="button"
-                    onClick={() => googleSignup()}
+                    onClick={handleGoogleRedirect}
                     disabled={!!isSocialLoading}
                     className="flex items-center justify-center gap-2 py-2.5 px-4 bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 hover:border-white/20 rounded-xl text-xs font-semibold text-white transition-all disabled:opacity-50"
                   >
