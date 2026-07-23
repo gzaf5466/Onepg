@@ -34,6 +34,21 @@ const ClientDashboard = () => {
     { id: 3, title: 'Timeline Updated', message: 'Onboarding packet submitted to partner bank.', date: '13 July 2026', read: true }
   ]);
 
+  const [showOnboardingModal, setShowOnboardingModal] = useState(() => {
+    // Automatically prompt onboarding modal if user's company or phone is not set
+    const savedOnboarding = localStorage.getItem('onepg_onboarding_completed');
+    return !savedOnboarding && (!currentClient?.company || !currentClient?.phone);
+  });
+
+  const [onboardingForm, setOnboardingForm] = useState({
+    company: currentClient?.company || '',
+    phone: currentClient?.phone || '',
+    businessType: 'E-commerce & Digital Goods',
+    monthlyVolume: '₹5L - ₹25L',
+    gstin: '',
+    address: ''
+  });
+
   if (!currentClient) {
     return (
       <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center">
@@ -41,6 +56,18 @@ const ClientDashboard = () => {
       </div>
     );
   }
+
+  const handleSaveOnboarding = (e) => {
+    e.preventDefault();
+    localStorage.setItem('onepg_onboarding_completed', 'true');
+    if (currentClient) {
+      currentClient.company = onboardingForm.company || currentClient.company;
+      currentClient.phone = onboardingForm.phone || currentClient.phone;
+      currentClient.businessType = onboardingForm.businessType;
+    }
+    setShowOnboardingModal(false);
+    showToast('Merchant onboarding form submitted! Account verification in progress.', 'success');
+  };
 
   const handleLogout = () => {
     logout();
@@ -341,6 +368,153 @@ const ClientDashboard = () => {
         </motion.footer>
       </div>
 
+      {/* Post-Authentication Merchant Onboarding Modal */}
+      <AnimatePresence>
+        {showOnboardingModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-[#0c0d12] border border-white/10 rounded-2xl max-w-xl w-full p-6 sm:p-8 shadow-2xl relative my-8"
+            >
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                <div>
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#FF5722] bg-[#FF5722]/10 px-2.5 py-1 rounded-full border border-[#FF5722]/20 mb-2 inline-block">
+                    Step 2 of 2 • Account Verification
+                  </span>
+                  <h3 className="text-xl sm:text-2xl font-bold text-white">Complete Merchant Profile</h3>
+                  <p className="text-xs text-gray-400 font-light mt-1">Please provide your merchant details to complete onboarding & activate payment processing.</p>
+                </div>
+              </div>
+
+              <form onSubmit={handleSaveOnboarding} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="onboarding-company" className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                      Business / Company Name <span className="text-[#FF5722]">*</span>
+                    </label>
+                    <input 
+                      id="onboarding-company"
+                      type="text"
+                      name="company"
+                      required
+                      autoComplete="organization"
+                      value={onboardingForm.company}
+                      onChange={(e) => setOnboardingForm(prev => ({ ...prev, company: e.target.value }))}
+                      placeholder="e.g. Acme Tech Pvt Ltd"
+                      className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all placeholder-gray-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="onboarding-phone" className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                      Contact Phone <span className="text-[#FF5722]">*</span>
+                    </label>
+                    <input 
+                      id="onboarding-phone"
+                      type="tel"
+                      name="phone"
+                      required
+                      autoComplete="tel"
+                      value={onboardingForm.phone}
+                      onChange={(e) => setOnboardingForm(prev => ({ ...prev, phone: e.target.value }))}
+                      placeholder="+91 98765 43210"
+                      className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all placeholder-gray-600"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="onboarding-business-type" className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                      Business Category
+                    </label>
+                    <select
+                      id="onboarding-business-type"
+                      name="businessType"
+                      value={onboardingForm.businessType}
+                      onChange={(e) => setOnboardingForm(prev => ({ ...prev, businessType: e.target.value }))}
+                      className="w-full bg-[#121319] border border-white/10 text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#FF5722]/50 transition-all"
+                    >
+                      <option value="E-commerce & Digital Goods">E-commerce & Digital Goods</option>
+                      <option value="SaaS & Software">SaaS & Software</option>
+                      <option value="Fintech & Financial Services">Fintech & Financial Services</option>
+                      <option value="Education & EdTech">Education & EdTech</option>
+                      <option value="Gaming & Entertainment">Gaming & Entertainment</option>
+                      <option value="Retail & Services">Retail & Services</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label htmlFor="onboarding-volume" className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                      Monthly Expected Volume
+                    </label>
+                    <select
+                      id="onboarding-volume"
+                      name="monthlyVolume"
+                      value={onboardingForm.monthlyVolume}
+                      onChange={(e) => setOnboardingForm(prev => ({ ...prev, monthlyVolume: e.target.value }))}
+                      className="w-full bg-[#121319] border border-white/10 text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#FF5722]/50 transition-all"
+                    >
+                      <option value="₹0 - ₹5L">₹0 - ₹5 Lakhs</option>
+                      <option value="₹5L - ₹25L">₹5 Lakhs - ₹25 Lakhs</option>
+                      <option value="₹25L - ₹1Cr">₹25 Lakhs - ₹1 Crore</option>
+                      <option value="₹1Cr+">₹1 Crore +</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="onboarding-gstin" className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                    GSTIN / Business Tax ID (Optional)
+                  </label>
+                  <input 
+                    id="onboarding-gstin"
+                    type="text"
+                    name="gstin"
+                    value={onboardingForm.gstin}
+                    onChange={(e) => setOnboardingForm(prev => ({ ...prev, gstin: e.target.value }))}
+                    placeholder="22AAAAA0000A1Z5"
+                    className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all placeholder-gray-600"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="onboarding-address" className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                    Registered Operating Address
+                  </label>
+                  <textarea 
+                    id="onboarding-address"
+                    name="address"
+                    rows={2}
+                    value={onboardingForm.address}
+                    onChange={(e) => setOnboardingForm(prev => ({ ...prev, address: e.target.value }))}
+                    placeholder="Enter registered address and PIN code"
+                    className="w-full bg-white/[0.03] border border-white/10 hover:border-white/20 focus:border-[#FF5722]/50 text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all placeholder-gray-600 resize-none"
+                  />
+                </div>
+
+                <div className="pt-4 flex items-center justify-end gap-3 border-t border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => setShowOnboardingModal(false)}
+                    className="px-5 py-2.5 text-xs text-gray-400 hover:text-white transition-colors bg-transparent border-none cursor-pointer"
+                  >
+                    Complete Later
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-[#FF5722] hover:bg-[#e64e1e] text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all shadow-[0_4px_20px_rgba(255,87,34,0.3)] cursor-pointer"
+                  >
+                    Submit & Start Processing
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
