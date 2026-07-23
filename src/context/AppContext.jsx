@@ -5,11 +5,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 export const AppContext = createContext();
 
 const getApiBase = () => {
-  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
-  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    return '/api';
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      if (import.meta.env.VITE_API_URL && (import.meta.env.VITE_API_URL.includes('localhost') || import.meta.env.VITE_API_URL.includes('127.0.0.1'))) {
+        return import.meta.env.VITE_API_URL;
+      }
+      return 'http://localhost:5000/api';
+    }
   }
-  return 'http://localhost:5000/api';
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  return '/api';
 };
 
 const API_BASE = getApiBase();
