@@ -28,9 +28,10 @@ function signToken(payloadLike) {
   const id = payloadLike.id ?? payloadLike.sub;
   const role = payloadLike.role;
   const email = payloadLike.email;
+  const secret = process.env.JWT_SECRET || "onepg-production-jwt-secret-key-2026-super-secure-auth-token-key";
   return jwt.sign(
     { sub: id, role, email },
-    process.env.JWT_SECRET,
+    secret,
     { expiresIn: `${SESSION_DAYS}d` }
   );
 }
