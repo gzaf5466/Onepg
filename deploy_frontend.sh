@@ -20,7 +20,7 @@ rm -rf /var/www/onepg/* /var/www/html/*
 # 3. Install frontend dependencies & Build clean SPA bundle
 echo "📦 Installing frontend dependencies & building production SPA..."
 npm install --silent
-VITE_API_URL=/api npm run build
+VITE_API_URL=/api VITE_GOOGLE_CLIENT_ID=820468676697-c0rgcdn6dbsjbkab1a87v4io4t7ct6ta.apps.googleusercontent.com npm run build
 
 # 4. Deploy fresh SPA dist files to Nginx web root
 echo "📂 Copying fresh dist assets to /var/www/onepg..."

@@ -12,10 +12,9 @@ dist
 dist-ssr
 *.local
 
-# Environment variables & secrets
-.env
-*.env
-.env.*
+# Environment variables
+!.env
+!.env.local
 !.env.example
 server/.env
 server/node_modules/
