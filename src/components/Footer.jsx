@@ -254,7 +254,11 @@ const Footer = () => {
             <div className="relative flex-grow md:w-64">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
               <input 
+                id="footer-newsletter-email"
+                name="email"
                 type="email" 
+                autoComplete="email"
+                aria-label="Email address for newsletter subscription"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email" 

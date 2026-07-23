@@ -156,11 +156,13 @@ const ContactPage = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Full Name</label>
+                    <label htmlFor="contact-name" className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Full Name</label>
                     <input 
+                      id="contact-name"
                       type="text" 
                       required
                       name="name"
+                      autoComplete="name"
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="Enter your name"
@@ -168,11 +170,13 @@ const ContactPage = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Work Email</label>
+                    <label htmlFor="contact-email" className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Work Email</label>
                     <input 
+                      id="contact-email"
                       type="email" 
                       required
                       name="email"
+                      autoComplete="email"
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="Enter work email"
@@ -183,10 +187,12 @@ const ContactPage = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Phone Number</label>
+                    <label htmlFor="contact-phone" className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Phone Number</label>
                     <input 
-                      type="text" 
+                      id="contact-phone"
+                      type="tel" 
                       name="phone"
+                      autoComplete="tel"
                       value={formData.phone}
                       onChange={handleChange}
                       placeholder="Enter phone number"
@@ -194,10 +200,12 @@ const ContactPage = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Company Name</label>
+                    <label htmlFor="contact-company" className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Company Name</label>
                     <input 
+                      id="contact-company"
                       type="text" 
                       name="company"
+                      autoComplete="organization"
                       value={formData.company}
                       onChange={handleChange}
                       placeholder="Enter company name"

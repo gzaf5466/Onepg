@@ -401,13 +401,15 @@ const SignupPage = () => {
                 <form onSubmit={handleInitiateSignup} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                      <label htmlFor="signup-name" className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
                         Full Name <span className="text-red-400">*</span>
                       </label>
                       <div className="relative">
                         <input 
+                          id="signup-name"
                           type="text"
                           name="name"
+                          autoComplete="name"
                           value={formData.name}
                           onChange={handleChange}
                           placeholder="John Doe"
@@ -418,13 +420,15 @@ const SignupPage = () => {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                      <label htmlFor="signup-company" className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
                         Business / Company <span className="text-red-400">*</span>
                       </label>
                       <div className="relative">
                         <input 
+                          id="signup-company"
                           type="text"
                           name="company"
+                          autoComplete="organization"
                           value={formData.company}
                           onChange={handleChange}
                           placeholder="Acme Tech Pvt Ltd"
@@ -437,13 +441,15 @@ const SignupPage = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
-                        Work Email <span className="text-red-400">*</span>
+                      <label htmlFor="signup-email" className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                        Work Email <span className="text-[#FF5722]">*</span>
                       </label>
                       <div className="relative">
                         <input 
+                          id="signup-email"
                           type="email"
                           name="email"
+                          autoComplete="email"
                           value={formData.email}
                           onChange={handleChange}
                           placeholder="merchant@company.com"
@@ -454,13 +460,15 @@ const SignupPage = () => {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                      <label htmlFor="signup-phone" className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
                         Phone Number
                       </label>
                       <div className="relative">
                         <input 
-                          type="text"
+                          id="signup-phone"
+                          type="tel"
                           name="phone"
+                          autoComplete="tel"
                           value={formData.phone}
                           onChange={handleChange}
                           placeholder="+91 98765 43210"
@@ -473,13 +481,15 @@ const SignupPage = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
-                        Password <span className="text-red-400">*</span>
+                      <label htmlFor="signup-password" className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                        Password <span className="text-[#FF5722]">*</span>
                       </label>
                       <div className="relative">
                         <input 
+                          id="signup-password"
                           type={showPassword ? 'text' : 'password'}
                           name="password"
+                          autoComplete="new-password"
                           value={formData.password}
                           onChange={handleChange}
                           placeholder="Min 6 characters"
@@ -497,13 +507,15 @@ const SignupPage = () => {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
-                        Confirm Password <span className="text-red-400">*</span>
+                      <label htmlFor="signup-confirm-password" className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
+                        Confirm Password <span className="text-[#FF5722]">*</span>
                       </label>
                       <div className="relative">
                         <input 
+                          id="signup-confirm-password"
                           type="password"
                           name="confirmPassword"
+                          autoComplete="new-password"
                           value={formData.confirmPassword}
                           onChange={handleChange}
                           placeholder="Re-enter password"

@@ -352,9 +352,12 @@ const LoginPage = () => {
 
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">Email / User ID</label>
+                <label htmlFor="login-email" className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">Email / User ID</label>
                 <input
+                  id="login-email"
+                  name="email"
                   type="text"
+                  autoComplete="username"
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); setError(''); }}
                   placeholder="Enter your email or user ID"
@@ -364,11 +367,14 @@ const LoginPage = () => {
 
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Password</label>
+                  <label htmlFor="login-password" className="block text-xs font-semibold text-gray-300 uppercase tracking-wider">Password</label>
                 </div>
                 <div className="relative">
                   <input
+                    id="login-password"
+                    name="password"
                     type={showPassword ? 'text' : 'password'}
+                    autoComplete="current-password"
                     value={password}
                     onChange={(e) => { setPassword(e.target.value); setError(''); }}
                     placeholder="Enter your password"
@@ -385,8 +391,10 @@ const LoginPage = () => {
               </div>
 
               <div className="flex items-center justify-between text-xs py-1">
-                <label className="flex items-center text-gray-400 cursor-pointer select-none">
+                <label htmlFor="login-remember-me" className="flex items-center text-gray-400 cursor-pointer select-none">
                   <input
+                    id="login-remember-me"
+                    name="rememberMe"
                     type="checkbox"
                     checked={rememberMe}
                     onChange={() => setRememberMe(!rememberMe)}

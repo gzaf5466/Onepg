@@ -137,12 +137,15 @@ const ForgotPasswordPage = () => {
 
             <form onSubmit={handleRequestReset} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">
+                <label htmlFor="forgot-email" className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">
                   Merchant Email Address
                 </label>
                 <div className="relative">
                   <input 
+                    id="forgot-email"
+                    name="email"
                     type="email"
+                    autoComplete="email"
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); setError(''); }}
                     placeholder="merchant@onepg.co.in"
@@ -192,7 +195,9 @@ const ForgotPasswordPage = () => {
                   <input 
                     key={idx}
                     id={`otp-input-${idx}`}
+                    name={`otp-digit-${idx}`}
                     type="text"
+                    aria-label={`Digit ${idx + 1} of verification code`}
                     maxLength={1}
                     value={digit}
                     onChange={(e) => handleOtpChange(idx, e.target.value)}
@@ -248,10 +253,13 @@ const ForgotPasswordPage = () => {
 
             <form onSubmit={handleResetPassword} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">New Password</label>
+                <label htmlFor="reset-new-password" className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">New Password</label>
                 <div className="relative">
                   <input 
+                    id="reset-new-password"
+                    name="newPassword"
                     type={showPassword ? 'text' : 'password'}
+                    autoComplete="new-password"
                     value={newPassword}
                     onChange={(e) => { setNewPassword(e.target.value); setError(''); }}
                     placeholder="Minimum 6 characters"
@@ -268,9 +276,12 @@ const ForgotPasswordPage = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">Confirm New Password</label>
+                <label htmlFor="reset-confirm-password" className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">Confirm New Password</label>
                 <input 
+                  id="reset-confirm-password"
+                  name="confirmPassword"
                   type="password"
+                  autoComplete="new-password"
                   value={confirmPassword}
                   onChange={(e) => { setConfirmPassword(e.target.value); setError(''); }}
                   placeholder="Re-enter password"
