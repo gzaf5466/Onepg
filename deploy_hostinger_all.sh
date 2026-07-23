@@ -35,7 +35,18 @@ else
     echo "⚠️ Warning: $CONF_SRC not found, skipping Nginx copy."
 fi
 
-# 4. Install & Start Backend (Express on port 5000)
+# 4. Initialize PostgreSQL Database & Tables
+echo "🗄️ Initializing PostgreSQL Database & Tables..."
+sudo systemctl start postgresql || true
+sudo systemctl enable postgresql || true
+sudo -u postgres psql -c "CREATE DATABASE onepg_db;" 2>/dev/null || true
+sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';" 2>/dev/null || true
+if [ -f "$ROOT_DIR/server/db.sql" ]; then
+    echo "📋 Importing database schema server/db.sql into onepg_db..."
+    sudo -u postgres psql -d onepg_db -f "$ROOT_DIR/server/db.sql" || true
+fi
+
+# 5. Install & Start Backend (Express on port 5000)
 echo "⚙️ Setting up Express Backend on Port 5000..."
 if [ -d "$ROOT_DIR/server" ]; then
     cd "$ROOT_DIR/server"
