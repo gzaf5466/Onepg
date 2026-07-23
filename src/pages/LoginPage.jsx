@@ -122,7 +122,7 @@ const LoginPage = () => {
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "820468676697-c0rgcdn6dbsjbkab1a87v4io4t7ct6ta.apps.googleusercontent.com";
     const redirectUri = `${window.location.origin}/redirect.html`;
     const scope = encodeURIComponent('email profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile');
-    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${scope}&include_granted_scopes=true&state=google_oauth`;
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${scope}&include_granted_scopes=true&prompt=select_account&state=google_oauth`;
     window.location.href = googleAuthUrl;
   };
 
