@@ -47,6 +47,18 @@ export async function initDb() {
         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
       );
     `);
+    // Seed default system admin account if missing
+    const adminCheck = await pool.query("SELECT id FROM users WHERE role='admin' LIMIT 1;");
+    if (adminCheck.rowCount === 0) {
+      const bcrypt = await import("bcryptjs");
+      const adminPassHash = await bcrypt.default.hash("Admin@123456", 12);
+      await pool.query(
+        `INSERT INTO users (name, full_name, email, password_hash, role)
+         VALUES ($1, $2, $3, $4, 'admin') ON CONFLICT (email) DO NOTHING;`,
+        ["System Admin", "System Admin", "admin@onepg.co.in", adminPassHash]
+      );
+      console.log("👑 Default Admin account created: admin@onepg.co.in");
+    }
     console.log("✅ Database tables initialized successfully.");
   } catch (err) {
     console.error("⚠️ Database initialization check:", err.message);
