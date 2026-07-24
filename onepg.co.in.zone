@@ -1,0 +1,10 @@
+; AWS SES Domain Verification and DKIM / DMARC Zone Records for onepg.co.in
+$ORIGIN onepg.co.in.
+$TTL 3600
+
+xse3y5ti3376xvfmjc46r2nb5eohgeu7._domainkey IN CNAME xse3y5ti3376xvfmjc46r2nb5eohgeu7.dkim.amazonses.com.
+wgbgpjtc6xuxht5ghgb7tqlwat7lv3xc._domainkey IN CNAME wgbgpjtc6xuxht5ghgb7tqlwat7lv3xc.dkim.amazonses.com.
+sefr6ejdh3kp2j2gvhzbq4zz34siu2jb._domainkey IN CNAME sefr6ejdh3kp2j2gvhzbq4zz34siu2jb.dkim.amazonses.com.
+no-reply IN MX 10 feedback-smtp.us-east-1.amazonses.com.
+no-reply IN TXT "v=spf1 include:amazonses.com ~all"
+_dmarc IN TXT "v=DMARC1; p=none;"
