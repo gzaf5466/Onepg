@@ -50,6 +50,10 @@ fi
 echo "⚙️ Setting up Express Backend on Port 5000..."
 if [ -d "$ROOT_DIR/server" ]; then
     cd "$ROOT_DIR/server"
+    if [ -f "$ROOT_DIR/server/.env" ]; then
+        sed -i 's/support@onepg.co.in/helponeopg@gmail.com/g' "$ROOT_DIR/server/.env" || true
+        sed -i 's/contactghazi55@gmail.com/helponeopg@gmail.com/g' "$ROOT_DIR/server/.env" || true
+    fi
     npm install --silent
     
     if command -v pm2 &> /dev/null; then
